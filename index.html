@@ -5,41 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The Fairway</title>
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#0a1a0f">
+<meta name="theme-color" content="#2a0a0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="The Fairway">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --ink: #0a1a0f;
-  --ink-mid: #1c3324;
-  --ink-light: #2d4a38;
-  --turf: #3a6b47;
-  --turf-light: #4e8f5e;
-  --gold: #c8a951;
-  --gold-light: #dfc070;
-  --cream: #f5f0e8;
-  --cream-dark: #ede5d4;
+  --ink: #2a0a0e;
+  --ink-mid: #3d1018;
+  --ink-light: #5b0e14;
+  --turf: #5b0e14;
+  --turf-light: #7a1a1f;
+  --gold: #f1e194;
+  --gold-light: #f8edaf;
+  --gold-dark: #d4c460;
+  --cream: #fdf8ec;
+  --cream-dark: #f5edcc;
   --white: #ffffff;
-  --muted: rgba(10,26,15,0.45);
-  --border: rgba(10,26,15,0.12);
-  --border-mid: rgba(10,26,15,0.2);
+  --muted: rgba(42,10,14,0.42);
+  --border: rgba(42,10,14,0.1);
+  --border-mid: rgba(42,10,14,0.18);
   --red: #c0392b;
   --blue: #2980b9;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow: 0 4px 24px rgba(10,26,15,0.12);
-  --shadow-lg: 0 12px 48px rgba(10,26,15,0.18);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 2px 16px rgba(42,10,14,0.1), 0 1px 3px rgba(42,10,14,0.06);
+  --shadow-lg: 0 12px 48px rgba(42,10,14,0.18);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   background: var(--cream);
   color: var(--ink);
   min-height: 100vh;
@@ -47,9 +48,14 @@ body {
   overflow-x: hidden;
 }
 
+/* Subtle grain texture on scroll content */
+.scroll-content {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
 /* ── TYPOGRAPHY ── */
-.font-display { font-family: 'Italiana', serif; }
-.mono { font-family: 'DM Mono', monospace; }
+.font-display { font-family: 'Cormorant Garamond', serif; }
+.mono { font-family: 'JetBrains Mono', monospace; }
 
 /* ── PAGES ── */
 .page { display: none; min-height: 100vh; min-height: 100dvh; }
@@ -57,29 +63,34 @@ body {
 
 /* ── HEADER ── */
 .app-header {
-  background: var(--ink);
+  background: rgba(42,10,14,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   color: var(--cream);
-  padding: 16px 20px 14px;
+  padding: 14px 20px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid rgba(200,169,81,0.3);
+  border-bottom: 1px solid rgba(241,225,148,0.15);
+  box-shadow: 0 1px 0 rgba(241,225,148,0.08), 0 4px 20px rgba(42,10,14,0.3);
 }
 .app-header-title {
-  font-family: 'Italiana', serif;
-  font-size: 1.6rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
   color: var(--gold);
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 .app-header-sub {
-  font-size: 0.7rem;
-  color: rgba(245,240,232,0.5);
-  letter-spacing: 2px;
+  font-size: 0.6rem;
+  color: rgba(241,225,148,0.35);
+  letter-spacing: 3px;
   text-transform: uppercase;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   margin-top: 1px;
 }
 .header-btn {
@@ -92,7 +103,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
   opacity: 0.7;
   transition: opacity 0.2s;
@@ -106,11 +117,14 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--ink);
-  border-top: 1px solid rgba(200,169,81,0.2);
+  background: rgba(42,10,14,0.96);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(241,225,148,0.12);
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -1px 0 rgba(241,225,148,0.06), 0 -8px 32px rgba(42,10,14,0.4);
 }
 .nav-item {
   flex: 1;
@@ -121,16 +135,17 @@ body {
   padding: 10px 0 8px;
   background: none;
   border: none;
-  color: rgba(245,240,232,0.4);
+  color: rgba(241,225,148,0.3);
   cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 1px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.2s;
 }
-.nav-item svg { width: 22px; height: 22px; }
+.nav-item svg { width: 20px; height: 20px; }
 .nav-item.active { color: var(--gold); }
+.nav-item.active svg { filter: drop-shadow(0 0 6px rgba(241,225,148,0.4)); }
 
 /* ── SCROLL CONTENT ── */
 .scroll-content {
@@ -145,14 +160,16 @@ body {
   background: var(--white);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: var(--shadow);
-  margin-bottom: 14px;
-  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(241,225,148,0.0), 0 2px 16px rgba(42,10,14,0.07);
+  margin-bottom: 12px;
+  border: 1px solid rgba(42,10,14,0.09);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
+.card:active { transform: scale(0.995); box-shadow: 0 1px 4px rgba(42,10,14,0.06); }
 .card-dark {
   background: var(--ink);
   color: var(--cream);
-  border-color: rgba(200,169,81,0.2);
+  border-color: rgba(241,225,148,0.15);
 }
 .card-turf {
   background: var(--turf);
@@ -170,7 +187,7 @@ body {
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1rem;
   font-weight: 500;
   transition: all 0.18s;
@@ -179,20 +196,31 @@ body {
 }
 .btn-primary {
   background: var(--ink);
-  color: var(--cream);
+  color: var(--gold);
+  box-shadow: 0 4px 20px rgba(42,10,14,0.3);
+  letter-spacing: 0.5px;
+  font-weight: 500;
 }
-.btn-primary:active { transform: scale(0.97); }
+.btn-primary:hover { background: var(--ink-mid); }
+.btn-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(42,10,14,0.2); }
 .btn-gold {
   background: var(--gold);
   color: var(--ink);
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(241,225,148,0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
 }
-.btn-gold:active { transform: scale(0.97); background: var(--gold-light); }
+.btn-gold:hover { background: var(--gold-light); box-shadow: 0 6px 24px rgba(241,225,148,0.4); }
+.btn-gold:active { transform: scale(0.97); }
 .btn-outline {
   background: transparent;
-  border: 1.5px solid var(--border-mid);
+  border: 1.5px solid rgba(42,10,14,0.2);
   color: var(--ink);
+  letter-spacing: 0.3px;
 }
+.btn-outline:hover { border-color: rgba(42,10,14,0.4); background: rgba(42,10,14,0.03); }
 .btn-outline:active { transform: scale(0.97); }
 .btn-ghost {
   background: rgba(10,26,15,0.06);
@@ -218,22 +246,22 @@ body {
   letter-spacing: 1.5px;
   color: var(--muted);
   margin-bottom: 8px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
 }
 .form-input {
   width: 100%;
   padding: 13px 16px;
-  border: 1.5px solid var(--border-mid);
+  border: 1.5px solid rgba(42,10,14,0.15);
   border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 1rem;
   background: var(--white);
   color: var(--ink);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
 }
-.form-input:focus { outline: none; border-color: var(--turf); }
-.form-input::placeholder { color: rgba(10,26,15,0.3); }
+.form-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(42,10,14,0.08); }
+.form-input::placeholder { color: rgba(42,10,14,0.25); }
 
 /* ── CHIP / TOGGLE ── */
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -245,7 +273,7 @@ body {
   color: var(--ink);
   cursor: pointer;
   font-size: 0.875rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   transition: all 0.15s;
 }
 .chip.active {
@@ -282,7 +310,7 @@ body {
 .score-val {
   flex: 1;
   text-align: center;
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 2rem;
   color: var(--ink);
   background: var(--white);
@@ -293,7 +321,7 @@ body {
   min-width: 60px;
 }
 .score-val.eagle { color: #c0392b; }
-.score-val.birdie { color: #e67e22; }
+.score-val.birdie { color: #d4a017; }
 .score-val.par { color: var(--turf); }
 .score-val.bogey { color: var(--ink-light); }
 .score-val.double { color: #888; }
@@ -306,26 +334,33 @@ body {
   margin-bottom: 20px;
 }
 .hole-num {
-  font-family: 'Italiana', serif;
-  font-size: 3.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4.5rem;
   line-height: 1;
   color: var(--ink);
+  letter-spacing: -1px;
+  text-shadow: 0 2px 12px rgba(10,26,15,0.1);
 }
 .hole-par-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   color: var(--muted);
-  margin-top: 2px;
+  margin-top: 4px;
+  background: rgba(42,10,14,0.06);
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: inline-block;
 }
 .hole-nav-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 1.5px solid var(--border-mid);
-  background: transparent;
+  background: var(--white);
   color: var(--ink);
+  box-shadow: 0 2px 8px rgba(10,26,15,0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -346,7 +381,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
 }
 .scorecard-table th, .scorecard-table td {
   text-align: center;
@@ -363,7 +398,7 @@ body {
 .scorecard-table .player-name-cell {
   text-align: left;
   padding-left: 10px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 0.75rem;
   min-width: 80px;
   font-weight: 500;
@@ -383,9 +418,9 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .skins-row:last-child { border-bottom: none; }
-.skin-hole { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+.skin-hole { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); }
 .skin-winner { font-size: 0.9rem; font-weight: 500; }
-.skin-value { font-family: 'Italiana', serif; font-size: 1.1rem; color: var(--gold); }
+.skin-value { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--gold); }
 
 /* ── SETTLEMENT ── */
 .settlement-row {
@@ -399,7 +434,7 @@ body {
 .settlement-names { flex: 1; }
 .settlement-from { font-size: 0.8rem; color: var(--muted); }
 .settlement-to { font-size: 1rem; font-weight: 500; }
-.settlement-amount { font-family: 'Italiana', serif; font-size: 1.6rem; color: var(--turf); }
+.settlement-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--turf); }
 .venmo-btn {
   background: #3d95ce;
   color: white;
@@ -409,7 +444,7 @@ body {
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -434,16 +469,17 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 100px;
-  font-size: 0.7rem;
-  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   border: 1px solid;
+  font-weight: 500;
 }
-.game-badge-skins { background: rgba(200,169,81,0.12); color: #8b6914; border-color: rgba(200,169,81,0.4); }
-.game-badge-nassau { background: rgba(58,107,71,0.12); color: var(--turf); border-color: rgba(58,107,71,0.3); }
+.game-badge-skins { background: rgba(200,169,81,0.1); color: #7a6020; border-color: rgba(200,169,81,0.35); }
+.game-badge-nassau { background: rgba(58,107,71,0.1); color: var(--turf); border-color: rgba(58,107,71,0.3); }
 .game-badge-stableford { background: rgba(41,128,185,0.1); color: var(--blue); border-color: rgba(41,128,185,0.3); }
 
 /* ── HOLE DOTS ── */
@@ -463,7 +499,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 0.65rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   cursor: pointer;
   color: var(--muted);
   transition: all 0.15s;
@@ -489,13 +525,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 1.1rem;
   flex-shrink: 0;
 }
 .player-info { flex: 1; }
 .player-name { font-weight: 500; font-size: 0.95rem; }
-.player-venmo { font-size: 0.75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+.player-venmo { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 .player-remove {
   background: none;
   border: none;
@@ -507,29 +543,46 @@ body {
 .player-remove:active { background: var(--cream-dark); }
 
 /* ── STAT PILL ── */
-.stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
 .stat-pill {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 16px;
-  text-align: center;
-  flex: 1;
-  min-width: 80px;
+  background: var(--ink);
+  border: 1px solid rgba(241,225,148,0.12);
+  border-radius: var(--radius);
+  padding: 18px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.stat-pill::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0.6;
+}
+.stat-pill::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 1px solid rgba(241,225,148,0.08);
 }
 .stat-pill-val {
-  font-family: 'Italiana', serif;
-  font-size: 1.6rem;
-  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--gold);
   line-height: 1;
 }
 .stat-pill-label {
-  font-size: 0.65rem;
-  color: var(--muted);
+  font-size: 0.55rem;
+  color: rgba(241,225,148,0.4);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-family: 'DM Mono', monospace;
-  margin-top: 3px;
+  letter-spacing: 2.5px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 6px;
 }
 
 /* ── LOADING ── */
@@ -558,12 +611,12 @@ body {
   padding: 60px 24px;
 }
 .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.3; }
-.empty-title { font-family: 'Italiana', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: 8px; }
+.empty-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: 8px; }
 .empty-sub { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
 
 /* ── JOIN CODE ── */
 .join-code {
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 3.5rem;
   letter-spacing: 12px;
   text-align: center;
@@ -607,7 +660,7 @@ body {
   margin: 0 auto 20px;
 }
 .modal-title {
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 1.6rem;
   margin-bottom: 20px;
 }
@@ -621,7 +674,7 @@ body {
   margin-bottom: 16px;
 }
 .greenie-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -634,16 +687,19 @@ body {
 
 /* ── SECTION TITLE ── */
 .section-title {
-  font-family: 'Italiana', serif;
-  font-size: 1.4rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 300;
   color: var(--ink);
   margin-bottom: 4px;
+  letter-spacing: 1px;
 }
 .section-sub {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--muted);
   margin-bottom: 16px;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
 }
 
 /* ── DIVIDER ── */
@@ -675,7 +731,7 @@ body {
 /* ── HOME PAGE ── */
 .hero-header {
   background: var(--ink);
-  padding: 48px 24px 40px;
+  padding: 56px 24px 48px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -684,26 +740,59 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 30% 0%, rgba(200,169,81,0.12) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 100%, rgba(58,107,71,0.15) 0%, transparent 50%);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(241,225,148,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 10% 100%, rgba(91,14,20,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 90% 50%, rgba(91,14,20,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+/* Geometric grid lines */
+.hero-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(241,225,148,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241,225,148,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
   pointer-events: none;
 }
 .hero-logo {
-  font-family: 'Italiana', serif;
-  font-size: 3.2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
   color: var(--gold);
-  letter-spacing: 2px;
+  letter-spacing: 8px;
   line-height: 1;
   position: relative;
+  z-index: 1;
+  text-transform: uppercase;
+  animation: heroIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .hero-tagline {
-  font-size: 0.75rem;
-  color: rgba(245,240,232,0.45);
-  letter-spacing: 3px;
+  font-size: 0.6rem;
+  color: rgba(241,225,148,0.35);
+  letter-spacing: 5px;
   text-transform: uppercase;
-  font-family: 'DM Mono', monospace;
-  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 12px;
   position: relative;
+  z-index: 1;
+  animation: heroIn 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-divider {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 16px auto 0;
+  position: relative;
+  z-index: 1;
+  opacity: 0.4;
+  animation: heroIn 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 /* ── HISTORY ROUND CARD ── */
@@ -720,9 +809,9 @@ body {
 .round-card:active { transform: scale(0.99); }
 .round-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
 .round-card-course { font-weight: 500; font-size: 0.95rem; }
-.round-card-date { font-size: 0.75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
-.round-card-score { font-family: 'Italiana', serif; font-size: 2rem; line-height: 1; }
-.round-card-score span { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
+.round-card-date { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.round-card-score { font-family: 'Cormorant Garamond', serif; font-size: 2rem; line-height: 1; }
+.round-card-score span { font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
 
 /* ── GAME SUMMARY ── */
 .winner-crown { font-size: 1.4rem; }
@@ -734,11 +823,11 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .leaderboard-row:last-child { border-bottom: none; }
-.lb-rank { font-family: 'Italiana', serif; font-size: 1.4rem; width: 28px; color: var(--muted); }
+.lb-rank { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; width: 28px; color: var(--muted); font-weight: 300; }
 .lb-rank.first { color: var(--gold); }
-.lb-name { flex: 1; font-weight: 500; }
-.lb-score { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--muted); }
-.lb-money { font-family: 'Italiana', serif; font-size: 1.2rem; color: var(--turf); }
+.lb-name { flex: 1; font-weight: 500; letter-spacing: 0.2px; }
+.lb-score { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+.lb-money { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--turf); }
 
 /* ── AMOUNT INPUT ── */
 .amount-input-wrap {
@@ -749,7 +838,7 @@ body {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 1.2rem;
   color: var(--muted);
   pointer-events: none;
@@ -766,9 +855,9 @@ body {
 }
 .hole-progress-fill {
   height: 100%;
-  background: var(--gold);
+  background: linear-gradient(90deg, var(--ink), var(--turf-light));
   border-radius: 2px;
-  transition: width 0.3s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── AUTH PAGE ── */
@@ -776,6 +865,10 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--ink);
+  background-image:
+    linear-gradient(rgba(241,225,148,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241,225,148,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -799,7 +892,9 @@ body {
   text-align: center;
 }
 .auth-logo {
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 8px;
+  text-transform: uppercase;
   font-size: 4rem;
   color: var(--gold);
   letter-spacing: 2px;
@@ -811,7 +906,7 @@ body {
   color: rgba(245,240,232,0.35);
   letter-spacing: 3px;
   text-transform: uppercase;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
 }
 .auth-sheet {
   background: var(--cream);
@@ -837,7 +932,7 @@ body {
   padding: 10px;
   text-align: center;
   cursor: pointer;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -873,7 +968,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 2.2rem;
   margin: 0 auto 16px;
   border: 3px solid var(--gold);
@@ -918,7 +1013,7 @@ body {
   margin-bottom: 14px;
 }
 .venmo-connected-handle {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   color: var(--turf);
   font-weight: 500;
@@ -947,14 +1042,14 @@ body {
   flex: 1;
 }
 .gps-distance-val {
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 3rem;
   color: var(--gold);
   line-height: 1;
   letter-spacing: -1px;
 }
 .gps-distance-unit {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   color: rgba(245,240,232,0.4);
   text-transform: uppercase;
@@ -964,7 +1059,7 @@ body {
 .gps-distance-label {
   font-size: 0.7rem;
   color: rgba(245,240,232,0.5);
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 4px;
@@ -975,7 +1070,7 @@ body {
   gap: 6px;
   font-size: 0.7rem;
   color: rgba(245,240,232,0.4);
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   margin-top: 6px;
 }
 .gps-dot {
@@ -1011,7 +1106,7 @@ body {
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 0.75rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   cursor: pointer;
   text-align: center;
   line-height: 1.3;
@@ -1028,7 +1123,7 @@ body {
   justify-content: space-between;
   gap: 12px;
   font-size: 0.7rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
 }
 .gps-yardage-label { color: rgba(245,240,232,0.35); }
 .gps-yardage-val { color: rgba(245,240,232,0.7); font-weight: 500; }
@@ -1051,12 +1146,12 @@ body {
   background: var(--white);
   margin-bottom: 10px;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Outfit', sans-serif;
   transition: border-color 0.15s;
 }
 .yardage-marker-btn:active { border-color: var(--turf); background: rgba(58,107,71,0.04); }
 .yardage-marker-yds {
-  font-family: 'Italiana', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: 1.8rem;
   color: var(--ink);
   line-height: 1;
@@ -1095,17 +1190,20 @@ body {
   <div class="hero-header">
     <div class="hero-logo">The Fairway</div>
     <div class="hero-tagline">Golf · Games · Settlement</div>
+    <div class="hero-divider"></div>
   </div>
   <div class="scroll-content">
 
     <!-- Active Round Banner -->
     <div id="active-round-banner" class="hidden">
-      <div class="card card-dark mb-3" style="position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;right:0;width:120px;height:120px;opacity:0.04;font-family:'Italiana',serif;font-size:8rem;line-height:1;color:var(--gold);pointer-events:none;">⛳</div>
-        <div class="text-xs mono text-gold mb-2" style="letter-spacing:2px;text-transform:uppercase;">Round in progress</div>
-        <div id="banner-course" class="font-display" style="font-size:1.4rem;color:var(--cream);margin-bottom:4px;"></div>
-        <div id="banner-hole" class="text-sm" style="color:rgba(245,240,232,0.5);margin-bottom:16px;"></div>
-        <button class="btn btn-gold btn-full" onclick="resumeRound()">Resume Round</button>
+      <div class="card card-dark mb-3" style="position:relative; overflow:hidden; border:1px solid rgba(200,169,81,0.25); padding:22px;">
+        <!-- Fairway stripe texture -->
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(168deg,transparent,transparent 20px,rgba(58,107,71,0.06) 20px,rgba(58,107,71,0.06) 21px);pointer-events:none;"></div>
+        <div style="position:absolute;top:-20px;right:-20px;font-size:7rem;opacity:0.05;line-height:1;pointer-events:none;">⛳</div>
+        <div style="font-size:0.65rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;position:relative;">● Round in progress</div>
+        <div id="banner-course" class="font-display" style="font-size:1.5rem;color:var(--cream);margin-bottom:4px;position:relative;"></div>
+        <div id="banner-hole" class="text-sm" style="color:rgba(245,240,232,0.45);margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;position:relative;"></div>
+        <button class="btn btn-gold btn-full" onclick="resumeRound()" style="position:relative;font-size:1rem;letter-spacing:0.5px;">Resume Round →</button>
       </div>
     </div>
 
@@ -1162,28 +1260,43 @@ body {
     <!-- Step 1: Course -->
     <div id="setup-step-course">
       <div class="section-title">Find your course</div>
-      <div class="section-sub">Search by name or city</div>
-      <div class="form-group">
-        <input class="form-input" id="course-search-input" type="text" placeholder="e.g. Pebble Beach, Torrey Pines..." autocomplete="off">
+      <div class="section-sub">Search by course name for best results</div>
+
+      <!-- Favorites -->
+      <div id="course-favorites-section" class="hidden mb-3">
+        <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">⭐ Favorites</div>
+        <div id="course-favorites-list" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
-      <div id="course-search-results" class="card hidden" style="padding:0;overflow:hidden;"></div>
-      <div id="course-search-loading" class="hidden"><div class="loading"><div class="spinner"></div></div></div>
+
+      <div class="form-group" style="position:relative;">
+        <input class="form-input" id="course-search-input" type="text" placeholder="e.g. Penmar, Pebble Beach, Torrey Pines..." autocomplete="off" style="padding-right:44px;">
+        <div id="course-search-loading" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);display:none;">
+          <div class="spinner" style="width:16px;height:16px;border-width:2px;"></div>
+        </div>
+      </div>
+      <div id="course-search-results" class="card hidden" style="padding:0;overflow:hidden;border:1px solid var(--border-mid);"></div>
+
       <div id="course-selected" class="hidden">
-        <div class="card" style="background:var(--turf);color:white;border:none;">
-          <div class="text-xs mono mb-2" style="opacity:0.7;letter-spacing:2px;text-transform:uppercase;">Selected course</div>
-          <div id="course-selected-name" style="font-family:'Italiana',serif;font-size:1.4rem;"></div>
-          <div id="course-selected-location" style="font-size:0.8rem;opacity:0.75;margin-top:4px;"></div>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
-            <div id="course-selected-holes" style="font-size:0.8rem;opacity:0.7;font-family:'DM Mono',monospace;"></div>
-            <div style="display:flex;align-items:center;gap:6px;margin-left:8px;">
-              <span style="font-size:0.7rem;opacity:0.6;">Override:</span>
-              <button onclick="setHoles(9)" id="holes-btn-9" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:2px 8px;font-size:0.75rem;font-family:'DM Mono',monospace;cursor:pointer;">9</button>
-              <button onclick="setHoles(18)" id="holes-btn-18" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:2px 8px;font-size:0.75rem;font-family:'DM Mono',monospace;cursor:pointer;">18</button>
+        <div style="background:var(--ink);color:var(--gold);border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid rgba(241,225,148,0.15);">
+          <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(241,225,148,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(241,225,148,0.03) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;"></div>
+          <div style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;opacity:0.5;margin-bottom:10px;position:relative;">Selected Course</div>
+          <div id="course-selected-name" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:1px;position:relative;line-height:1.2;"></div>
+          <div id="course-selected-location" style="font-size:0.75rem;opacity:0.5;margin-top:6px;font-family:'JetBrains Mono',monospace;position:relative;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;position:relative;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div id="course-selected-holes" style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;opacity:0.6;"></div>
+              <div style="display:flex;gap:4px;">
+                <button onclick="setHoles(9)" id="holes-btn-9" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">9H</button>
+                <button onclick="setHoles(18)" id="holes-btn-18" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">18H</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="toggleFavoriteCourse()" id="fav-btn" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:8px;padding:6px 12px;font-size:0.8rem;cursor:pointer;">☆ Save</button>
+              <button onclick="clearCourse()" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:8px;padding:6px 12px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">Change</button>
             </div>
           </div>
-          <button class="btn btn-sm mt-3" style="background:rgba(255,255,255,0.15);color:white;border:none;" onclick="clearCourse()">Change course</button>
         </div>
-        <button class="btn btn-primary btn-full mt-3 btn-lg" onclick="goToSetupGames()">
+        <button class="btn btn-primary btn-full btn-lg" onclick="goToSetupGames()">
           Next: Choose Games
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
@@ -1196,10 +1309,10 @@ body {
       <div class="section-sub">Add up to 4 players — include Venmo handles for easy settlement</div>
       <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:var(--gold);border-radius:12px;padding:12px 16px;margin-bottom:16px;cursor:pointer;">
         <div>
-          <div style="font-size:0.65rem;font-family:'DM Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
-          <div id="setup-join-code" style="font-family:'DM Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
+          <div style="font-size:0.65rem;font-family:'JetBrains Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
+          <div id="setup-join-code" style="font-family:'JetBrains Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
         </div>
-        <div style="font-size:0.7rem;font-family:'DM Mono',monospace;opacity:0.6;">TAP TO COPY</div>
+        <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;opacity:0.6;">TAP TO COPY</div>
       </div>
 
       <div id="players-list"></div>
@@ -1312,34 +1425,18 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <div style="text-align:center;">
-        <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
+        <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
         <div class="hole-num" id="current-hole-display">1</div>
         <div class="hole-par-badge" id="current-par-display">Par 4</div>
-        <div id="round-join-code-display" onclick="copyJoinCode()" style="margin-top:6px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--gold);cursor:pointer;padding:3px 8px;background:rgba(200,169,81,0.12);border-radius:6px;display:inline-block;">----</div>
+        <div id="round-join-code-display" onclick="copyJoinCode()" style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--gold);cursor:pointer;padding:3px 8px;background:rgba(200,169,81,0.12);border-radius:6px;display:none;"></div>
       </div>
       <button class="hole-nav-btn" id="next-hole-btn" onclick="nextHole()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>
     </div>
 
-    <!-- GPS Distance Widget -->
-    <div class="gps-widget" id="gps-widget">
-      <div class="gps-distance-main">
-        <div class="gps-distance-label">To the pin</div>
-        <div class="gps-distance-val" id="gps-distance-val">—</div>
-        <div class="gps-distance-unit" id="gps-distance-unit">yards to green</div>
-        <div class="gps-status">
-          <div class="gps-dot" id="gps-dot"></div>
-          <span id="gps-status-text">Starting GPS…</span>
-        </div>
-      </div>
-      <div class="gps-side">
-        <button class="gps-calibrate-btn" onclick="showCalibrateModal()" id="gps-calibrate-btn">
-          📍 At a<br>marker?
-        </button>
-        <div class="gps-yardage-rows" id="gps-tee-yardages"></div>
-      </div>
-    </div>
+    <!-- Games running tally — always visible at top -->
+    <div id="games-tally" class="mb-3"></div>
 
     <!-- Greenie section (shown on par 3s when skins active) -->
     <div id="greenie-section" class="greenie-section hidden">
@@ -1355,12 +1452,9 @@ body {
     <!-- Scores -->
     <div id="score-inputs"></div>
 
-    <!-- Games running tally -->
-    <div id="games-tally" class="mt-3"></div>
-
     <!-- Hole dots -->
     <div class="card mt-3" style="padding:14px 16px;">
-      <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Progress</div>
+      <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Progress</div>
       <div class="hole-dots" id="hole-dots"></div>
     </div>
 
@@ -1391,7 +1485,7 @@ body {
     <!-- Winner banner -->
     <div class="card card-dark mb-3" style="text-align:center;padding:28px 20px;">
       <div class="winner-crown mb-2">🏆</div>
-      <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:rgba(245,240,232,0.5);margin-bottom:6px;">Overall winner</div>
+      <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:rgba(245,240,232,0.5);margin-bottom:6px;">Overall winner</div>
       <div id="settlement-winner" class="font-display" style="font-size:2rem;color:var(--gold);"></div>
     </div>
 
@@ -1450,50 +1544,25 @@ body {
     <div class="auth-sheet">
       <div class="auth-sheet-handle"></div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" onclick="switchAuthTab('magic')">Magic Link</button>
-        <button class="auth-tab" onclick="switchAuthTab('password')">Password</button>
+      <!-- Log In / Sign Up tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <button class="chip active" id="pw-tab-login" onclick="switchPwTab('login')">Log In</button>
+        <button class="chip" id="pw-tab-signup" onclick="switchPwTab('signup')">Sign Up</button>
       </div>
-
-      <!-- Magic Link Panel -->
-      <div class="auth-panel active" id="auth-panel-magic">
-        <p class="text-sm text-muted mb-3" style="line-height:1.6;">Enter your email and we'll send you a link — no password needed. Easiest on mobile.</p>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input" id="magic-email" type="email" placeholder="you@example.com" autocomplete="email">
-        </div>
-        <button class="btn btn-primary btn-full btn-lg" onclick="sendMagicLink()">
-          Send Magic Link
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-        </button>
-        <div id="magic-sent" class="magic-sent hidden">
-          <div class="magic-sent-icon">✉️</div>
-          <div class="section-title mb-2">Check your email</div>
-          <p class="text-sm text-muted">We sent a login link to <strong id="magic-sent-email"></strong>. Tap it to sign in.</p>
-        </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="pw-email" type="email" placeholder="you@example.com" autocomplete="email">
       </div>
-
-      <!-- Password Panel -->
-      <div class="auth-panel" id="auth-panel-password">
-        <div style="display:flex;gap:8px;margin-bottom:20px;">
-          <button class="chip active" id="pw-tab-login" onclick="switchPwTab('login')">Log In</button>
-          <button class="chip" id="pw-tab-signup" onclick="switchPwTab('signup')">Sign Up</button>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input" id="pw-email" type="email" placeholder="you@example.com" autocomplete="email">
-        </div>
-        <div class="form-group" id="pw-name-group" style="display:none;">
-          <label class="form-label">Your Name</label>
-          <input class="form-input" id="pw-name" type="text" placeholder="e.g. Kai">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input class="form-input" id="pw-password" type="password" placeholder="••••••••" autocomplete="current-password">
-        </div>
-        <button class="btn btn-primary btn-full btn-lg" id="pw-submit-btn" onclick="submitPassword()">Log In</button>
-        <div id="pw-error" class="text-sm text-red mt-2 hidden"></div>
+      <div class="form-group" id="pw-name-group" style="display:none;">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" id="pw-name" type="text" placeholder="e.g. Kai">
       </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="pw-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" id="pw-submit-btn" onclick="submitPassword()">Log In</button>
+      <div id="pw-error" class="text-sm text-red mt-2 hidden"></div>
 
     </div>
   </div>
@@ -1723,14 +1792,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function initAuth() {
-  // Handle magic link redirect
-  const hash = window.location.hash;
-  if (hash && hash.includes('access_token')) {
-    const { data, error } = await sb.auth.getSession();
-    if (data.session) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }
+
 
   const { data } = await sb.auth.getSession();
   if (data.session) {
@@ -1750,14 +1812,6 @@ function showAuthPage() {
 }
 
 // ── AUTH TABS ──
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && tab === 'magic') || (i === 1 && tab === 'password'));
-  });
-  document.getElementById('auth-panel-magic').classList.toggle('active', tab === 'magic');
-  document.getElementById('auth-panel-password').classList.toggle('active', tab === 'password');
-}
-
 function switchPwTab(tab) {
   const isSignup = tab === 'signup';
   document.getElementById('pw-tab-login').classList.toggle('active', !isSignup);
@@ -1765,22 +1819,6 @@ function switchPwTab(tab) {
   document.getElementById('pw-name-group').style.display = isSignup ? 'block' : 'none';
   document.getElementById('pw-submit-btn').textContent = isSignup ? 'Create Account' : 'Log In';
   document.getElementById('pw-error').classList.add('hidden');
-}
-
-// ── MAGIC LINK ──
-async function sendMagicLink() {
-  const email = document.getElementById('magic-email').value.trim();
-  if (!email) { showToast('Enter your email'); return; }
-
-  const redirectTo = window.location.origin + window.location.pathname;
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
-
-  if (error) { showToast('Error: ' + error.message); return; }
-
-  document.getElementById('magic-sent-email').textContent = email;
-  document.getElementById('magic-email').closest('.form-group').style.display = 'none';
-  document.querySelector('#auth-panel-magic .btn').style.display = 'none';
-  document.getElementById('magic-sent').classList.remove('hidden');
 }
 
 // ── PASSWORD AUTH ──
@@ -1949,6 +1987,7 @@ function showPage(id) {
   if (id === 'page-history') loadHistory();
   if (id === 'page-home') { loadHomeStats(); loadRecentRounds(); }
   if (id === 'page-profile') renderProfileUI();
+  if (id === 'page-setup') renderFavorites();
 }
 
 function navTo(pageId, btn) {
@@ -1967,58 +2006,146 @@ function navTo(pageId, btn) {
 function setupCourseSearch() {
   const input = document.getElementById('course-search-input');
   let debounceTimer;
+  let lastQuery = '';
   input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
     const q = input.value.trim();
-    if (q.length < 3) {
+    if (q.length < 2) {
       document.getElementById('course-search-results').classList.add('hidden');
+      lastQuery = '';
       return;
     }
-    debounceTimer = setTimeout(() => searchCourses(q), 400);
+    // Search immediately if query got longer (user still typing)
+    // Use longer debounce for short queries, shorter for longer ones
+    const delay = q.length >= 5 ? 250 : 450;
+    debounceTimer = setTimeout(() => {
+      lastQuery = q;
+      searchCourses(q);
+    }, delay);
   });
 }
 
 async function searchCourses(query) {
   const loadEl = document.getElementById('course-search-loading');
   const resultsEl = document.getElementById('course-search-results');
-  loadEl.classList.remove('hidden');
+  if (loadEl) loadEl.style.display = 'block';
   resultsEl.classList.add('hidden');
 
   try {
     const res = await fetch(`${GOLF_PROXY}/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
-    loadEl.classList.add('hidden');
+    if (loadEl) loadEl.style.display = 'none';
 
-    // golfcourseapi.com can return { courses: [] } or { results: [] } or []
     const courses = data.courses || data.results || data.data || (Array.isArray(data) ? data : []);
 
     if (!courses.length) {
-      resultsEl.innerHTML = '<div class="course-result text-muted text-sm" style="padding:16px;">No courses found. Try a different search.</div>';
-      resultsEl.classList.remove('hidden');
+      // Only show "no results" if results panel is currently empty/hidden
+      if (resultsEl.classList.contains('hidden') || !resultsEl.innerHTML.trim()) {
+        resultsEl.innerHTML = '<div style="padding:16px;font-size:0.85rem;color:var(--muted);text-align:center;">No courses found — try a longer search term</div>';
+        resultsEl.classList.remove('hidden');
+      }
       return;
     }
 
-    // Store courses in a global map by index to avoid HTML encoding issues
+    const favs = getFavoriteCourses();
     window._courseSearchResults = {};
-    resultsEl.innerHTML = courses.slice(0, 8).map((c, i) => {
+    resultsEl.innerHTML = courses.slice(0, 12).map((c, i) => {
       const name = c.club_name || c.course_name || c.name || 'Unknown Course';
       const city = c.location?.city || c.city || '';
       const state = c.location?.state || c.state_name || c.state || '';
       const country = c.location?.country || c.country_name || c.country || '';
-      const location = [city, state, country].filter(Boolean).join(', ');
+      const location = [city, state].filter(Boolean).join(', ');
+      const isFav = favs.some(f => f.id === (c.id || c.course_id));
       window._courseSearchResults[i] = {...c, _display_name: name};
       return `
-        <div class="course-result" onclick="selectCourse(window._courseSearchResults[${i}])">
-          <div class="course-result-name">${name}</div>
-          <div class="course-result-location">${location}</div>
+        <div class="course-result" onclick="selectCourse(window._courseSearchResults[${i}])" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div class="course-result-name">${name}</div>
+            <div class="course-result-location">${location}</div>
+          </div>
+          ${isFav ? '<span style="font-size:0.8rem;color:var(--gold);padding-right:4px;">⭐</span>' : ''}
         </div>
       `;
     }).join('');
     resultsEl.classList.remove('hidden');
   } catch(e) {
-    loadEl.classList.add('hidden');
+    if (loadEl) loadEl.style.display = 'none';
     showToast('Search failed — check connection');
   }
+}
+
+// ── FAVORITES ──
+function getFavoriteCourses() {
+  try { return JSON.parse(localStorage.getItem('fairway_fav_courses') || '[]'); } catch { return []; }
+}
+
+function saveFavoriteCourses(favs) {
+  localStorage.setItem('fairway_fav_courses', JSON.stringify(favs));
+}
+
+function toggleFavoriteCourse() {
+  if (!state.course) return;
+  const favs = getFavoriteCourses();
+  const id = state.course.id || state.course.course_id || state.course.display_name;
+  const exists = favs.findIndex(f => f.id === id);
+  if (exists >= 0) {
+    favs.splice(exists, 1);
+    showToast('Removed from favorites');
+    document.getElementById('fav-btn').textContent = '☆ Save';
+  } else {
+    favs.unshift({ id, name: state.course.display_name, location: state.course._location || '', course: state.course, pars: state.pars, totalHoles: state.totalHoles });
+    if (favs.length > 10) favs.pop();
+    showToast('⭐ Saved to favorites!');
+    document.getElementById('fav-btn').textContent = '⭐ Saved';
+  }
+  saveFavoriteCourses(favs);
+  renderFavorites();
+}
+
+function renderFavorites() {
+  const favs = getFavoriteCourses();
+  const section = document.getElementById('course-favorites-section');
+  const list = document.getElementById('course-favorites-list');
+  if (!favs.length || !section || !list) { if (section) section.classList.add('hidden'); return; }
+  section.classList.remove('hidden');
+  // Store favs globally for index-based access (avoids id escaping issues)
+  window._favCourses = favs;
+  list.innerHTML = favs.map((f, idx) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;" onclick="selectFavoriteCourse(${idx})">
+      <div>
+        <div style="font-weight:500;font-size:0.9rem;">${f.name}</div>
+        ${f.location ? `<div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">${f.location}</div>` : ''}
+      </div>
+      <button onclick="event.stopPropagation();removeFavoriteCourse(${idx})" style="background:none;border:none;font-size:1rem;color:var(--muted);cursor:pointer;padding:4px 8px;">×</button>
+    </div>
+  `).join('');
+}
+
+function selectFavoriteCourse(idx) {
+  const favs = window._favCourses || getFavoriteCourses();
+  const fav = favs[idx];
+  if (!fav) return;
+  state.course = fav.course;
+  state.pars = fav.pars;
+  state.totalHoles = fav.totalHoles;
+  document.getElementById('course-selected-name').textContent = fav.name;
+  document.getElementById('course-selected-location').textContent = fav.location || '';
+  document.getElementById('course-selected-holes').textContent = `${fav.totalHoles} holes`;
+  document.getElementById('fav-btn').textContent = '⭐ Saved';
+  const b9 = document.getElementById('holes-btn-9');
+  const b18 = document.getElementById('holes-btn-18');
+  if (b9) b9.style.background = fav.totalHoles === 9 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  if (b18) b18.style.background = fav.totalHoles === 18 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  document.getElementById('course-selected').classList.remove('hidden');
+  document.getElementById('course-search-input').value = '';
+  document.getElementById('course-search-results').classList.add('hidden');
+}
+
+function removeFavoriteCourse(idx) {
+  const favs = getFavoriteCourses();
+  favs.splice(idx, 1);
+  saveFavoriteCourses(favs);
+  renderFavorites();
 }
 
 async function selectCourse(course) {
@@ -2081,14 +2208,21 @@ async function selectCourse(course) {
     setFallbackCourse(course, displayName);
   }
 
+  const locationStr = [city, stateStr].filter(Boolean).join(', ');
+  state.course._location = locationStr;
   document.getElementById('course-selected-name').textContent = state.course.display_name;
-  document.getElementById('course-selected-location').textContent = [city, stateStr].filter(Boolean).join(', ');
+  document.getElementById('course-selected-location').textContent = locationStr;
   document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
   // Highlight correct hole count button
   const b9 = document.getElementById('holes-btn-9');
   const b18 = document.getElementById('holes-btn-18');
-  if (b9) b9.style.background = state.totalHoles === 9 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
-  if (b18) b18.style.background = state.totalHoles === 18 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+  if (b9) b9.style.background = state.totalHoles === 9 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  if (b18) b18.style.background = state.totalHoles === 18 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  // Show fav button state
+  const favCourseId = state.course.id || state.course.course_id || state.course.display_name;
+  const isFav = getFavoriteCourses().some(f => f.id === favCourseId);
+  const favBtn = document.getElementById('fav-btn');
+  if (favBtn) favBtn.textContent = isFav ? '⭐ Saved' : '☆ Save';
   document.getElementById('course-selected').classList.remove('hidden');
 }
 
@@ -2345,7 +2479,10 @@ async function startRound() {
 function renderRound() {
   document.getElementById('round-course-name').textContent = state.course?.display_name || 'Round';
   const jcEl = document.getElementById('round-join-code-display');
-  if (jcEl) jcEl.textContent = state.joinCode || '----';
+  if (jcEl && state.joinCode) {
+    jcEl.textContent = state.joinCode;
+    jcEl.style.display = 'inline-block';
+  }
 
   // Game badges
   const badges = Object.entries(state.games)
@@ -2392,31 +2529,74 @@ function renderHole() {
 
 function renderScoreInputs(hole, par) {
   const el = document.getElementById('score-inputs');
+  // Show scores 1 through par+4, with par-2 (eagle) through par+3 visible
+  const minScore = Math.max(1, par - 2);
+  const maxScore = par + 4;
+
   el.innerHTML = state.players.map(p => {
     const score = state.scores[p.id]?.[hole];
-    const rel = score !== null ? score - par : null;
-    const cls = rel === null ? '' : rel <= -2 ? 'eagle' : rel === -1 ? 'birdie' : rel === 0 ? 'par' : rel === 1 ? 'bogey' : 'double';
-    const label = rel === null ? '—' : rel <= -2 ? 'Eagle' : rel === -1 ? 'Birdie' : rel === 0 ? 'Par' : rel === 1 ? 'Bogey' : rel === 2 ? 'Double' : '+' + rel;
+    const rel = score !== null && score !== undefined ? score - par : null;
+    const label = rel === null ? '' : rel <= -2 ? 'Eagle' : rel === -1 ? 'Birdie' : rel === 0 ? 'Par' : rel === 1 ? 'Bogey' : rel === 2 ? 'Double' : '+' + rel;
+    const labelColor = rel === null ? '' : rel <= -2 ? '#c0392b' : rel === -1 ? '#e67e22' : rel === 0 ? 'var(--turf)' : 'var(--muted)';
+
+    const chips = Array.from({length: maxScore - minScore + 1}, (_, i) => {
+      const s = minScore + i;
+      const r = s - par;
+      const isSelected = score === s;
+      const chipLabel = r <= -2 ? 'Eagle' : r === -1 ? 'Bird' : r === 0 ? 'Par' : r === 1 ? 'Bog' : r === 2 ? 'Dbl' : `+${r}`;
+      const chipColor = isSelected ? (r <= -2 ? '#c0392b' : r === -1 ? '#e67e22' : r === 0 ? 'var(--turf)' : r >= 2 ? '#888' : 'var(--ink)') : 'transparent';
+      const textColor = isSelected ? 'white' : 'var(--muted)';
+      const border = isSelected ? 'none' : '1px solid var(--border)';
+      return `<button onclick="setScore('${p.id}', ${hole}, ${s})" style="flex:1;padding:10px 4px;border-radius:8px;border:${border};background:${chipColor};color:${textColor};font-family:'JetBrains Mono',monospace;font-size:0.7rem;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;">
+        <span style="font-size:1.1rem;font-weight:600;font-family:'Cormorant Garamond',serif;">${s}</span>
+        <span style="font-size:0.6rem;opacity:0.8;">${chipLabel}</span>
+      </button>`;
+    }).join('');
 
     return `
-      <div class="card mb-2" style="padding:16px;">
+      <div class="card mb-2" style="padding:14px 16px;">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <div class="player-avatar" style="width:34px;height:34px;font-size:0.95rem;">${p.name[0].toUpperCase()}</div>
+            <div class="player-avatar" style="width:32px;height:32px;font-size:0.9rem;">${p.name[0].toUpperCase()}</div>
             <div>
               <div class="fw-500">${p.name}</div>
-              ${rel !== null ? `<div class="text-xs" style="color:${cls === 'eagle' ? '#c0392b' : cls === 'birdie' ? '#e67e22' : cls === 'par' ? 'var(--turf)' : 'var(--muted)'}">${label}</div>` : ''}
+              ${label ? `<div class="text-xs" style="color:${labelColor};">${label}</div>` : '<div class="text-xs" style="color:var(--muted);">No score</div>'}
             </div>
           </div>
+          ${score !== null && score !== undefined ? `<button onclick="setScore('${p.id}', ${hole}, null)" style="font-size:0.7rem;color:var(--muted);background:none;border:none;cursor:pointer;">Clear</button>` : ''}
         </div>
-        <div class="score-stepper">
-          <button class="score-btn" onclick="adjustScore('${p.id}', ${hole}, -1)">−</button>
-          <div class="score-val ${cls}">${score !== null ? score : '—'}</div>
-          <button class="score-btn" onclick="adjustScore('${p.id}', ${hole}, 1)">+</button>
-        </div>
+        <div style="display:flex;gap:6px;">${chips}</div>
       </div>
     `;
   }).join('');
+}
+
+function setScore(playerId, hole, score) {
+  if (!state.scores[playerId]) state.scores[playerId] = {};
+  state.scores[playerId][hole] = score;
+  const par = state.pars[hole] || 4;
+  renderScoreInputs(hole, par);
+  renderGamesTally();
+  checkAutoAdvance(hole);
+  pushScoreUpdate();
+}
+
+function checkAutoAdvance(hole) {
+  // Auto-advance to next hole when all players have scores
+  const allScored = state.players.every(p => state.scores[p.id]?.[hole] !== null && state.scores[p.id]?.[hole] !== undefined);
+  if (allScored && hole < state.totalHoles) {
+    setTimeout(() => {
+      if (state.currentHole === hole) {
+        state.currentHole++;
+        renderHole();
+      }
+    }, 600);
+  }
+  // Show finish button on last hole
+  const isLast = hole === state.totalHoles;
+  if (allScored && isLast) {
+    document.getElementById('finish-round-btn')?.classList.remove('hidden');
+  }
 }
 
 function adjustScore(playerId, hole, delta) {

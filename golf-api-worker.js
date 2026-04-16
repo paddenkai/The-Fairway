@@ -30,7 +30,7 @@ export default {
       );
     }
 
-    // Search — uses correct /v1/search endpoint with search_query param
+    // Search — run two queries in parallel and merge: direct query + "golf [query]"
     if (path === 'search') {
       if (!q || q.length < 2) {
         return new Response(JSON.stringify({ courses: [] }), {
@@ -38,14 +38,30 @@ export default {
         });
       }
       try {
-        const apiUrl = `${GOLF_API_BASE}/search?search_query=${encodeURIComponent(q)}`;
-        const resp = await fetch(apiUrl, {
-          headers: { 'Authorization': `Key ${GOLF_API_KEY}` }
-        });
-        const text = await resp.text();
-        return new Response(text, {
-          status: resp.status,
-          headers: { 'Content-Type': 'application/json', ...CORS }
+        const queries = [q, `golf ${q}`];
+        const results = await Promise.all(queries.map(async term => {
+          const apiUrl = `${GOLF_API_BASE}/search?search_query=${encodeURIComponent(term)}`;
+          const resp = await fetch(apiUrl, { headers: { 'Authorization': `Key ${GOLF_API_KEY}` } });
+          if (!resp.ok) return [];
+          const data = await resp.json();
+          return data.courses || data.results || [];
+        }));
+
+        // Merge and deduplicate by id
+        const seen = new Set();
+        const courses = [];
+        for (const batch of results) {
+          for (const c of batch) {
+            const id = c.id || c.course_id || c.club_id;
+            if (!seen.has(id)) {
+              seen.add(id);
+              courses.push(c);
+            }
+          }
+        }
+
+        return new Response(JSON.stringify({ courses }), {
+          status: 200, headers: { 'Content-Type': 'application/json', ...CORS }
         });
       } catch(e) {
         return new Response(JSON.stringify({ error: e.message }), {
