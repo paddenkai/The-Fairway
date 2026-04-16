@@ -1183,8 +1183,8 @@ body {
           </div>
           <button class="btn btn-sm mt-3" style="background:rgba(255,255,255,0.15);color:white;border:none;" onclick="clearCourse()">Change course</button>
         </div>
-        <button class="btn btn-primary btn-full mt-3 btn-lg" onclick="goToSetupPlayers()">
-          Next: Add Players
+        <button class="btn btn-primary btn-full mt-3 btn-lg" onclick="goToSetupGames()">
+          Next: Choose Games
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
@@ -1219,8 +1219,8 @@ body {
         </button>
       </div>
 
-      <button class="btn btn-primary btn-full btn-lg" onclick="goToSetupGames()" id="players-next-btn" disabled>
-        Next: Choose Games
+      <button class="btn btn-primary btn-full btn-lg" onclick="startRound()" id="players-next-btn" disabled>
+        Start Round
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
@@ -1277,9 +1277,9 @@ body {
         <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Points per hole: Eagle=4, Birdie=3, Par=2, Bogey=1, Double+=0. Highest total wins.</div>
       </div>
 
-      <button class="btn btn-primary btn-full btn-lg mt-3" onclick="startRound()" id="start-round-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
-        Start Round
+      <button class="btn btn-primary btn-full btn-lg mt-3" onclick="goToSetupPlayers()" id="start-round-btn">
+        Next: Add Players
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
 
@@ -2142,14 +2142,17 @@ function clearCourse() {
 // SETUP FLOW
 // ══════════════════════════════════════════
 async function goToSetupPlayers() {
-  if (!state.course) { showToast('Please select a course first'); return; }
+  if (!Object.values(state.games).some(v => v)) { showToast('Select at least one game'); return; }
+  // Save game amounts
+  state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
+  state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
   // Generate join code early so players can join before round starts
   if (!state.joinCode) {
     state.joinCode = Math.floor(1000 + Math.random() * 9000).toString();
   }
   const codeEl = document.getElementById('setup-join-code');
   if (codeEl) codeEl.textContent = state.joinCode;
-  document.getElementById('setup-step-course').classList.add('hidden');
+  document.getElementById('setup-step-games').classList.add('hidden');
   document.getElementById('setup-step-players').classList.remove('hidden');
   renderPlayersList();
 
@@ -2187,8 +2190,8 @@ async function goToSetupPlayers() {
 }
 
 function goToSetupGames() {
-  if (state.players.length < 2) { showToast('Add at least 2 players'); return; }
-  document.getElementById('setup-step-players').classList.add('hidden');
+  if (!state.course) { showToast('Please select a course first'); return; }
+  document.getElementById('setup-step-course').classList.add('hidden');
   document.getElementById('setup-step-games').classList.remove('hidden');
 }
 
@@ -2265,9 +2268,6 @@ async function startRound() {
     return;
   }
 
-  state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
-  state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
-
   const code = state.joinCode || Math.floor(1000 + Math.random() * 9000).toString();
   state.joinCode = code;
   state.currentHole = 1;
@@ -2275,7 +2275,17 @@ async function startRound() {
   state.greenies = {};
   state.greenieEligible = {};
 
-  // Init scores
+  // Fetch latest players from Supabase (someone may have joined)
+  if (state.roundId && !state.roundId.startsWith('offline-')) {
+    try {
+      const { data: latest } = await sb.from('rounds').select('players').eq('id', state.roundId).single();
+      if (latest?.players?.length > state.players.length) {
+        state.players = latest.players;
+      }
+    } catch(e) {}
+  }
+
+  // Init scores for all players
   state.players.forEach(p => {
     state.scores[p.id] = {};
     for (let h = 1; h <= state.totalHoles; h++) state.scores[p.id][h] = null;
@@ -2986,8 +2996,33 @@ function subscribeToRound(roundId) {
       if (d.scores) state.scores = d.scores;
       if (d.greenies) state.greenies = d.greenies;
       if (d.greenie_eligible) state.greenieEligible = d.greenie_eligible;
-      renderHole();
-      renderHoleDots();
+
+      // Sync players — someone may have joined
+      if (d.players && d.players.length !== state.players.length) {
+        state.players = d.players;
+        // If still on setup page, re-render players list
+        const setupPlayers = document.getElementById('setup-step-players');
+        if (setupPlayers && !setupPlayers.classList.contains('hidden')) {
+          renderPlayersList();
+          showToast(d.players[d.players.length - 1].name + ' joined!');
+        }
+        // If on round page, re-render scores
+        if (document.getElementById('page-round')?.classList.contains('active')) {
+          renderHole();
+        }
+      }
+
+      // Sync status — if round became active, joiner can start playing
+      if (d.status === 'active' && d.games && !state.games) {
+        state.games = d.games;
+        state.gameAmounts = d.game_amounts;
+      }
+
+      const onRoundPage = document.getElementById('page-round')?.classList.contains('active');
+      if (onRoundPage) {
+        renderHole();
+        renderHoleDots();
+      }
     })
     .subscribe();
 }
@@ -3030,16 +3065,24 @@ async function joinRound() {
 
     // Load round state
     state.roundId = data.id;
-    state.course = { display_name: data.course_name };
+    state.course = { ...data.course_data, display_name: data.course_name };
     state.players = data.players;
-    state.scores = data.scores || {};
-    state.greenies = data.greenies || {};
-    state.greenieEligible = data.greenie_eligible || {};
-    state.games = data.games;
-    state.gameAmounts = data.game_amounts;
     state.pars = data.pars;
     state.totalHoles = data.total_holes;
+    state.games = data.games;
+    state.gameAmounts = data.game_amounts;
     state.currentHole = 1;
+    state.greenies = data.greenies || {};
+    state.greenieEligible = data.greenie_eligible || {};
+
+    // Initialize scores — ensure every player has a score entry for every hole
+    state.scores = data.scores || {};
+    state.players.forEach(p => {
+      if (!state.scores[p.id]) state.scores[p.id] = {};
+      for (let h = 1; h <= state.totalHoles; h++) {
+        if (state.scores[p.id][h] === undefined) state.scores[p.id][h] = null;
+      }
+    });
 
     closeModal('join-modal');
     subscribeToRound(state.roundId);
