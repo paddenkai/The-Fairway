@@ -2012,8 +2012,8 @@ async function selectCourse(course) {
 
   const displayName = course._display_name || course.club_name || course.course_name || course.name || 'Unknown Course';
   const courseId = course.id || course.course_id || course.club_id || '';
-  const city = course.city || '';
-  const state = course.state_name || course.state || '';
+  const city = course.location?.city || course.city || '';
+  const stateStr = course.location?.state || course.state_name || course.state || '';
 
   // Try to fetch full course details
   if (courseId) {
@@ -2065,7 +2065,7 @@ async function selectCourse(course) {
   }
 
   document.getElementById('course-selected-name').textContent = state.course.display_name;
-  document.getElementById('course-selected-location').textContent = [city, state].filter(Boolean).join(', ');
+  document.getElementById('course-selected-location').textContent = [city, stateStr].filter(Boolean).join(', ');
   document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
   document.getElementById('course-selected').classList.remove('hidden');
 }
