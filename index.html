@@ -1299,10 +1299,6 @@ body {
     <div class="hole-progress">
       <div class="hole-progress-fill" id="hole-progress-fill" style="width:0%"></div>
     </div>
-    <div id="join-code-banner" style="text-align:center;padding:4px 0 8px;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:3px;color:var(--gold);">
-      JOIN CODE: <span id="round-join-code-display">----</span>
-    </div>
-
     <!-- Hole navigation -->
     <div class="hole-nav">
       <button class="hole-nav-btn" id="prev-hole-btn" onclick="prevHole()">
@@ -1312,6 +1308,7 @@ body {
         <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
         <div class="hole-num" id="current-hole-display">1</div>
         <div class="hole-par-badge" id="current-par-display">Par 4</div>
+        <div id="round-join-code-display" onclick="copyJoinCode()" style="margin-top:6px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--gold);cursor:pointer;padding:3px 8px;background:rgba(200,169,81,0.12);border-radius:6px;display:inline-block;">----</div>
       </div>
       <button class="hole-nav-btn" id="next-hole-btn" onclick="nextHole()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -2107,6 +2104,15 @@ function setHoles(n) {
   // Highlight active button
   document.getElementById('holes-btn-9').style.background = n === 9 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
   document.getElementById('holes-btn-18').style.background = n === 18 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+}
+
+function copyJoinCode() {
+  if (!state.joinCode) return;
+  navigator.clipboard?.writeText(state.joinCode).then(() => {
+    showToast(`Code ${state.joinCode} copied!`);
+  }).catch(() => {
+    showToast(`Join code: ${state.joinCode}`);
+  });
 }
 
 function setFallbackCourse(course, displayName) {
