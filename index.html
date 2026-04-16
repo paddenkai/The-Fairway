@@ -2233,6 +2233,9 @@ function renderPlayersList() {
         </button>
       </div>
     `).join('') + '</div>';
+  // Always update button state after re-rendering
+  const btn = document.getElementById('players-next-btn');
+  if (btn) btn.disabled = state.players.length < 2;
 }
 
 function toggleGame(game) {
