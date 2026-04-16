@@ -2169,7 +2169,7 @@ async function goToSetupPlayers() {
         games: state.games,
         game_amounts: state.gameAmounts,
         created_by: state.user?.id,
-        status: 'waiting'
+        status: 'active'
       }).select().single();
       if (!error && data) {
         state.roundId = data.id;
@@ -3013,7 +3013,7 @@ async function joinRound() {
   if (!name || !code) { showToast('Enter your name and code'); return; }
 
   try {
-    const { data, error } = await sb.from('rounds').select('*').eq('join_code', code).in('status', ['active', 'waiting']).single();
+    const { data, error } = await sb.from('rounds').select('*').eq('join_code', code).eq('status', 'active').single();
     if (error || !data) { showToast('Round not found'); return; }
 
     // Add self to players if not already there
