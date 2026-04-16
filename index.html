@@ -2141,7 +2141,7 @@ function clearCourse() {
 // ══════════════════════════════════════════
 // SETUP FLOW
 // ══════════════════════════════════════════
-function goToSetupPlayers() {
+async function goToSetupPlayers() {
   if (!state.course) { showToast('Please select a course first'); return; }
   // Generate join code early so players can join before round starts
   if (!state.joinCode) {
@@ -2152,6 +2152,33 @@ function goToSetupPlayers() {
   document.getElementById('setup-step-course').classList.add('hidden');
   document.getElementById('setup-step-players').classList.remove('hidden');
   renderPlayersList();
+
+  // Save placeholder round to Supabase now so others can join with code
+  if (!state.roundId) {
+    try {
+      const { data, error } = await sb.from('rounds').insert({
+        join_code: state.joinCode,
+        course_name: state.course.display_name,
+        course_data: state.course,
+        pars: state.pars,
+        total_holes: state.totalHoles,
+        players: state.players,
+        scores: {},
+        greenies: {},
+        greenie_eligible: {},
+        games: state.games,
+        game_amounts: state.gameAmounts,
+        created_by: state.user?.id,
+        status: 'waiting'
+      }).select().single();
+      if (!error && data) {
+        state.roundId = data.id;
+        subscribeToRound(state.roundId);
+      }
+    } catch(e) {
+      console.warn('Could not pre-save round, will save on start', e);
+    }
+  }
 }
 
 function goToSetupGames() {
@@ -2249,23 +2276,38 @@ async function startRound() {
     for (let h = 1; h <= state.totalHoles; h++) state.scores[p.id][h] = null;
   });
 
-  // Save to Supabase
+  // Save to Supabase — update existing round if pre-saved, otherwise insert
   try {
-    const { data, error } = await sb.from('rounds').insert({
-      join_code: code,
-      course_name: state.course.display_name,
-      course_data: state.course,
-      pars: state.pars,
-      total_holes: state.totalHoles,
-      players: state.players,
-      scores: state.scores,
-      greenies: state.greenies,
-      greenie_eligible: state.greenieEligible,
-      games: state.games,
-      game_amounts: state.gameAmounts,
-      created_by: state.user?.id,
-      status: 'active'
-    }).select().single();
+    let data, error;
+    if (state.roundId && !state.roundId.startsWith('offline-')) {
+      // Update the pre-saved round
+      ({ data, error } = await sb.from('rounds').update({
+        players: state.players,
+        scores: state.scores,
+        greenies: state.greenies,
+        greenie_eligible: state.greenieEligible,
+        games: state.games,
+        game_amounts: state.gameAmounts,
+        status: 'active'
+      }).eq('id', state.roundId).select().single());
+    } else {
+      // Insert fresh
+      ({ data, error } = await sb.from('rounds').insert({
+        join_code: code,
+        course_name: state.course.display_name,
+        course_data: state.course,
+        pars: state.pars,
+        total_holes: state.totalHoles,
+        players: state.players,
+        scores: state.scores,
+        greenies: state.greenies,
+        greenie_eligible: state.greenieEligible,
+        games: state.games,
+        game_amounts: state.gameAmounts,
+        created_by: state.user?.id,
+        status: 'active'
+      }).select().single());
+    }
 
     if (error) throw error;
     state.roundId = data.id;
@@ -2971,7 +3013,7 @@ async function joinRound() {
   if (!name || !code) { showToast('Enter your name and code'); return; }
 
   try {
-    const { data, error } = await sb.from('rounds').select('*').eq('join_code', code).eq('status', 'active').single();
+    const { data, error } = await sb.from('rounds').select('*').eq('join_code', code).in('status', ['active', 'waiting']).single();
     if (error || !data) { showToast('Round not found'); return; }
 
     // Add self to players if not already there
