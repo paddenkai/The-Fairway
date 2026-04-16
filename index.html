@@ -1975,7 +1975,17 @@ async function searchCourses(query) {
     loadEl.classList.add('hidden');
 
     // golfcourseapi.com can return { courses: [] } or { results: [] } or []
-    const courses = data.courses || data.results || data.data || (Array.isArray(data) ? data : []);
+    const allCourses = data.courses || data.results || data.data || (Array.isArray(data) ? data : []);
+
+    // Client-side filter since the API doesn't reliably filter by search term
+    const q = query.toLowerCase().trim();
+    const courses = allCourses.filter(c => {
+      const name = (c.club_name || c.course_name || c.name || '').toLowerCase();
+      const city = (c.location?.city || c.city || '').toLowerCase();
+      const state = (c.location?.state || c.state_name || c.state || '').toLowerCase();
+      return name.includes(q) || city.includes(q) || state.includes(q);
+    });
+
     if (!courses.length) {
       resultsEl.innerHTML = '<div class="course-result text-muted text-sm" style="padding:16px;">No courses found. Try a different search.</div>';
       resultsEl.classList.remove('hidden');
