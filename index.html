@@ -2174,9 +2174,14 @@ async function goToSetupPlayers() {
       if (!error && data) {
         state.roundId = data.id;
         subscribeToRound(state.roundId);
+        showToast('Round ready — code ' + state.joinCode);
+      } else if (error) {
+        showToast('Save error: ' + (error.message || JSON.stringify(error)));
+        console.error('Pre-save error:', error);
       }
     } catch(e) {
-      console.warn('Could not pre-save round, will save on start', e);
+      showToast('Save failed: ' + e.message);
+      console.error('Pre-save exception:', e);
     }
   }
 }
