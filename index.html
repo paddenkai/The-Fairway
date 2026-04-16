@@ -1983,17 +1983,17 @@ async function searchCourses(query) {
       return;
     }
 
-    resultsEl.innerHTML = courses.slice(0, 8).map(c => {
+    // Store courses in a global map by index to avoid HTML encoding issues
+    window._courseSearchResults = {};
+    resultsEl.innerHTML = courses.slice(0, 8).map((c, i) => {
       const name = c.club_name || c.course_name || c.name || 'Unknown Course';
-      const city = c.city || '';
-      const state = c.state_name || c.state || c.state_code || '';
-      const country = c.country_name || c.country || '';
+      const city = c.location?.city || c.city || '';
+      const state = c.location?.state || c.state_name || c.state || '';
+      const country = c.location?.country || c.country_name || c.country || '';
       const location = [city, state, country].filter(Boolean).join(', ');
-      const id = c.id || c.course_id || c.club_id || '';
-      // Encode the course object safely
-      const encoded = encodeURIComponent(JSON.stringify({...c, _display_name: name}));
+      window._courseSearchResults[i] = {...c, _display_name: name};
       return `
-        <div class="course-result" onclick="selectCourse(JSON.parse(decodeURIComponent('${encoded}')))">
+        <div class="course-result" onclick="selectCourse(window._courseSearchResults[${i}])">
           <div class="course-result-name">${name}</div>
           <div class="course-result-location">${location}</div>
         </div>
