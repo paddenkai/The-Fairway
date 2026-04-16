@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The Fairway</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0a1a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1485,8 +1485,8 @@ body {
 // ══════════════════════════════════════════
 const SUPABASE_URL = 'https://xjkyjqfbicnppjlsdvju.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_1aP1PUQwlKEuwFJtQPjIxw_p6c967oa';
-const GOLF_API_KEY = 'VMP53Q6WZANO5U72FFBOF77QY4';
-const GOLF_API_BASE = 'https://api.golfcourseapi.com/v1';
+const GOLF_API_KEY = 'VMP53Q6WZANO5U72FFBOF77QY4'; // kept for reference
+const GOLF_PROXY = 'https://the-fairway.kai-padden11.workers.dev';
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -1792,9 +1792,7 @@ async function searchCourses(query) {
   resultsEl.classList.add('hidden');
 
   try {
-    const res = await fetch(`${GOLF_API_BASE}/courses?search=${encodeURIComponent(query)}`, {
-      headers: { 'x-api-key': GOLF_API_KEY }
-    });
+    const res = await fetch(`${GOLF_PROXY}/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     loadEl.classList.add('hidden');
 
@@ -1824,9 +1822,7 @@ async function selectCourse(course) {
 
   // Fetch full course details with holes
   try {
-    const res = await fetch(`${GOLF_API_BASE}/courses/${course.id}`, {
-      headers: { 'x-api-key': GOLF_API_KEY }
-    });
+    const res = await fetch(`${GOLF_PROXY}/course/${course.id}`);
     const full = await res.json();
     const courseData = full.course || full;
 
@@ -2915,7 +2911,7 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 
 // PWA
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 </script>
 
