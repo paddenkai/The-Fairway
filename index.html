@@ -1326,6 +1326,10 @@ body {
           <label class="form-label">Venmo Handle (optional)</label>
           <input class="form-input" id="new-player-venmo" type="text" placeholder="@username">
         </div>
+        <div class="form-group" id="handicap-input-group" style="display:none;">
+          <label class="form-label">Handicap Strokes (optional)</label>
+          <input class="form-input" id="new-player-handicap" type="number" min="0" max="36" placeholder="e.g. 12">
+        </div>
         <button class="btn btn-ghost btn-full" onclick="addPlayer()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
           Add Player
@@ -1351,12 +1355,35 @@ body {
           </div>
           <div id="skins-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
-        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Win a hole outright = win the skin. Ties carry over. Includes <strong>Greenies</strong> on par 3s.</div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Win a hole outright = win the skin. Ties carry over.</div>
         <div id="skins-options" class="hidden mt-3">
           <label class="form-label">Dollar amount per skin</label>
           <div class="amount-input-wrap">
             <span class="amount-prefix">$</span>
             <input class="form-input" id="skins-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+          </div>
+          <!-- Greenies toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);" onclick="event.stopPropagation()">
+            <div>
+              <div style="font-size:0.85rem;font-weight:500;">🟢 Greenies</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Closest to pin on par 3s wins a bonus skin</div>
+            </div>
+            <button id="greenies-toggle-btn" onclick="toggleGreenies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+          </div>
+          <!-- Birdies toggle -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);" onclick="event.stopPropagation()">
+            <div>
+              <div style="font-size:0.85rem;font-weight:500;">🐦 Birdies</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Outright birdie wins a bonus — ties don't pay</div>
+            </div>
+            <button id="birdies-toggle-btn" onclick="toggleBirdies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+          </div>
+          <div id="birdies-amount-row" class="hidden" style="margin-top:12px;" onclick="event.stopPropagation()">
+            <label class="form-label">Dollar amount per birdie</label>
+            <div class="amount-input-wrap">
+              <span class="amount-prefix">$</span>
+              <input class="form-input" id="birdies-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+            </div>
           </div>
         </div>
       </div>
@@ -1388,6 +1415,63 @@ body {
           <div id="stableford-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
         <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Points per hole: Eagle=4, Birdie=3, Par=2, Bogey=1, Double+=0. Highest total wins.</div>
+        <div id="stableford-options" class="hidden mt-3" onclick="event.stopPropagation()">
+          <label class="form-label">Dollar amount per point difference</label>
+          <div class="amount-input-wrap">
+            <span class="amount-prefix">$</span>
+            <input class="form-input" id="stableford-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+          </div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;">e.g. Pops wins 22–20 = 2 pts × $1 = $2 owed</div>
+        </div>
+      </div>
+
+      <!-- Match Play -->
+      <div class="card mb-3" id="game-matchplay-card" style="cursor:pointer;" onclick="toggleGame('matchplay')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="game-badge" style="background:rgba(139,69,19,0.1);color:#6b3a1f;border-color:rgba(139,69,19,0.3);">Match Play</span>
+            <div id="matchplay-check" class="hidden" style="color:var(--turf);">✓</div>
+          </div>
+          <div id="matchplay-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
+        </div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Hole by hole — win, lose, or halve. Track who's up or down. Best overall record wins.</div>
+        <div id="matchplay-options" class="hidden mt-3" onclick="event.stopPropagation()">
+          <label class="form-label">Dollar amount per hole won</label>
+          <div class="amount-input-wrap">
+            <span class="amount-prefix">$</span>
+            <input class="form-input" id="matchplay-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Wolf -->
+      <div class="card mb-3" id="game-wolf-card" style="cursor:pointer;" onclick="toggleGame('wolf')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="game-badge" style="background:rgba(50,50,80,0.1);color:#2d2d5e;border-color:rgba(50,50,80,0.3);">🐺 Wolf</span>
+            <div id="wolf-check" class="hidden" style="color:var(--turf);">✓</div>
+          </div>
+          <div id="wolf-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
+        </div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Each hole one player is the Wolf — they pick a partner after each tee shot, or go Lone Wolf for double stakes.</div>
+        <div id="wolf-options" class="hidden mt-3" onclick="event.stopPropagation()">
+          <label class="form-label">Dollar amount per point</label>
+          <div class="amount-input-wrap">
+            <span class="amount-prefix">$</span>
+            <input class="form-input" id="wolf-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Handicap toggle -->
+      <div class="card mb-3" style="background:rgba(42,10,14,0.03);border:1px dashed var(--border-mid);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:0.9rem;font-weight:500;">Use Handicaps</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Adjust scores based on each player's strokes</div>
+          </div>
+          <button id="handicap-toggle-btn" onclick="toggleHandicaps()" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+        </div>
       </div>
 
       <button class="btn btn-primary btn-full btn-lg mt-3" onclick="goToSetupPlayers()" id="start-round-btn">
@@ -1447,6 +1531,13 @@ body {
       <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Who hit the green on their tee shot and is closest to the pin?</div>
       <div class="chip-group" id="greenie-chips"></div>
       <div id="greenie-winner-display" class="mt-2 text-sm" style="color:var(--turf);font-weight:500;"></div>
+    </div>
+
+    <!-- Wolf Pick Banner -->
+    <div id="wolf-pick-banner" class="hidden" style="background:var(--ink);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid rgba(241,225,148,0.2);">
+      <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">🐺 Wolf — Pick Your Partner</div>
+      <div id="wolf-banner-wolf-name" style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--cream);margin-bottom:12px;"></div>
+      <div id="wolf-banner-buttons" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
     <!-- Scores -->
@@ -1631,6 +1722,11 @@ body {
       </div>
       <div class="form-note text-xs text-muted mt-1">Just your Venmo username, without the @</div>
     </div>
+    <div class="form-group">
+      <label class="form-label">Handicap Index</label>
+      <input class="form-input" id="profile-handicap-input" type="number" min="0" max="54" step="0.1" placeholder="e.g. 14.2">
+      <div class="form-note text-xs text-muted mt-1">Used to calculate stroke adjustments in games</div>
+    </div>
     <button class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
 
     <div class="divider"></div>
@@ -1766,12 +1862,22 @@ let state = {
   games: {
     skins: false,
     nassau: false,
-    stableford: false
+    stableford: false,
+    matchplay: false,
+    wolf: false
   },
   gameAmounts: {
     skins: 1,
-    nassau: 5
+    nassau: 5,
+    birdies: 1,
+    stableford: 1,
+    matchplay: 5,
+    wolf: 1
   },
+  greeniesEnabled: false,
+  birdiesEnabled: false,
+  handicapsEnabled: false,
+  handicaps: {},  // { playerId: strokes }
   currentHole: 1,
   totalHoles: 18,
   pars: {},          // { hole: par }
@@ -1900,6 +2006,8 @@ function renderProfileUI() {
   document.getElementById('profile-email-display').textContent = email;
   document.getElementById('profile-name-input').value = name;
   document.getElementById('profile-venmo-input').value = venmo;
+  const hcpInput = document.getElementById('profile-handicap-input');
+  if (hcpInput) hcpInput.value = p.handicap_index || '';
 
   // Venmo block
   if (venmo) {
@@ -1921,7 +2029,9 @@ function prefillPlayerFromProfile() {
   const name = p.full_name || state.user?.email?.split('@')[0] || '';
   const venmo = p.venmo_handle || '';
   if (name && !state.players.find(pl => pl.name === name)) {
-    state.players = [{ id: 'me', name, venmo }];
+    const handicap = p.handicap_index ? Math.round(p.handicap_index) : 0;
+    state.players = [{ id: 'me', name, venmo, handicap }];
+    if (handicap) state.handicaps['me'] = handicap;
   }
 }
 
@@ -1930,8 +2040,9 @@ async function saveProfile() {
   const venmo = document.getElementById('profile-venmo-input').value.trim().replace(/^@/, '');
   if (!name) { showToast('Enter your name'); return; }
 
-  await upsertProfile({ full_name: name, venmo_handle: venmo });
-  state.profile = { ...state.profile, full_name: name, venmo_handle: venmo };
+  const handicap = parseFloat(document.getElementById('profile-handicap-input')?.value || '') || null;
+  await upsertProfile({ full_name: name, venmo_handle: venmo, handicap_index: handicap });
+  state.profile = { ...state.profile, full_name: name, venmo_handle: venmo, handicap_index: handicap };
   renderProfileUI();
   showToast('Profile saved ✓');
 }
@@ -2280,6 +2391,10 @@ async function goToSetupPlayers() {
   // Save game amounts
   state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
   state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
+  state.gameAmounts.birdies = parseFloat(document.getElementById('birdies-amount')?.value || 1);
+  state.gameAmounts.stableford = parseFloat(document.getElementById('stableford-amount')?.value || 1);
+  state.gameAmounts.matchplay = parseFloat(document.getElementById('matchplay-amount')?.value || 1);
+  state.gameAmounts.wolf = parseFloat(document.getElementById('wolf-amount')?.value || 1);
   // Generate join code early so players can join before round starts
   if (!state.joinCode) {
     state.joinCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -2305,6 +2420,11 @@ async function goToSetupPlayers() {
         greenie_eligible: {},
         games: state.games,
         game_amounts: state.gameAmounts,
+        greenies_enabled: state.greeniesEnabled,
+        birdies_enabled: state.birdiesEnabled,
+        handicaps_enabled: state.handicapsEnabled,
+        handicaps: state.handicaps,
+        wolf_state: state.wolfState || {},
         created_by: state.user?.id,
         status: 'active'
       }).select().single();
@@ -2335,9 +2455,13 @@ function addPlayer() {
   if (!name) { showToast('Enter a player name'); return; }
   if (state.players.length >= 4) { showToast('Max 4 players'); return; }
 
-  state.players.push({ id: genId(), name, venmo });
+  const handicap = state.handicapsEnabled ? parseInt(document.getElementById('new-player-handicap')?.value || 0) : 0;
+  const pid = genId();
+  state.players.push({ id: pid, name, venmo, handicap });
+  if (state.handicapsEnabled) state.handicaps[pid] = handicap;
   document.getElementById('new-player-name').value = '';
   document.getElementById('new-player-venmo').value = '';
+  if (document.getElementById('new-player-handicap')) document.getElementById('new-player-handicap').value = '';
   renderPlayersList();
   document.getElementById('players-next-btn').disabled = state.players.length < 2;
 }
@@ -2360,7 +2484,7 @@ function renderPlayersList() {
         <div class="player-avatar">${p.name[0].toUpperCase()}</div>
         <div class="player-info">
           <div class="player-name">${p.name}</div>
-          <div class="player-venmo">${p.venmo ? '@' + p.venmo : 'No Venmo'}</div>
+          <div class="player-venmo">${p.venmo ? '@' + p.venmo : 'No Venmo'}${state.handicapsEnabled && p.handicap ? ' · +' + p.handicap + ' strokes' : ''}</div>
         </div>
         <button class="player-remove" onclick="removePlayer('${p.id}')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
@@ -2370,6 +2494,39 @@ function renderPlayersList() {
   // Always update button state after re-rendering
   const btn = document.getElementById('players-next-btn');
   if (btn) btn.disabled = state.players.length < 2;
+}
+
+function toggleHandicaps() {
+  state.handicapsEnabled = !state.handicapsEnabled;
+  const btn = document.getElementById('handicap-toggle-btn');
+  btn.textContent = state.handicapsEnabled ? 'ON' : 'OFF';
+  btn.style.background = state.handicapsEnabled ? 'var(--ink)' : 'transparent';
+  btn.style.color = state.handicapsEnabled ? 'var(--gold)' : '';
+  btn.style.borderColor = state.handicapsEnabled ? 'var(--ink)' : 'var(--border-mid)';
+  // Show/hide handicap input on player form
+  const hGroup = document.getElementById('handicap-input-group');
+  if (hGroup) hGroup.style.display = state.handicapsEnabled ? 'block' : 'none';
+}
+
+function toggleGreenies(e) {
+  e.stopPropagation();
+  state.greeniesEnabled = !state.greeniesEnabled;
+  const btn = document.getElementById('greenies-toggle-btn');
+  btn.textContent = state.greeniesEnabled ? 'ON' : 'OFF';
+  btn.style.background = state.greeniesEnabled ? 'var(--turf)' : 'transparent';
+  btn.style.color = state.greeniesEnabled ? 'white' : '';
+  btn.style.borderColor = state.greeniesEnabled ? 'var(--turf)' : 'var(--border-mid)';
+}
+
+function toggleBirdies(e) {
+  e.stopPropagation();
+  state.birdiesEnabled = !state.birdiesEnabled;
+  const btn = document.getElementById('birdies-toggle-btn');
+  btn.textContent = state.birdiesEnabled ? 'ON' : 'OFF';
+  btn.style.background = state.birdiesEnabled ? 'var(--ink)' : 'transparent';
+  btn.style.color = state.birdiesEnabled ? 'var(--gold)' : '';
+  btn.style.borderColor = state.birdiesEnabled ? 'var(--ink)' : 'var(--border-mid)';
+  document.getElementById('birdies-amount-row').classList.toggle('hidden', !state.birdiesEnabled);
 }
 
 function toggleGame(game) {
@@ -2513,12 +2670,15 @@ function renderHole() {
 
   // Greenie section
   const greenieEl = document.getElementById('greenie-section');
-  if (par === 3 && state.games.skins) {
+  if (par === 3 && state.games.skins && state.greeniesEnabled) {
     greenieEl.classList.remove('hidden');
     renderGreenies(h);
   } else {
     greenieEl.classList.add('hidden');
   }
+
+  // Wolf pick banner
+  renderWolfBanner(h);
 
   // Score inputs
   renderScoreInputs(h, par);
@@ -2559,7 +2719,14 @@ function renderScoreInputs(hole, par) {
           <div class="flex items-center gap-2">
             <div class="player-avatar" style="width:32px;height:32px;font-size:0.9rem;">${p.name[0].toUpperCase()}</div>
             <div>
-              <div class="fw-500">${p.name}</div>
+              <div class="fw-500">${p.name}${(() => {
+                if (!state.games.wolf) return '';
+                const cw = getWolfOrder(hole);
+                const cws = (state.wolfState||{})[hole];
+                if (cw.id === p.id) return cws?.loneWolf ? ' 🐺' : ' 🐺';
+                if (cws?.partner === p.id) return ' 🤝';
+                return '';
+              })()}</div>
               ${label ? `<div class="text-xs" style="color:${labelColor};">${label}</div>` : '<div class="text-xs" style="color:var(--muted);">No score</div>'}
             </div>
           </div>
@@ -2575,6 +2742,7 @@ function setScore(playerId, hole, score) {
   if (!state.scores[playerId]) state.scores[playerId] = {};
   state.scores[playerId][hole] = score;
   const par = state.pars[hole] || 4;
+  resolveGreenies(hole);  // commit greenie immediately when score is set
   renderScoreInputs(hole, par);
   renderGamesTally();
   checkAutoAdvance(hole);
@@ -2721,6 +2889,8 @@ function renderGamesTally() {
   if (state.games.skins) html += renderSkinsTally();
   if (state.games.nassau) html += renderNassauTally();
   if (state.games.stableford) html += renderStablefordTally();
+  if (state.games.matchplay) html += renderMatchPlayTally();
+  if (state.games.wolf) html += renderWolfTally();
 
   el.innerHTML = html;
 }
@@ -2732,10 +2902,20 @@ function computeSkins() {
 
   for (let h = 1; h <= state.totalHoles; h++) {
     const scores = state.players.map(p => ({ id: p.id, score: state.scores[p.id]?.[h] }))
-      .filter(s => s.score !== null);
+      .filter(s => s.score !== null && s.score !== undefined);
 
     if (scores.length < state.players.length) {
-      results[h] = { winner: null, carryover, value: (carryover + 1) * amt, pending: true };
+      // Still check for birdie on partial holes (one player may have scored a birdie already)
+      let pendingBirdie = null;
+      if (state.birdiesEnabled && scores.length > 0) {
+        const par = state.pars[h] || 4;
+        const birdies = scores.filter(s => s.score === par - 1);
+        // Only award if exactly one player has a birdie AND all others who scored didn't tie it
+        if (birdies.length === 1 && scores.filter(s => s.score !== null).every(s => s.score >= par - 1 || s.id === birdies[0].id)) {
+          pendingBirdie = birdies[0].id;
+        }
+      }
+      results[h] = { winner: null, carryover, value: (carryover + 1) * amt, pending: true, birdieWinner: pendingBirdie };
       continue;
     }
 
@@ -2750,10 +2930,24 @@ function computeSkins() {
       if (state.pars[h] === 3) {
         greenieWinner = state.greenies[h] || null;
       }
-      results[h] = { winner: winnerId, carryover, value: holeValue, greenieWinner };
+      // Check birdie bonus (independent of skin result)
+      let birdieWinner = null;
+      if (state.birdiesEnabled) {
+        const par = state.pars[h] || 4;
+        const birdies = scores.filter(s => s.score === par - 1);
+        if (birdies.length === 1) birdieWinner = birdies[0].id;
+      }
+      results[h] = { winner: winnerId, carryover, value: holeValue, greenieWinner, birdieWinner };
       carryover = 0;
     } else {
-      results[h] = { winner: null, carryover, value: holeValue, tie: true };
+      // Birdies still pay even on tie holes
+      let birdieWinnerTie = null;
+      if (state.birdiesEnabled) {
+        const par = state.pars[h] || 4;
+        const birdies = scores.filter(s => s.score === par - 1);
+        if (birdies.length === 1) birdieWinnerTie = birdies[0].id;
+      }
+      results[h] = { winner: null, carryover, value: holeValue, tie: true, birdieWinner: birdieWinnerTie };
       carryover++;
     }
   }
@@ -2763,26 +2957,36 @@ function computeSkins() {
 function renderSkinsTally() {
   const skins = computeSkins();
   const totals = {};
-  state.players.forEach(p => totals[p.id] = { skins: 0, greenies: 0, money: 0 });
+  state.players.forEach(p => totals[p.id] = { skins: 0, greenies: 0, birdies: 0, money: 0 });
 
   Object.entries(skins).forEach(([h, r]) => {
     if (r.winner) {
-      totals[r.winner].skins++;
+      totals[r.winner].skins += (r.carryover || 0) + 1;
       totals[r.winner].money += r.value;
     }
     if (r.greenieWinner) {
       totals[r.greenieWinner].greenies++;
       totals[r.greenieWinner].money += state.gameAmounts.skins || 1;
     }
+    if (r.birdieWinner) {
+      totals[r.birdieWinner].birdies++;
+      totals[r.birdieWinner].money += state.gameAmounts.birdies || 1;
+    }
   });
 
   const sorted = [...state.players].sort((a, b) => totals[b.id].money - totals[a.id].money);
+  const hasGreenies = Object.keys(state.greenies || {}).length > 0 || state.greeniesEnabled;
+  const badgeLabel = [
+    'Skins',
+    hasGreenies ? '+ Greenies' : '',
+    state.birdiesEnabled ? '+ Birdies' : ''
+  ].filter(Boolean).join(' ');
 
   return `
     <div class="card mb-3">
       <div class="flex items-center justify-between mb-3">
-        <span class="game-badge game-badge-skins">Skins + Greenies</span>
-        <span class="text-xs mono text-muted">$${state.gameAmounts.skins}/hole</span>
+        <span class="game-badge game-badge-skins">${badgeLabel}</span>
+        <span class="text-xs mono text-muted">$${state.gameAmounts.skins}/skin</span>
       </div>
       ${sorted.map(p => `
         <div class="flex items-center justify-between" style="padding:8px 0;border-bottom:1px solid var(--border);">
@@ -2791,7 +2995,11 @@ function renderSkinsTally() {
             <span class="fw-500 text-sm">${p.name}</span>
           </div>
           <div class="flex items-center gap-3">
-            <span class="text-xs text-muted">${totals[p.id].skins}🏆 ${totals[p.id].greenies}🟢</span>
+            <span class="text-xs text-muted">
+              ${totals[p.id].skins}🏆
+              ${state.greeniesEnabled ? totals[p.id].greenies + '🟢' : ''}
+              ${state.birdiesEnabled ? totals[p.id].birdies + '🐦' : ''}
+            </span>
             <span class="font-display" style="font-size:1.2rem;color:${totals[p.id].money > 0 ? 'var(--turf)' : 'var(--muted)'}">$${totals[p.id].money}</span>
           </div>
         </div>
@@ -2976,6 +3184,8 @@ function renderSettlement() {
   if (state.games.skins) gameHTML += buildSkinsResultHTML();
   if (state.games.nassau) gameHTML += buildNassauResultHTML();
   if (state.games.stableford) gameHTML += buildStablefordResultHTML();
+  if (state.games.matchplay) gameHTML += buildMatchPlayResultHTML();
+  if (state.games.wolf) gameHTML += buildWolfResultHTML();
   document.getElementById('game-results-section').innerHTML = gameHTML;
 
   // Final scorecard
@@ -2991,8 +3201,9 @@ function buildSkinsResultHTML() {
   state.players.forEach(p => totals[p.id] = { skins: 0, greenies: 0, money: 0 });
 
   Object.entries(skins).forEach(([, r]) => {
-    if (r.winner) { totals[r.winner].skins++; totals[r.winner].money += r.value; }
+    if (r.winner) { totals[r.winner].skins += (r.carryover || 0) + 1; totals[r.winner].money += r.value; }
     if (r.greenieWinner) { totals[r.greenieWinner].greenies++; totals[r.greenieWinner].money += state.gameAmounts.skins || 1; }
+    if (r.birdieWinner && state.birdiesEnabled) { totals[r.birdieWinner].birdies = (totals[r.birdieWinner].birdies || 0) + 1; totals[r.birdieWinner].money += state.gameAmounts.birdies || 1; }
   });
 
   const sorted = [...state.players].sort((a, b) => totals[b.id].money - totals[a.id].money);
@@ -3000,12 +3211,12 @@ function buildSkinsResultHTML() {
   return `
     <div class="card mb-3">
       <div class="section-title mb-1">Skins</div>
-      <div class="text-xs mono text-muted mb-3">$${state.gameAmounts.skins}/skin incl. greenies</div>
+      <div class="text-xs mono text-muted mb-3">$\${state.gameAmounts.skins}/skin\${state.greeniesEnabled ? " + greenies" : ""}\${state.birdiesEnabled ? " + birdies $" + state.gameAmounts.birdies : ""}</div>
       ${sorted.map((p, i) => `
         <div class="leaderboard-row">
           <div class="lb-rank ${i === 0 ? 'first' : ''}">${i + 1}</div>
           <div class="lb-name">${p.name}</div>
-          <div class="lb-score">${totals[p.id].skins} skins · ${totals[p.id].greenies} 🟢</div>
+          <div class="lb-score">${totals[p.id].skins} skins${state.greeniesEnabled ? ' · ' + totals[p.id].greenies + ' 🟢' : ''}${state.birdiesEnabled ? ' · ' + (totals[p.id].birdies||0) + ' 🐦' : ''}</div>
           <div class="lb-money">$${totals[p.id].money}</div>
         </div>
       `).join('')}
@@ -3032,7 +3243,10 @@ function buildStablefordResultHTML() {
   const sorted = [...state.players].sort((a, b) => pts[b.id] - pts[a.id]);
   return `
     <div class="card mb-3">
-      <div class="section-title mb-3">Stableford</div>
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title">Stableford</div>
+        ${state.gameAmounts.stableford ? `<span class="text-xs mono text-muted">$${state.gameAmounts.stableford}/pt</span>` : ''}
+      </div>
       ${sorted.map((p, i) => `
         <div class="leaderboard-row">
           <div class="lb-rank ${i === 0 ? 'first' : ''}">${i + 1}</div>
@@ -3042,6 +3256,269 @@ function buildStablefordResultHTML() {
       `).join('')}
     </div>
   `;
+}
+
+// ══════════════════════════════════════════
+// MATCH PLAY
+// ══════════════════════════════════════════
+function computeMatchPlay() {
+  // Only works for 2 players (or 2 teams)
+  if (state.players.length !== 2) return null;
+  const [a, b] = state.players;
+  let aUp = 0; // positive = a is up, negative = b is up
+  const holes = [];
+
+  for (let h = 1; h <= state.totalHoles; h++) {
+    const sa = state.scores[a.id]?.[h];
+    const sb = state.scores[b.id]?.[h];
+    if (sa === null || sa === undefined || sb === null || sb === undefined) {
+      holes.push({ hole: h, result: 'pending' });
+      continue;
+    }
+    // Apply handicap strokes
+    const aNet = sa - getHandicapStroke(a.id, h);
+    const bNet = sb - getHandicapStroke(b.id, h);
+    if (aNet < bNet) { aUp++; holes.push({ hole: h, winner: a.id, aUp }); }
+    else if (bNet < aNet) { aUp--; holes.push({ hole: h, winner: b.id, aUp }); }
+    else { holes.push({ hole: h, result: 'halved', aUp }); }
+  }
+  return { a, b, aUp, holes };
+}
+
+function getHandicapStroke(playerId, hole) {
+  if (!state.handicapsEnabled) return 0;
+  const player = state.players.find(p => p.id === playerId);
+  const strokes = player?.handicap || state.handicaps[playerId] || 0;
+  if (strokes === 0) return 0;
+  // Get hole handicap rating from tee data
+  const holeHandicap = state.holeHandicaps?.[hole] || hole; // fallback to hole number
+  return holeHandicap <= strokes ? 1 : 0;
+}
+
+function renderMatchPlayTally() {
+  const mp = computeMatchPlay();
+  if (!mp) return '';
+  const { a, b, aUp } = mp;
+  const holesPlayed = mp.holes.filter(h => h.result !== 'pending').length;
+  const holesLeft = state.totalHoles - holesPlayed;
+  let status;
+  if (aUp === 0) status = 'All Square';
+  else if (aUp > 0) status = `${a.name} ${aUp} UP (${holesLeft} to play)`;
+  else status = `${b.name} ${Math.abs(aUp)} UP (${holesLeft} to play)`;
+
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="game-badge" style="background:rgba(139,69,19,0.1);color:#6b3a1f;border-color:rgba(139,69,19,0.3);">Match Play</span>
+        <span class="text-xs mono text-muted">$${state.gameAmounts.matchplay}/hole</span>
+      </div>
+      <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.4rem;padding:8px 0;">${status}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        ${[a, b].map(p => {
+          const won = mp.holes.filter(h => h.winner === p.id).length;
+          const halved = mp.holes.filter(h => h.result === 'halved').length;
+          return `<div style="text-align:center;flex:1;">
+            <div style="font-weight:500;font-size:0.9rem;">${p.name}</div>
+            <div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">${won}W ${Math.floor(halved/2)}H</div>
+          </div>`;
+        }).join('<div style="width:1px;background:var(--border);"></div>')}
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// WOLF
+// ══════════════════════════════════════════
+// Wolf state: wolfState[hole] = { wolf: playerId, partner: playerId|null, loneWolf: bool }
+function getWolfOrder(hole) {
+  const n = state.players.length;
+  // Rotate wolf each hole: hole 1 = player[0], hole 2 = player[1], etc.
+  return state.players[(hole - 1) % n];
+}
+
+function renderWolfTally() {
+  const amt = state.gameAmounts.wolf || 1;
+  const pts = {};
+  state.players.forEach(p => pts[p.id] = 0);
+  const ws = state.wolfState || {};
+
+  for (let h = 1; h <= state.totalHoles; h++) {
+    const w = ws[h];
+    if (!w) continue;
+    const scores = state.players.map(p => ({ id: p.id, score: state.scores[p.id]?.[h] }))
+      .filter(s => s.score !== null && s.score !== undefined);
+    if (scores.length < state.players.length) continue;
+
+    const wolf = w.wolf;
+    const partner = w.partner;
+    const lone = w.loneWolf;
+    const multiplier = lone ? 2 : 1;
+
+    if (lone) {
+      // Lone wolf vs everyone — win = +2pts, lose = others get +1pt each, tie = no pts
+      const wolfScore = state.scores[wolf]?.[h];
+      const othersMin = Math.min(...state.players.filter(p => p.id !== wolf).map(p => state.scores[p.id]?.[h]));
+      if (wolfScore < othersMin) {
+        pts[wolf] += multiplier; // lone wolf wins, gets 2 pts
+      } else if (wolfScore > othersMin) {
+        state.players.filter(p => p.id !== wolf).forEach(p => pts[p.id] += 1); // others each get 1
+      }
+      // tie = no pts
+    } else if (partner) {
+      // Team wolf+partner vs others — winning team each get 1pt, tie = no pts
+      const teamMin = Math.min(state.scores[wolf]?.[h], state.scores[partner]?.[h]);
+      const othersMin = Math.min(...state.players.filter(p => p.id !== wolf && p.id !== partner).map(p => state.scores[p.id]?.[h]));
+      if (teamMin < othersMin) {
+        pts[wolf] += 1;
+        pts[partner] += 1;
+      } else if (othersMin < teamMin) {
+        state.players.filter(p => p.id !== wolf && p.id !== partner).forEach(p => pts[p.id] += 1);
+      }
+      // tie = no pts
+    }
+  }
+
+  const sorted = [...state.players].sort((a, b) => pts[b.id] - pts[a.id]);
+  const currentWolf = getWolfOrder(state.currentHole);
+  const currentWolfState = ws[state.currentHole];
+
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="game-badge" style="background:rgba(50,50,80,0.1);color:#2d2d5e;border-color:rgba(50,50,80,0.3);">🐺 Wolf</span>
+        <span class="text-xs mono text-muted">$${amt}/pt</span>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:10px;">
+        Wolf this hole: <strong style="color:var(--ink);">${currentWolf.name}</strong>
+        ${currentWolfState ? (currentWolfState.loneWolf ? ' · 🐺 Lone Wolf!' : currentWolfState.partner ? ' · Partner: ' + (state.players.find(p=>p.id===currentWolfState.partner)?.name||'') : '') : ' · Pick after tee shots'}
+      </div>
+      ${sorted.map((p, i) => {
+        const isWolf = currentWolf.id === p.id;
+        const isPartner = currentWolfState?.partner === p.id;
+        const isLoneWolf = isWolf && currentWolfState?.loneWolf;
+        const badge = isLoneWolf ? ' 🐺' : isWolf ? ' 🐺' : isPartner ? ' 🤝' : '';
+        return `
+        <div class="flex items-center justify-between" style="padding:6px 0;border-bottom:1px solid var(--border);">
+          <div class="flex items-center gap-2">
+            <div class="player-avatar" style="width:28px;height:28px;font-size:0.8rem;${isWolf ? 'background:var(--ink);' : ''}">${p.name[0]}</div>
+            <span class="fw-500 text-sm">${p.name}${badge}</span>
+          </div>
+          <span class="font-display" style="font-size:1.2rem;color:${pts[p.id] > 0 ? 'var(--turf)' : 'var(--muted)'}">
+            ${pts[p.id]} pt${pts[p.id] !== 1 ? 's' : ''}
+          </span>
+        </div>`;
+      }).join('')}
+      <div id="wolf-pick-section" style="margin-top:12px;"></div>
+    </div>
+  `;
+}
+
+function renderWolfPick(hole) {
+  const ws = state.wolfState || {};
+  if (ws[hole]) return; // Already picked
+  const wolf = getWolfOrder(hole);
+  const el = document.getElementById('wolf-pick-section');
+  if (!el) return;
+
+  // Only show if all players have scores except wolf decision pending
+  const others = state.players.filter(p => p.id !== wolf.id);
+  el.innerHTML = `
+    <div style="font-size:0.8rem;font-weight:500;margin-bottom:8px;">${wolf.name} — pick a partner or go Lone Wolf:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      ${others.map(p => `
+        <button onclick="wolfPick('${hole}', '${p.id}')" style="padding:8px 14px;border-radius:8px;border:1.5px solid var(--border-mid);background:white;cursor:pointer;font-size:0.85rem;">
+          Partner: ${p.name}
+        </button>
+      `).join('')}
+      <button onclick="wolfPick('${hole}', null, true)" style="padding:8px 14px;border-radius:8px;border:1.5px solid var(--ink);background:var(--ink);color:var(--gold);cursor:pointer;font-size:0.85rem;">
+        🐺 Lone Wolf
+      </button>
+    </div>
+  `;
+}
+
+function renderWolfBanner(hole) {
+  const banner = document.getElementById('wolf-pick-banner');
+  if (!banner || !state.games.wolf) { if (banner) banner.classList.add('hidden'); return; }
+
+  const ws = state.wolfState || {};
+  // Hide if already picked
+  if (ws[hole]) { banner.classList.add('hidden'); return; }
+
+  const wolf = getWolfOrder(hole);
+  const others = state.players.filter(p => p.id !== wolf.id);
+
+  // Show banner — wolf always picks (can pick before or after tee shots)
+  document.getElementById('wolf-banner-wolf-name').textContent = `${wolf.name} is the Wolf`;
+  document.getElementById('wolf-banner-buttons').innerHTML = [
+    ...others.map(p => `
+      <button onclick="wolfPick(${hole}, '${p.id}')" style="flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(241,225,148,0.3);background:rgba(241,225,148,0.08);color:var(--gold);cursor:pointer;font-size:0.9rem;font-family:'Outfit',sans-serif;min-width:80px;">
+        🤝 ${p.name}
+      </button>`),
+    `<button onclick="wolfPick(${hole}, null, true)" style="flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(241,225,148,0.6);background:rgba(241,225,148,0.15);color:var(--gold);cursor:pointer;font-size:0.9rem;font-family:'Outfit',sans-serif;font-weight:600;min-width:80px;">
+      🐺 Lone Wolf
+    </button>`
+  ].join('');
+  banner.classList.remove('hidden');
+}
+
+function wolfPick(hole, partnerId, lone = false) {
+  if (!state.wolfState) state.wolfState = {};
+  const wolf = getWolfOrder(parseInt(hole));
+  state.wolfState[hole] = { wolf: wolf.id, partner: partnerId, loneWolf: lone };
+  renderGamesTally();
+  pushScoreUpdate();
+  // Update banner to show the pick instead of hiding it
+  const banner = document.getElementById('wolf-pick-banner');
+  const partnerName = partnerId ? state.players.find(p => p.id === partnerId)?.name : null;
+  if (banner) {
+    const nameEl = document.getElementById('wolf-banner-wolf-name');
+    const btnsEl = document.getElementById('wolf-banner-buttons');
+    if (nameEl) nameEl.textContent = lone
+      ? `🐺 ${wolf.name} goes Lone Wolf — double stakes!`
+      : `🤝 ${wolf.name} + ${partnerName} vs the field`;
+    if (btnsEl) btnsEl.innerHTML = `<button onclick="undoWolfPick(${parseInt(hole)})" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(241,225,148,0.25);background:transparent;color:rgba(241,225,148,0.5);cursor:pointer;font-size:0.75rem;font-family:'JetBrains Mono',monospace;">Change pick</button>`;
+  }
+}
+
+function buildMatchPlayResultHTML() {
+  const mp = computeMatchPlay();
+  if (!mp) return '';
+  const { a, b, aUp, holes } = mp;
+  const winner = aUp > 0 ? a : aUp < 0 ? b : null;
+  const margin = Math.abs(aUp);
+  const holesPlayed = holes.filter(h => h.result !== 'pending').length;
+  const status = winner ? `${winner.name} wins ${margin}&${state.totalHoles - holesPlayed} (${margin} UP with ${state.totalHoles - holesPlayed} to play)` : 'All Square';
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <div class="section-title">Match Play</div>
+        <span class="text-xs mono text-muted">$${state.gameAmounts.matchplay}/hole</span>
+      </div>
+      <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.3rem;padding:8px 0;color:${winner ? 'var(--turf)' : 'var(--muted)'}">
+        ${aUp === 0 ? 'All Square' : `${aUp > 0 ? a.name : b.name} wins`}
+      </div>
+      ${[a, b].map(p => {
+        const won = holes.filter(h => h.winner === p.id).length;
+        const halved = holes.filter(h => h.result === 'halved').length;
+        return `<div class="leaderboard-row">
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-score">${won}W · ${halved}H</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function buildWolfResultHTML() {
+  // Reuse the wolf tally which already shows totals
+  return renderWolfTally().replace('wolf-pick-section', 'wolf-pick-section-settle');
+}
+
+function undoWolfPick(hole) {
+  if (state.wolfState) delete state.wolfState[hole];
+  renderWolfBanner(hole);
+  renderGamesTally();
 }
 
 function renderMoneySettlement() {
@@ -3073,6 +3550,14 @@ function renderMoneySettlement() {
           if (p.id !== r.greenieWinner) net[p.id] -= amt;
         });
       }
+      if (r.birdieWinner && state.birdiesEnabled) {
+        // Birdie bonus: winner gets $birdieAmt from each other player
+        const bAmt = state.gameAmounts.birdies || 1;
+        net[r.birdieWinner] += bAmt * (n - 1);
+        state.players.forEach(p => {
+          if (p.id !== r.birdieWinner) net[p.id] -= bAmt;
+        });
+      }
     });
   }
 
@@ -3085,6 +3570,89 @@ function renderMoneySettlement() {
         losers.forEach(p => net[p.id] -= bet.amount);
       }
     });
+  }
+
+  if (state.games.matchplay && state.players.length === 2) {
+    const mp = computeMatchPlay();
+    if (mp) {
+      const amt = state.gameAmounts.matchplay || 1;
+      const n = state.players.length;
+      // Each hole won = $amt from opponent
+      mp.holes.forEach(h => {
+        if (h.winner) {
+          const loser = state.players.find(p => p.id !== h.winner);
+          net[h.winner] += amt;
+          net[loser.id] -= amt;
+        }
+      });
+    }
+  }
+
+  if (state.games.stableford) {
+    const amt = state.gameAmounts.stableford || 1;
+    // Compute each player's stableford total
+    const pts = {};
+    state.players.forEach(p => {
+      pts[p.id] = 0;
+      for (let h = 1; h <= state.totalHoles; h++) {
+        const score = state.scores[p.id]?.[h];
+        const par = state.pars[h] || 4;
+        if (score === null || score === undefined) continue;
+        const diff = score - par;
+        pts[p.id] += diff <= -2 ? 4 : diff === -1 ? 3 : diff === 0 ? 2 : diff === 1 ? 1 : 0;
+      }
+    });
+    // Each player settles vs every other player: winner gets $amt * point difference
+    for (let i = 0; i < state.players.length; i++) {
+      for (let j = i + 1; j < state.players.length; j++) {
+        const a = state.players[i], b = state.players[j];
+        const diff = pts[a.id] - pts[b.id];
+        if (diff > 0) {
+          net[a.id] += diff * amt;
+          net[b.id] -= diff * amt;
+        } else if (diff < 0) {
+          net[b.id] += Math.abs(diff) * amt;
+          net[a.id] -= Math.abs(diff) * amt;
+        }
+      }
+    }
+  }
+
+  if (state.games.wolf) {
+    const amt = state.gameAmounts.wolf || 1;
+    // Compute points same way as renderWolfTally
+    const wolfPts = {};
+    state.players.forEach(p => wolfPts[p.id] = 0);
+    const ws = state.wolfState || {};
+    for (let h = 1; h <= state.totalHoles; h++) {
+      const w = ws[h];
+      if (!w) continue;
+      const scores = state.players.map(p => ({ id: p.id, score: state.scores[p.id]?.[h] }))
+        .filter(s => s.score !== null && s.score !== undefined);
+      if (scores.length < state.players.length) continue;
+      const wolf = w.wolf, partner = w.partner, lone = w.loneWolf;
+      const multiplier = lone ? 2 : 1;
+      if (lone) {
+        const wolfScore = state.scores[wolf]?.[h];
+        const othersMin = Math.min(...state.players.filter(p => p.id !== wolf).map(p => state.scores[p.id]?.[h]));
+        if (wolfScore < othersMin) wolfPts[wolf] += multiplier;
+        else if (wolfScore > othersMin) state.players.filter(p => p.id !== wolf).forEach(p => wolfPts[p.id] += 1);
+      } else if (partner) {
+        const teamMin = Math.min(state.scores[wolf]?.[h], state.scores[partner]?.[h]);
+        const othersMin = Math.min(...state.players.filter(p => p.id !== wolf && p.id !== partner).map(p => state.scores[p.id]?.[h]));
+        if (teamMin < othersMin) { wolfPts[wolf] += 1; wolfPts[partner] += 1; }
+        else if (othersMin < teamMin) state.players.filter(p => p.id !== wolf && p.id !== partner).forEach(p => wolfPts[p.id] += 1);
+      }
+    }
+    // Settle: each player pays/receives $amt per point difference vs every other player
+    for (let i = 0; i < state.players.length; i++) {
+      for (let j = i + 1; j < state.players.length; j++) {
+        const a = state.players[i], b = state.players[j];
+        const diff = wolfPts[a.id] - wolfPts[b.id];
+        if (diff > 0) { net[a.id] += diff * amt; net[b.id] -= diff * amt; }
+        else if (diff < 0) { net[b.id] += Math.abs(diff) * amt; net[a.id] -= Math.abs(diff) * amt; }
+      }
+    }
   }
 
   // Simplify debts: who owes who
@@ -3254,6 +3822,11 @@ async function joinRound() {
     state.totalHoles = data.total_holes;
     state.games = data.games;
     state.gameAmounts = data.game_amounts;
+    state.greeniesEnabled = data.greenies_enabled || false;
+    state.birdiesEnabled = data.birdies_enabled || false;
+    state.handicapsEnabled = data.handicaps_enabled || false;
+    state.handicaps = data.handicaps || {};
+    state.wolfState = data.wolf_state || {};
     state.currentHole = 1;
     state.greenies = data.greenies || {};
     state.greenieEligible = data.greenie_eligible || {};
