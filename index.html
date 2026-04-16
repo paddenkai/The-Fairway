@@ -1173,7 +1173,14 @@ body {
           <div class="text-xs mono mb-2" style="opacity:0.7;letter-spacing:2px;text-transform:uppercase;">Selected course</div>
           <div id="course-selected-name" style="font-family:'Italiana',serif;font-size:1.4rem;"></div>
           <div id="course-selected-location" style="font-size:0.8rem;opacity:0.75;margin-top:4px;"></div>
-          <div id="course-selected-holes" style="font-size:0.8rem;opacity:0.7;margin-top:2px;font-family:'DM Mono',monospace;"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+            <div id="course-selected-holes" style="font-size:0.8rem;opacity:0.7;font-family:'DM Mono',monospace;"></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-left:8px;">
+              <span style="font-size:0.7rem;opacity:0.6;">Override:</span>
+              <button onclick="setHoles(9)" id="holes-btn-9" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:2px 8px;font-size:0.75rem;font-family:'DM Mono',monospace;cursor:pointer;">9</button>
+              <button onclick="setHoles(18)" id="holes-btn-18" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:2px 8px;font-size:0.75rem;font-family:'DM Mono',monospace;cursor:pointer;">18</button>
+            </div>
+          </div>
           <button class="btn btn-sm mt-3" style="background:rgba(255,255,255,0.15);color:white;border:none;" onclick="clearCourse()">Change course</button>
         </div>
         <button class="btn btn-primary btn-full mt-3 btn-lg" onclick="goToSetupPlayers()">
@@ -1292,8 +1299,8 @@ body {
     <div class="hole-progress">
       <div class="hole-progress-fill" id="hole-progress-fill" style="width:0%"></div>
     </div>
-    <div id="join-code-banner" style="text-align:center;padding:4px 0 8px;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:3px;color:var(--gold);display:none;">
-      JOIN CODE: <span id="round-join-code-display"></span>
+    <div id="join-code-banner" style="text-align:center;padding:4px 0 8px;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:3px;color:var(--gold);">
+      JOIN CODE: <span id="round-join-code-display">----</span>
     </div>
 
     <!-- Hole navigation -->
@@ -2029,14 +2036,25 @@ async function selectCourse(course) {
       // Extract pars from golfcourseapi response: tees.male[0].holes or tees.female[0].holes
       const teeData = courseData.tees?.male?.[0] || courseData.tees?.female?.[0] || null;
       const holes = teeData?.holes || courseData.holes || [];
+      console.log('[Fairway] courseData:', JSON.stringify(courseData).slice(0, 500));
+      console.log('[Fairway] teeData:', JSON.stringify(teeData)?.slice(0, 300));
+      console.log('[Fairway] holes.length:', holes.length, 'number_of_holes:', teeData?.number_of_holes);
       const pars = {};
       if (holes.length) {
         holes.forEach((h, i) => { pars[i + 1] = h.par || 4; });
       }
 
-      // Trust holes array length as the true hole count
-      // number_of_holes field can sometimes report 18 even for 9-hole courses
-      const total = holes.length || teeData?.number_of_holes || 18;
+      // Detect duplicate 9-hole data (API bug: 9-hole courses listed as 18 with repeated holes)
+      // If holes 1-9 have identical pars to holes 10-18, it's really a 9-hole course
+      let total = holes.length || teeData?.number_of_holes || 18;
+      if (holes.length === 18) {
+        const firstNine = holes.slice(0, 9).map(h => h.par).join(',');
+        const secondNine = holes.slice(9, 18).map(h => h.par).join(',');
+        if (firstNine === secondNine) {
+          console.log('[Fairway] Detected duplicate 9-hole data, treating as 9 holes');
+          total = 9;
+        }
+      }
       for (let h = 1; h <= total; h++) {
         if (!pars[h]) pars[h] = 4;
       }
@@ -2062,7 +2080,33 @@ async function selectCourse(course) {
   document.getElementById('course-selected-name').textContent = state.course.display_name;
   document.getElementById('course-selected-location').textContent = [city, stateStr].filter(Boolean).join(', ');
   document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
+  // Highlight correct hole count button
+  const b9 = document.getElementById('holes-btn-9');
+  const b18 = document.getElementById('holes-btn-18');
+  if (b9) b9.style.background = state.totalHoles === 9 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+  if (b18) b18.style.background = state.totalHoles === 18 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
   document.getElementById('course-selected').classList.remove('hidden');
+}
+
+function setHoles(n) {
+  state.totalHoles = n;
+  // Rebuild pars for new hole count
+  const existing = {...state.pars};
+  state.pars = {};
+  for (let h = 1; h <= n; h++) {
+    state.pars[h] = existing[h] || 4;
+  }
+  // If all 4s, sprinkle some variety
+  if (Object.values(state.pars).every(p => p === 4)) {
+    const par3s = n === 9 ? [3, 6] : [3, 6, 12, 17];
+    const par5s = n === 9 ? [5, 9] : [5, 9, 14, 18];
+    par3s.forEach(h => { if (state.pars[h]) state.pars[h] = 3; });
+    par5s.forEach(h => { if (state.pars[h]) state.pars[h] = 5; });
+  }
+  document.getElementById('course-selected-holes').textContent = `${n} holes`;
+  // Highlight active button
+  document.getElementById('holes-btn-9').style.background = n === 9 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+  document.getElementById('holes-btn-18').style.background = n === 18 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
 }
 
 function setFallbackCourse(course, displayName) {
@@ -2221,11 +2265,7 @@ async function startRound() {
 function renderRound() {
   document.getElementById('round-course-name').textContent = state.course?.display_name || 'Round';
   const jcEl = document.getElementById('round-join-code-display');
-  const jcBanner = document.getElementById('join-code-banner');
-  if (jcEl && state.joinCode) {
-    jcEl.textContent = state.joinCode;
-    if (jcBanner) jcBanner.style.display = 'block';
-  }
+  if (jcEl) jcEl.textContent = state.joinCode || '----';
 
   // Game badges
   const badges = Object.entries(state.games)
