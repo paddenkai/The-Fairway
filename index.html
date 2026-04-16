@@ -1194,6 +1194,13 @@ body {
     <div id="setup-step-players" class="hidden">
       <div class="section-title">Players</div>
       <div class="section-sub">Add up to 4 players — include Venmo handles for easy settlement</div>
+      <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:var(--gold);border-radius:12px;padding:12px 16px;margin-bottom:16px;cursor:pointer;">
+        <div>
+          <div style="font-size:0.65rem;font-family:'DM Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
+          <div id="setup-join-code" style="font-family:'DM Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
+        </div>
+        <div style="font-size:0.7rem;font-family:'DM Mono',monospace;opacity:0.6;">TAP TO COPY</div>
+      </div>
 
       <div id="players-list"></div>
 
@@ -2107,11 +2114,12 @@ function setHoles(n) {
 }
 
 function copyJoinCode() {
-  if (!state.joinCode) return;
-  navigator.clipboard?.writeText(state.joinCode).then(() => {
-    showToast(`Code ${state.joinCode} copied!`);
+  const code = state.joinCode;
+  if (!code || code === '----') return;
+  navigator.clipboard?.writeText(code).then(() => {
+    showToast(`Code ${code} copied!`);
   }).catch(() => {
-    showToast(`Join code: ${state.joinCode}`);
+    showToast(`Join code: ${code}`);
   });
 }
 
@@ -2135,6 +2143,12 @@ function clearCourse() {
 // ══════════════════════════════════════════
 function goToSetupPlayers() {
   if (!state.course) { showToast('Please select a course first'); return; }
+  // Generate join code early so players can join before round starts
+  if (!state.joinCode) {
+    state.joinCode = Math.floor(1000 + Math.random() * 9000).toString();
+  }
+  const codeEl = document.getElementById('setup-join-code');
+  if (codeEl) codeEl.textContent = state.joinCode;
   document.getElementById('setup-step-course').classList.add('hidden');
   document.getElementById('setup-step-players').classList.remove('hidden');
   renderPlayersList();
@@ -2222,7 +2236,7 @@ async function startRound() {
   state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
   state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
 
-  const code = Math.floor(1000 + Math.random() * 9000).toString();
+  const code = state.joinCode || Math.floor(1000 + Math.random() * 9000).toString();
   state.joinCode = code;
   state.currentHole = 1;
   state.scores = {};
