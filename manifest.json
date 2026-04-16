@@ -1,0 +1,21 @@
+{
+  "name": "The Fairway",
+  "short_name": "Fairway",
+  "description": "Golf scoring, games & instant settlement",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a1a0f",
+  "theme_color": "#0a1a0f",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/0a1a0f/c8a951?text=F",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/0a1a0f/c8a951?text=F",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1974,19 +1974,30 @@ async function searchCourses(query) {
     const data = await res.json();
     loadEl.classList.add('hidden');
 
-    const courses = data.courses || data || [];
+    // golfcourseapi.com can return { courses: [] } or { results: [] } or []
+    const courses = data.courses || data.results || data.data || (Array.isArray(data) ? data : []);
     if (!courses.length) {
       resultsEl.innerHTML = '<div class="course-result text-muted text-sm" style="padding:16px;">No courses found. Try a different search.</div>';
       resultsEl.classList.remove('hidden');
       return;
     }
 
-    resultsEl.innerHTML = courses.slice(0, 8).map(c => `
-      <div class="course-result" onclick="selectCourse(${JSON.stringify(c).replace(/"/g,'&quot;')})">
-        <div class="course-result-name">${c.club_name || c.name}</div>
-        <div class="course-result-location">${[c.city, c.state_name || c.state, c.country_name || c.country].filter(Boolean).join(', ')}</div>
-      </div>
-    `).join('');
+    resultsEl.innerHTML = courses.slice(0, 8).map(c => {
+      const name = c.club_name || c.course_name || c.name || 'Unknown Course';
+      const city = c.city || '';
+      const state = c.state_name || c.state || c.state_code || '';
+      const country = c.country_name || c.country || '';
+      const location = [city, state, country].filter(Boolean).join(', ');
+      const id = c.id || c.course_id || c.club_id || '';
+      // Encode the course object safely
+      const encoded = encodeURIComponent(JSON.stringify({...c, _display_name: name}));
+      return `
+        <div class="course-result" onclick="selectCourse(JSON.parse(decodeURIComponent('${encoded}')))">
+          <div class="course-result-name">${name}</div>
+          <div class="course-result-location">${location}</div>
+        </div>
+      `;
+    }).join('');
     resultsEl.classList.remove('hidden');
   } catch(e) {
     loadEl.classList.add('hidden');
@@ -1998,50 +2009,73 @@ async function selectCourse(course) {
   document.getElementById('course-search-results').classList.add('hidden');
   document.getElementById('course-search-input').value = '';
 
-  // Fetch full course details with holes
-  try {
-    const res = await fetch(`${GOLF_PROXY}/course/${course.id}`);
-    const full = await res.json();
-    const courseData = full.course || full;
+  const displayName = course._display_name || course.club_name || course.course_name || course.name || 'Unknown Course';
+  const courseId = course.id || course.course_id || course.club_id || '';
+  const city = course.city || '';
+  const state = course.state_name || course.state || '';
 
-    // Extract pars
-    const holes = courseData.holes || courseData.tees?.[0]?.holes || [];
-    const pars = {};
-    if (holes.length) {
-      holes.forEach((h, i) => {
-        pars[i + 1] = h.par || 4;
-      });
-    } else {
-      // fallback: standard pars
-      for (let i = 1; i <= 18; i++) pars[i] = 4;
-      if (pars[3]) pars[3] = 3; if (pars[6]) pars[6] = 3;
-      if (pars[9]) pars[9] = 5; if (pars[12]) pars[12] = 3;
-      if (pars[15]) pars[15] = 5; if (pars[17]) pars[17] = 3;
+  // Try to fetch full course details
+  if (courseId) {
+    try {
+      const res = await fetch(`${GOLF_PROXY}/course/${courseId}`);
+      const full = await res.json();
+      const courseData = full.course || full;
+
+      // Extract pars — handle various response shapes
+      const holes = courseData.holes || courseData.tees?.[0]?.holes || [];
+      const pars = {};
+      if (holes.length) {
+        holes.forEach((h, i) => { pars[i + 1] = h.par || 4; });
+      } else if (courseData.scorecard) {
+        // Parse scorecard format: [{1: "4", 2: "5", ...}]
+        try {
+          const sc = typeof courseData.scorecard === 'string' ? JSON.parse(courseData.scorecard) : courseData.scorecard;
+          const parRow = sc.find(row => row['Hole:'] === 'Par:' || row['Hole'] === 'Par' || Object.values(row).includes('Par'));
+          if (parRow) {
+            for (let h = 1; h <= 18; h++) {
+              if (parRow[h] || parRow[String(h)]) {
+                pars[h] = parseInt(parRow[h] || parRow[String(h)]) || 4;
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // Fill any missing holes with defaults
+      const total = courseData.num_holes || courseData.holes_count || holes.length || 18;
+      for (let h = 1; h <= total; h++) {
+        if (!pars[h]) pars[h] = 4;
+      }
+      // Sprinkle some par 3s and 5s if all 4s (fallback)
+      if (Object.values(pars).every(p => p === 4)) {
+        [3, 6, 12, 17].forEach(h => { if (pars[h]) pars[h] = 3; });
+        [5, 9, 14, 18].forEach(h => { if (pars[h]) pars[h] = 5; });
+      }
+
+      state.course = { ...courseData, display_name: displayName };
+      state.pars = pars;
+      state.totalHoles = total;
+    } catch(e) {
+      // Fallback to basic
+      setFallbackCourse(course, displayName);
     }
-
-    state.course = courseData;
-    state.course.display_name = course.club_name || course.name;
-    state.pars = pars;
-    state.totalHoles = holes.length || (courseData.num_holes || 18);
-
-    document.getElementById('course-selected-name').textContent = state.course.display_name;
-    document.getElementById('course-selected-location').textContent = [course.city, course.state_name || course.state].filter(Boolean).join(', ');
-    document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
-    document.getElementById('course-selected').classList.remove('hidden');
-
-  } catch(e) {
-    // Use basic course data
-    state.course = course;
-    state.course.display_name = course.club_name || course.name;
-    state.pars = {};
-    for (let i = 1; i <= 18; i++) state.pars[i] = 4;
-    state.totalHoles = 18;
-
-    document.getElementById('course-selected-name').textContent = state.course.display_name;
-    document.getElementById('course-selected-location').textContent = [course.city, course.state_name || course.state].filter(Boolean).join(', ');
-    document.getElementById('course-selected-holes').textContent = '18 holes';
-    document.getElementById('course-selected').classList.remove('hidden');
+  } else {
+    setFallbackCourse(course, displayName);
   }
+
+  document.getElementById('course-selected-name').textContent = state.course.display_name;
+  document.getElementById('course-selected-location').textContent = [city, state].filter(Boolean).join(', ');
+  document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
+  document.getElementById('course-selected').classList.remove('hidden');
+}
+
+function setFallbackCourse(course, displayName) {
+  state.course = { ...course, display_name: displayName };
+  state.pars = {};
+  for (let h = 1; h <= 18; h++) state.pars[h] = 4;
+  [3, 6, 12, 17].forEach(h => state.pars[h] = 3);
+  [5, 9, 14, 18].forEach(h => state.pars[h] = 5);
+  state.totalHoles = 18;
 }
 
 function clearCourse() {
