@@ -3443,15 +3443,29 @@ function renderWolfBanner(hole) {
   if (!banner || !state.games.wolf) { if (banner) banner.classList.add('hidden'); return; }
 
   const ws = state.wolfState || {};
-  // Hide if already picked
-  if (ws[hole]) { banner.classList.add('hidden'); return; }
-
   const wolf = getWolfOrder(hole);
   const others = state.players.filter(p => p.id !== wolf.id);
+  const nameEl = document.getElementById('wolf-banner-wolf-name');
+  const btnsEl = document.getElementById('wolf-banner-buttons');
 
-  // Show banner — wolf always picks (can pick before or after tee shots)
-  document.getElementById('wolf-banner-wolf-name').textContent = `${wolf.name} is the Wolf`;
-  document.getElementById('wolf-banner-buttons').innerHTML = [
+  // If already picked — show the pick with a change button
+  if (ws[hole]) {
+    const pick = ws[hole];
+    const partnerName = pick.partner ? state.players.find(p => p.id === pick.partner)?.name : null;
+    if (nameEl) nameEl.textContent = pick.loneWolf
+      ? `🐺 ${wolf.name} goes Lone Wolf — double stakes!`
+      : `🤝 ${wolf.name} + ${partnerName} vs the field`;
+    if (btnsEl) btnsEl.innerHTML = `
+      <button onclick="undoWolfPick(${hole})" style="padding:7px 16px;border-radius:8px;border:1.5px solid rgba(241,225,148,0.3);background:transparent;color:rgba(241,225,148,0.7);cursor:pointer;font-size:0.8rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+        ✏️ Change pick
+      </button>`;
+    banner.classList.remove('hidden');
+    return;
+  }
+
+  // Not yet picked — show picker
+  if (nameEl) nameEl.textContent = `${wolf.name} is the Wolf`;
+  if (btnsEl) btnsEl.innerHTML = [
     ...others.map(p => `
       <button onclick="wolfPick(${hole}, '${p.id}')" style="flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(241,225,148,0.3);background:rgba(241,225,148,0.08);color:var(--gold);cursor:pointer;font-size:0.9rem;font-family:'Outfit',sans-serif;min-width:80px;">
         🤝 ${p.name}
@@ -3469,17 +3483,8 @@ function wolfPick(hole, partnerId, lone = false) {
   state.wolfState[hole] = { wolf: wolf.id, partner: partnerId, loneWolf: lone };
   renderGamesTally();
   pushScoreUpdate();
-  // Update banner to show the pick instead of hiding it
-  const banner = document.getElementById('wolf-pick-banner');
-  const partnerName = partnerId ? state.players.find(p => p.id === partnerId)?.name : null;
-  if (banner) {
-    const nameEl = document.getElementById('wolf-banner-wolf-name');
-    const btnsEl = document.getElementById('wolf-banner-buttons');
-    if (nameEl) nameEl.textContent = lone
-      ? `🐺 ${wolf.name} goes Lone Wolf — double stakes!`
-      : `🤝 ${wolf.name} + ${partnerName} vs the field`;
-    if (btnsEl) btnsEl.innerHTML = `<button onclick="undoWolfPick(${parseInt(hole)})" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(241,225,148,0.25);background:transparent;color:rgba(241,225,148,0.5);cursor:pointer;font-size:0.75rem;font-family:'JetBrains Mono',monospace;">Change pick</button>`;
-  }
+  // Re-render banner to show the confirmed pick
+  renderWolfBanner(parseInt(hole));
 }
 
 function buildMatchPlayResultHTML() {
