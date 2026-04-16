@@ -1162,7 +1162,21 @@ body {
     <!-- Step 1: Course -->
     <div id="setup-step-course">
       <div class="section-title">Find your course</div>
-      <div class="section-sub">Search by name or city</div>
+      <div class="section-sub">Courses near you</div>
+
+      <!-- GPS nearby button -->
+      <div id="course-nearby-btn-wrap">
+        <button class="btn btn-primary" style="width:100%;margin-bottom:12px;" onclick="findNearbyCourses()">
+          📍 Find courses near me
+        </button>
+      </div>
+
+      <!-- Fallback text search -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:0.75rem;color:var(--muted);">or search by name</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
       <div class="form-group">
         <input class="form-input" id="course-search-input" type="text" placeholder="e.g. Pebble Beach, Torrey Pines..." autocomplete="off">
       </div>
@@ -1961,6 +1975,91 @@ function setupCourseSearch() {
     }
     debounceTimer = setTimeout(() => searchCourses(q), 400);
   });
+}
+
+async function findNearbyCourses() {
+  const btn = document.querySelector('#course-nearby-btn-wrap button');
+  const loadEl = document.getElementById('course-search-loading');
+  const resultsEl = document.getElementById('course-search-results');
+
+  btn.disabled = true;
+  btn.textContent = '📍 Getting location...';
+  loadEl.classList.remove('hidden');
+  resultsEl.classList.add('hidden');
+
+  if (!navigator.geolocation) {
+    showToast('Geolocation not supported on this device');
+    btn.disabled = false;
+    btn.textContent = '📍 Find courses near me';
+    loadEl.classList.add('hidden');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude.toFixed(6);
+    const lng = pos.coords.longitude.toFixed(6);
+
+    try {
+      const res = await fetch(`${GOLF_PROXY}/nearby?lat=${lat}&lng=${lng}&radius=25`);
+      const data = await res.json();
+      loadEl.classList.add('hidden');
+      btn.disabled = false;
+      btn.textContent = '📍 Find courses near me';
+
+      const courses = data.courses || [];
+
+      if (!courses.length || data.supported === false) {
+        // API doesn't support location search — show message
+        showToast('Location search not available — try searching by name');
+        return;
+      }
+
+      // Sort by distance if coords available
+      courses.sort((a, b) => {
+        const distA = getDistanceMiles(lat, lng, a.location?.latitude || a.latitude, a.location?.longitude || a.longitude);
+        const distB = getDistanceMiles(lat, lng, b.location?.latitude || b.latitude, b.location?.longitude || b.longitude);
+        return distA - distB;
+      });
+
+      resultsEl.innerHTML = courses.slice(0, 10).map(c => {
+        const name = c.club_name || c.course_name || c.name || 'Unknown Course';
+        const city = c.location?.city || c.city || '';
+        const state = c.location?.state || c.state_name || c.state || '';
+        const clat = c.location?.latitude || c.latitude;
+        const clng = c.location?.longitude || c.longitude;
+        const dist = (clat && clng) ? `${getDistanceMiles(lat, lng, clat, clng).toFixed(1)} mi` : '';
+        const location = [city, state, dist].filter(Boolean).join(' · ');
+        const encoded = encodeURIComponent(JSON.stringify({...c, _display_name: name}));
+        return `
+          <div class="course-result" onclick="selectCourse(JSON.parse(decodeURIComponent('${encoded}')))">
+            <div class="course-result-name">${name}</div>
+            <div class="course-result-location">${location}</div>
+          </div>
+        `;
+      }).join('');
+      resultsEl.classList.remove('hidden');
+
+    } catch(e) {
+      loadEl.classList.add('hidden');
+      btn.disabled = false;
+      btn.textContent = '📍 Find courses near me';
+      showToast('Could not load nearby courses');
+    }
+  }, (err) => {
+    loadEl.classList.add('hidden');
+    btn.disabled = false;
+    btn.textContent = '📍 Find courses near me';
+    showToast('Location access denied — search by name instead');
+  }, { enableHighAccuracy: false, timeout: 10000 });
+}
+
+function getDistanceMiles(lat1, lng1, lat2, lng2) {
+  if (!lat2 || !lng2) return 9999;
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
 async function searchCourses(query) {
