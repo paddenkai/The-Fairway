@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Fairway</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The Fairway">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --ink: #0a1a0f;
+  --ink-mid: #1c3324;
+  --ink-light: #2d4a38;
+  --turf: #3a6b47;
+  --turf-light: #4e8f5e;
+  --gold: #c8a951;
+  --gold-light: #dfc070;
+  --cream: #f5f0e8;
+  --cream-dark: #ede5d4;
+  --white: #ffffff;
+  --muted: rgba(10,26,15,0.45);
+  --border: rgba(10,26,15,0.12);
+  --border-mid: rgba(10,26,15,0.2);
+  --red: #c0392b;
+  --blue: #2980b9;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(10,26,15,0.12);
+  --shadow-lg: 0 12px 48px rgba(10,26,15,0.18);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── TYPOGRAPHY ── */
+.font-display { font-family: 'Italiana', serif; }
+.mono { font-family: 'DM Mono', monospace; }
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; min-height: 100dvh; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 16px 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(200,169,81,0.3);
+}
+.app-header-title {
+  font-family: 'Italiana', serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.app-header-sub {
+  font-size: 0.7rem;
+  color: rgba(245,240,232,0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  margin-top: 1px;
+}
+.header-btn {
+  background: none;
+  border: none;
+  color: var(--cream);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.header-btn:hover { opacity: 1; }
+.header-btn svg { width: 20px; height: 20px; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ink);
+  border-top: 1px solid rgba(200,169,81,0.2);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0 8px;
+  background: none;
+  border: none;
+  color: rgba(245,240,232,0.4);
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-item svg { width: 22px; height: 22px; }
+.nav-item.active { color: var(--gold); }
+
+/* ── SCROLL CONTENT ── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px calc(80px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+.card-dark {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: rgba(200,169,81,0.2);
+}
+.card-turf {
+  background: var(--turf);
+  color: var(--white);
+  border: none;
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.18s;
+  text-decoration: none;
+  letter-spacing: 0.2px;
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--cream);
+}
+.btn-primary:active { transform: scale(0.97); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 500;
+}
+.btn-gold:active { transform: scale(0.97); background: var(--gold-light); }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-mid);
+  color: var(--ink);
+}
+.btn-outline:active { transform: scale(0.97); }
+.btn-ghost {
+  background: rgba(10,26,15,0.06);
+  color: var(--ink);
+}
+.btn-danger {
+  background: var(--red);
+  color: white;
+}
+.btn-full { width: 100%; }
+.btn-sm { padding: 10px 18px; font-size: 0.875rem; }
+.btn-lg { padding: 18px 32px; font-size: 1.1rem; border-radius: var(--radius); }
+.btn:disabled { opacity: 0.4; pointer-events: none; }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* ── FORMS ── */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-family: 'DM Mono', monospace;
+}
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  background: var(--white);
+  color: var(--ink);
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-input:focus { outline: none; border-color: var(--turf); }
+.form-input::placeholder { color: rgba(10,26,15,0.3); }
+
+/* ── CHIP / TOGGLE ── */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border-mid);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.chip.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+}
+
+/* ── SCORE GRID ── */
+.score-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.score-btn {
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: var(--cream-dark);
+  color: var(--ink);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  font-weight: 300;
+}
+.score-btn:active { background: #d4cabb; }
+.score-val {
+  flex: 1;
+  text-align: center;
+  font-family: 'Italiana', serif;
+  font-size: 2rem;
+  color: var(--ink);
+  background: var(--white);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+.score-val.eagle { color: #c0392b; }
+.score-val.birdie { color: #e67e22; }
+.score-val.par { color: var(--turf); }
+.score-val.bogey { color: var(--ink-light); }
+.score-val.double { color: #888; }
+
+/* ── HOLE NAV ── */
+.hole-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.hole-num {
+  font-family: 'Italiana', serif;
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.hole-par-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.hole-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-mid);
+  background: transparent;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.hole-nav-btn:active { background: var(--cream-dark); }
+.hole-nav-btn svg { width: 20px; height: 20px; }
+.hole-nav-btn:disabled { opacity: 0.2; }
+
+/* ── MINI SCORECARD ── */
+.mini-scorecard {
+  display: grid;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scorecard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  font-family: 'DM Mono', monospace;
+}
+.scorecard-table th, .scorecard-table td {
+  text-align: center;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  min-width: 28px;
+}
+.scorecard-table th {
+  background: var(--ink);
+  color: var(--gold);
+  font-weight: 500;
+  font-size: 0.65rem;
+}
+.scorecard-table .player-name-cell {
+  text-align: left;
+  padding-left: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  min-width: 80px;
+  font-weight: 500;
+}
+.score-eagle { background: #fdecea; color: #c0392b; font-weight: 500; }
+.score-birdie { background: #fef3e2; color: #e67e22; font-weight: 500; }
+.score-bogey { background: #f0f4ff; }
+.score-double { background: #e8f0fe; color: #555; }
+.score-current { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+/* ── SKINS TRACKER ── */
+.skins-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.skins-row:last-child { border-bottom: none; }
+.skin-hole { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+.skin-winner { font-size: 0.9rem; font-weight: 500; }
+.skin-value { font-family: 'Italiana', serif; font-size: 1.1rem; color: var(--gold); }
+
+/* ── SETTLEMENT ── */
+.settlement-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.settlement-row:last-child { border-bottom: none; }
+.settlement-names { flex: 1; }
+.settlement-from { font-size: 0.8rem; color: var(--muted); }
+.settlement-to { font-size: 1rem; font-weight: 500; }
+.settlement-amount { font-family: 'Italiana', serif; font-size: 1.6rem; color: var(--turf); }
+.venmo-btn {
+  background: #3d95ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.venmo-btn:active { opacity: 0.85; }
+
+/* ── COURSE SEARCH ── */
+.course-result {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.course-result:last-child { border-bottom: none; }
+.course-result:active { background: var(--cream-dark); }
+.course-result-name { font-weight: 500; font-size: 0.95rem; }
+.course-result-location { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+/* ── GAME BADGE ── */
+.game-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+.game-badge-skins { background: rgba(200,169,81,0.12); color: #8b6914; border-color: rgba(200,169,81,0.4); }
+.game-badge-nassau { background: rgba(58,107,71,0.12); color: var(--turf); border-color: rgba(58,107,71,0.3); }
+.game-badge-stableford { background: rgba(41,128,185,0.1); color: var(--blue); border-color: rgba(41,128,185,0.3); }
+
+/* ── HOLE DOTS ── */
+.hole-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 12px;
+}
+.hole-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-mid);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.hole-dot.done { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+.hole-dot.current { border-color: var(--gold); color: var(--gold); }
+
+/* ── PLAYER ROW ── */
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.player-row:last-child { border-bottom: none; }
+.player-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Italiana', serif;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.player-info { flex: 1; }
+.player-name { font-weight: 500; font-size: 0.95rem; }
+.player-venmo { font-size: 0.75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+.player-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+.player-remove:active { background: var(--cream-dark); }
+
+/* ── STAT PILL ── */
+.stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.stat-pill {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  text-align: center;
+  flex: 1;
+  min-width: 80px;
+}
+.stat-pill-val {
+  font-family: 'Italiana', serif;
+  font-size: 1.6rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat-pill-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'DM Mono', monospace;
+  margin-top: 3px;
+}
+
+/* ── LOADING ── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  color: var(--muted);
+}
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid var(--border-mid);
+  border-top-color: var(--turf);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.3; }
+.empty-title { font-family: 'Italiana', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: 8px; }
+.empty-sub { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+
+/* ── JOIN CODE ── */
+.join-code {
+  font-family: 'Italiana', serif;
+  font-size: 3.5rem;
+  letter-spacing: 12px;
+  text-align: center;
+  color: var(--gold);
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 16px 0;
+  line-height: 1;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,26,15,0.7);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  padding: 0;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--cream);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 90dvh;
+  overflow-y: auto;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-mid);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.modal-title {
+  font-family: 'Italiana', serif;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+/* ── GREENIE PROMPT ── */
+.greenie-section {
+  background: linear-gradient(135deg, rgba(58,107,71,0.08), rgba(58,107,71,0.04));
+  border: 1px solid rgba(58,107,71,0.2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.greenie-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--turf);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'Italiana', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.section-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom) + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--cream);
+  padding: 12px 20px;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 300;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── HOME PAGE ── */
+.hero-header {
+  background: var(--ink);
+  padding: 48px 24px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, rgba(200,169,81,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 100%, rgba(58,107,71,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-logo {
+  font-family: 'Italiana', serif;
+  font-size: 3.2rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  line-height: 1;
+  position: relative;
+}
+.hero-tagline {
+  font-size: 0.75rem;
+  color: rgba(245,240,232,0.45);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  margin-top: 8px;
+  position: relative;
+}
+
+/* ── HISTORY ROUND CARD ── */
+.round-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.round-card:active { transform: scale(0.99); }
+.round-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.round-card-course { font-weight: 500; font-size: 0.95rem; }
+.round-card-date { font-size: 0.75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+.round-card-score { font-family: 'Italiana', serif; font-size: 2rem; line-height: 1; }
+.round-card-score span { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
+
+/* ── GAME SUMMARY ── */
+.winner-crown { font-size: 1.4rem; }
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.leaderboard-row:last-child { border-bottom: none; }
+.lb-rank { font-family: 'Italiana', serif; font-size: 1.4rem; width: 28px; color: var(--muted); }
+.lb-rank.first { color: var(--gold); }
+.lb-name { flex: 1; font-weight: 500; }
+.lb-score { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--muted); }
+.lb-money { font-family: 'Italiana', serif; font-size: 1.2rem; color: var(--turf); }
+
+/* ── AMOUNT INPUT ── */
+.amount-input-wrap {
+  position: relative;
+}
+.amount-prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Italiana', serif;
+  font-size: 1.2rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+.amount-input-wrap .form-input { padding-left: 28px; }
+
+/* ── PROGRESS BAR ── */
+.hole-progress {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.hole-progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ── AUTH PAGE ── */
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(200,169,81,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(58,107,71,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+.auth-hero {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 80px 32px 40px;
+  text-align: center;
+}
+.auth-logo {
+  font-family: 'Italiana', serif;
+  font-size: 4rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.auth-tagline {
+  font-size: 0.75rem;
+  color: rgba(245,240,232,0.35);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+.auth-sheet {
+  background: var(--cream);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  padding: 28px 24px calc(40px + env(safe-area-inset-bottom));
+  position: relative;
+  z-index: 2;
+}
+.auth-sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border-mid);
+  border-radius: 2px;
+  margin: 0 auto 24px;
+}
+.auth-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 24px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  transition: all 0.2s;
+}
+.auth-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+.auth-panel { display: none; }
+.auth-panel.active { display: block; }
+
+/* ── MAGIC LINK SENT ── */
+.magic-sent {
+  text-align: center;
+  padding: 20px 0;
+}
+.magic-sent-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+
+/* ── PROFILE PAGE ── */
+.profile-avatar-large {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Italiana', serif;
+  font-size: 2.2rem;
+  margin: 0 auto 16px;
+  border: 3px solid var(--gold);
+}
+.venmo-link-card {
+  background: #3d95ce;
+  border-radius: var(--radius);
+  padding: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+.venmo-link-card:active { opacity: 0.85; }
+.venmo-icon {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+.venmo-card-text { flex: 1; }
+.venmo-card-title { font-weight: 500; font-size: 1rem; margin-bottom: 2px; }
+.venmo-card-sub { font-size: 0.8rem; opacity: 0.8; }
+.venmo-connected {
+  background: rgba(58,107,71,0.1);
+  border: 1.5px solid rgba(58,107,71,0.3);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.venmo-connected-handle {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--turf);
+  font-weight: 500;
+}
+
+/* ── UTILS ── */
+.text-gold { color: var(--gold); }
+.text-muted { color: var(--muted); }
+.text-turf { color: var(--turf); }
+.text-red { color: var(--red); }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.text-center { text-align: center; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.fw-500 { font-weight: 500; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero-header">
+    <div class="hero-logo">The Fairway</div>
+    <div class="hero-tagline">Golf · Games · Settlement</div>
+  </div>
+  <div class="scroll-content">
+
+    <!-- Active Round Banner -->
+    <div id="active-round-banner" class="hidden">
+      <div class="card card-dark mb-3" style="position:relative; overflow:hidden;">
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;opacity:0.04;font-family:'Italiana',serif;font-size:8rem;line-height:1;color:var(--gold);pointer-events:none;">⛳</div>
+        <div class="text-xs mono text-gold mb-2" style="letter-spacing:2px;text-transform:uppercase;">Round in progress</div>
+        <div id="banner-course" class="font-display" style="font-size:1.4rem;color:var(--cream);margin-bottom:4px;"></div>
+        <div id="banner-hole" class="text-sm" style="color:rgba(245,240,232,0.5);margin-bottom:16px;"></div>
+        <button class="btn btn-gold btn-full" onclick="resumeRound()">Resume Round</button>
+      </div>
+    </div>
+
+    <!-- Start / Join -->
+    <div class="section-title">Play</div>
+    <div class="section-sub">Start a new round or join a friend's</div>
+
+    <div style="display:flex; gap:10px; margin-bottom:20px;">
+      <button class="btn btn-primary btn-full btn-lg" onclick="showPage('page-setup')" style="flex:1.4;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+        New Round
+      </button>
+      <button class="btn btn-outline btn-full btn-lg" onclick="showJoinModal()" style="flex:1;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Join
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-title">Your Stats</div>
+    <div class="section-sub">All-time performance</div>
+    <div class="stat-row" id="home-stats">
+      <div class="stat-pill"><div class="stat-pill-val" id="stat-rounds">—</div><div class="stat-pill-label">Rounds</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="stat-best">—</div><div class="stat-pill-label">Best Round</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="stat-net" style="color:var(--turf);">—</div><div class="stat-pill-label">Net $</div></div>
+    </div>
+
+    <!-- Recent Rounds -->
+    <div class="section-title mt-3">Recent Rounds</div>
+    <div id="recent-rounds-list">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: SETUP
+══════════════════════════════════════════ -->
+<div id="page-setup" class="page">
+  <div class="app-header">
+    <button class="header-btn" onclick="showPage('page-home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </button>
+    <div>
+      <div class="app-header-title">New Round</div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="scroll-content">
+
+    <!-- Step 1: Course -->
+    <div id="setup-step-course">
+      <div class="section-title">Find your course</div>
+      <div class="section-sub">Search by name or city</div>
+      <div class="form-group">
+        <input class="form-input" id="course-search-input" type="text" placeholder="e.g. Pebble Beach, Torrey Pines..." autocomplete="off">
+      </div>
+      <div id="course-search-results" class="card hidden" style="padding:0;overflow:hidden;"></div>
+      <div id="course-search-loading" class="hidden"><div class="loading"><div class="spinner"></div></div></div>
+      <div id="course-selected" class="hidden">
+        <div class="card" style="background:var(--turf);color:white;border:none;">
+          <div class="text-xs mono mb-2" style="opacity:0.7;letter-spacing:2px;text-transform:uppercase;">Selected course</div>
+          <div id="course-selected-name" style="font-family:'Italiana',serif;font-size:1.4rem;"></div>
+          <div id="course-selected-location" style="font-size:0.8rem;opacity:0.75;margin-top:4px;"></div>
+          <div id="course-selected-holes" style="font-size:0.8rem;opacity:0.7;margin-top:2px;font-family:'DM Mono',monospace;"></div>
+          <button class="btn btn-sm mt-3" style="background:rgba(255,255,255,0.15);color:white;border:none;" onclick="clearCourse()">Change course</button>
+        </div>
+        <button class="btn btn-primary btn-full mt-3 btn-lg" onclick="goToSetupPlayers()">
+          Next: Add Players
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Players -->
+    <div id="setup-step-players" class="hidden">
+      <div class="section-title">Players</div>
+      <div class="section-sub">Add up to 4 players — include Venmo handles for easy settlement</div>
+
+      <div id="players-list"></div>
+
+      <div id="add-player-form" class="card mb-3">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" id="new-player-name" type="text" placeholder="e.g. Dad">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Venmo Handle (optional)</label>
+          <input class="form-input" id="new-player-venmo" type="text" placeholder="@username">
+        </div>
+        <button class="btn btn-ghost btn-full" onclick="addPlayer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          Add Player
+        </button>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToSetupGames()" id="players-next-btn" disabled>
+        Next: Choose Games
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- Step 3: Games -->
+    <div id="setup-step-games" class="hidden">
+      <div class="section-title">Games</div>
+      <div class="section-sub">Pick one or more — they all run simultaneously</div>
+
+      <div class="card mb-3" id="game-skins-card" style="cursor:pointer;" onclick="toggleGame('skins')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="game-badge game-badge-skins">Skins</span>
+            <div id="skins-check" class="hidden" style="color:var(--turf);">✓</div>
+          </div>
+          <div id="skins-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
+        </div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Win a hole outright = win the skin. Ties carry over. Includes <strong>Greenies</strong> on par 3s.</div>
+        <div id="skins-options" class="hidden mt-3">
+          <label class="form-label">Dollar amount per skin</label>
+          <div class="amount-input-wrap">
+            <span class="amount-prefix">$</span>
+            <input class="form-input" id="skins-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3" id="game-nassau-card" style="cursor:pointer;" onclick="toggleGame('nassau')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="game-badge game-badge-nassau">Nassau</span>
+            <div id="nassau-check" class="hidden" style="color:var(--turf);">✓</div>
+          </div>
+          <div id="nassau-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
+        </div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Three separate bets: front 9, back 9, and total 18.</div>
+        <div id="nassau-options" class="hidden mt-3">
+          <label class="form-label">Dollar amount per bet</label>
+          <div class="amount-input-wrap">
+            <span class="amount-prefix">$</span>
+            <input class="form-input" id="nassau-amount" type="number" min="1" value="5" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-3" id="game-stableford-card" style="cursor:pointer;" onclick="toggleGame('stableford')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="game-badge game-badge-stableford">Stableford</span>
+            <div id="stableford-check" class="hidden" style="color:var(--turf);">✓</div>
+          </div>
+          <div id="stableford-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
+        </div>
+        <div style="font-size:0.875rem;color:var(--muted);line-height:1.5;">Points per hole: Eagle=4, Birdie=3, Par=2, Bogey=1, Double+=0. Highest total wins.</div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-3" onclick="startRound()" id="start-round-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
+        Start Round
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: ROUND (SCORECARD)
+══════════════════════════════════════════ -->
+<div id="page-round" class="page">
+  <div class="app-header">
+    <button class="header-btn" onclick="confirmLeaveRound()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div style="text-align:center;">
+      <div class="app-header-title" id="round-course-name">The Fairway</div>
+      <div class="app-header-sub" id="round-game-badges"></div>
+    </div>
+    <button class="header-btn" onclick="showScorecard()">Card</button>
+  </div>
+  <div class="scroll-content" style="padding-top:16px;">
+
+    <div class="hole-progress">
+      <div class="hole-progress-fill" id="hole-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Hole navigation -->
+    <div class="hole-nav">
+      <button class="hole-nav-btn" id="prev-hole-btn" onclick="prevHole()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div style="text-align:center;">
+        <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
+        <div class="hole-num" id="current-hole-display">1</div>
+        <div class="hole-par-badge" id="current-par-display">Par 4</div>
+      </div>
+      <button class="hole-nav-btn" id="next-hole-btn" onclick="nextHole()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- Greenie section (shown on par 3s when skins active) -->
+    <div id="greenie-section" class="greenie-section hidden">
+      <div class="greenie-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Greenie — Par 3
+      </div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Who hit the green on their tee shot and is closest to the pin?</div>
+      <div class="chip-group" id="greenie-chips"></div>
+      <div id="greenie-winner-display" class="mt-2 text-sm" style="color:var(--turf);font-weight:500;"></div>
+    </div>
+
+    <!-- Scores -->
+    <div id="score-inputs"></div>
+
+    <!-- Games running tally -->
+    <div id="games-tally" class="mt-3"></div>
+
+    <!-- Hole dots -->
+    <div class="card mt-3" style="padding:14px 16px;">
+      <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Progress</div>
+      <div class="hole-dots" id="hole-dots"></div>
+    </div>
+
+    <!-- Finish round -->
+    <button id="finish-round-btn" class="btn btn-gold btn-full btn-lg mt-3 hidden" onclick="finishRound()">
+      Finish Round & Settle Up
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: SETTLEMENT
+══════════════════════════════════════════ -->
+<div id="page-settlement" class="page">
+  <div class="app-header">
+    <button class="header-btn" onclick="showPage('page-round')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div style="text-align:center;">
+      <div class="app-header-title">Settle Up</div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="scroll-content">
+
+    <!-- Winner banner -->
+    <div class="card card-dark mb-3" style="text-align:center;padding:28px 20px;">
+      <div class="winner-crown mb-2">🏆</div>
+      <div style="font-size:0.7rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:rgba(245,240,232,0.5);margin-bottom:6px;">Overall winner</div>
+      <div id="settlement-winner" class="font-display" style="font-size:2rem;color:var(--gold);"></div>
+    </div>
+
+    <!-- Game results -->
+    <div id="game-results-section"></div>
+
+    <!-- Full scorecard -->
+    <div class="card mb-3">
+      <div class="section-title mb-2">Scorecard</div>
+      <div class="mini-scorecard" id="final-scorecard"></div>
+    </div>
+
+    <!-- Money settlement -->
+    <div class="section-title">Money</div>
+    <div class="section-sub">Tap Pay to open Venmo</div>
+    <div class="card" id="settlement-list"></div>
+
+    <button class="btn btn-outline btn-full mt-3" onclick="saveAndFinish()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+      Save Round & Finish
+    </button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: HISTORY
+══════════════════════════════════════════ -->
+<div id="page-history" class="page">
+  <div class="app-header">
+    <div></div>
+    <div style="text-align:center;">
+      <div class="app-header-title">History</div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="scroll-content">
+    <div class="section-title">Past Rounds</div>
+    <div class="section-sub">Your complete round history</div>
+    <div id="history-list">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: AUTH (Login / Sign Up)
+══════════════════════════════════════════ -->
+<div id="page-auth" class="page" style="display:none;">
+  <div class="auth-page">
+    <div class="auth-bg"></div>
+    <div class="auth-hero">
+      <div class="auth-logo">The Fairway</div>
+      <div class="auth-tagline">Golf · Games · Settlement</div>
+    </div>
+    <div class="auth-sheet">
+      <div class="auth-sheet-handle"></div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('magic')">Magic Link</button>
+        <button class="auth-tab" onclick="switchAuthTab('password')">Password</button>
+      </div>
+
+      <!-- Magic Link Panel -->
+      <div class="auth-panel active" id="auth-panel-magic">
+        <p class="text-sm text-muted mb-3" style="line-height:1.6;">Enter your email and we'll send you a link — no password needed. Easiest on mobile.</p>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="magic-email" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" onclick="sendMagicLink()">
+          Send Magic Link
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+        <div id="magic-sent" class="magic-sent hidden">
+          <div class="magic-sent-icon">✉️</div>
+          <div class="section-title mb-2">Check your email</div>
+          <p class="text-sm text-muted">We sent a login link to <strong id="magic-sent-email"></strong>. Tap it to sign in.</p>
+        </div>
+      </div>
+
+      <!-- Password Panel -->
+      <div class="auth-panel" id="auth-panel-password">
+        <div style="display:flex;gap:8px;margin-bottom:20px;">
+          <button class="chip active" id="pw-tab-login" onclick="switchPwTab('login')">Log In</button>
+          <button class="chip" id="pw-tab-signup" onclick="switchPwTab('signup')">Sign Up</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="pw-email" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group" id="pw-name-group" style="display:none;">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" id="pw-name" type="text" placeholder="e.g. Kai">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="pw-password" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="pw-submit-btn" onclick="submitPassword()">Log In</button>
+        <div id="pw-error" class="text-sm text-red mt-2 hidden"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: PROFILE
+══════════════════════════════════════════ -->
+<div id="page-profile" class="page">
+  <div class="app-header">
+    <div></div>
+    <div style="text-align:center;">
+      <div class="app-header-title">Profile</div>
+    </div>
+    <button class="header-btn" onclick="signOut()" style="color:rgba(245,240,232,0.6);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+  <div class="scroll-content">
+
+    <!-- Avatar + name -->
+    <div style="text-align:center;padding:8px 0 24px;">
+      <div class="profile-avatar-large" id="profile-avatar-large">K</div>
+      <div class="font-display" style="font-size:1.8rem;" id="profile-display-name">Golfer</div>
+      <div class="text-sm text-muted mono mt-1" id="profile-email-display"></div>
+    </div>
+
+    <!-- Venmo linking -->
+    <div class="section-title mb-1">Venmo</div>
+    <div class="section-sub">Linked for instant settlement after rounds</div>
+    <div id="venmo-connected-block" class="hidden">
+      <div class="venmo-connected">
+        <div style="width:40px;height:40px;background:#3d95ce;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;">V</div>
+        <div>
+          <div class="venmo-connected-handle" id="venmo-handle-display"></div>
+          <div class="text-xs text-muted">Venmo connected</div>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="editVenmo()" style="margin-left:auto;">Edit</button>
+      </div>
+    </div>
+    <div id="venmo-unconnected-block">
+      <button class="venmo-link-card" onclick="editVenmo()">
+        <div class="venmo-icon">V</div>
+        <div class="venmo-card-text">
+          <div class="venmo-card-title">Connect Venmo</div>
+          <div class="venmo-card-sub">Auto-fill payment requests after every round</div>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Edit profile -->
+    <div class="section-title mb-3">Your Info</div>
+    <div class="form-group">
+      <label class="form-label">Display Name</label>
+      <input class="form-input" id="profile-name-input" type="text" placeholder="Your name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Venmo Handle</label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;">@</span>
+        <input class="form-input" id="profile-venmo-input" type="text" placeholder="username" style="padding-left:28px;">
+      </div>
+      <div class="form-note text-xs text-muted mt-1">Just your Venmo username, without the @</div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
+
+    <div class="divider"></div>
+
+    <!-- Stats -->
+    <div class="section-title mb-3">Your Stats</div>
+    <div class="stat-row">
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-rounds">—</div><div class="stat-pill-label">Rounds</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-best">—</div><div class="stat-pill-label">Best</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-pill" style="flex:none;width:100%;"><div class="stat-pill-val" id="profile-stat-net" style="color:var(--turf);">—</div><div class="stat-pill-label">Net Money Won</div></div>
+    </div>
+
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BOTTOM NAV
+══════════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" data-page="page-home" onclick="navTo('page-home', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    Home
+  </button>
+  <button class="nav-item" data-page="page-round" onclick="navTo('page-round', this)" id="nav-round-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.93 4.93l2.12 2.12m9.9 9.9 2.12 2.12M4.93 19.07l2.12-2.12m9.9-9.9 2.12-2.12"/></svg>
+    Round
+  </button>
+  <button class="nav-item" data-page="page-history" onclick="navTo('page-history', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+    History
+  </button>
+  <button class="nav-item" data-page="page-profile" onclick="navTo('page-profile', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profile
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════ -->
+
+<!-- Join Modal -->
+<div class="modal-overlay" id="join-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Join a Round</div>
+    <p class="text-sm text-muted mb-3">Enter the 4-digit code from the round creator</p>
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" id="join-name" type="text" placeholder="e.g. Mike">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Venmo Handle (optional)</label>
+      <input class="form-input" id="join-venmo" type="text" placeholder="@username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Round Code</label>
+      <input class="form-input mono" id="join-code-input" type="text" placeholder="e.g. 4827" maxlength="4" style="font-size:1.4rem;letter-spacing:6px;text-align:center;">
+    </div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="joinRound()">Join Round</button>
+    <button class="btn btn-ghost btn-full mt-2" onclick="closeModal('join-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Scorecard Modal -->
+<div class="modal-overlay" id="scorecard-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Full Scorecard</div>
+    <div class="mini-scorecard" id="modal-scorecard"></div>
+    <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('scorecard-modal')">Close</button>
+  </div>
+</div>
+
+<!-- Round Detail Modal -->
+<div class="modal-overlay" id="round-detail-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="round-detail-content"></div>
+    <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('round-detail-modal')">Close</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const SUPABASE_URL = 'https://xjkyjqfbicnppjlsdvju.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_1aP1PUQwlKEuwFJtQPjIxw_p6c967oa';
+const GOLF_API_KEY = 'VMP53Q6WZANO5U72FFBOF77QY4';
+const GOLF_API_BASE = 'https://api.golfcourseapi.com/v1';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let state = {
+  user: null,
+  round: null,       // current round object
+  course: null,      // selected course
+  players: [],       // [{name, venmo, id}]
+  scores: {},        // { playerId: { hole: score } }
+  greenies: {},      // { hole: playerId or null }
+  greenieEligible: {}, // { hole: playerId } — closest to pin
+  games: {
+    skins: false,
+    nassau: false,
+    stableford: false
+  },
+  gameAmounts: {
+    skins: 1,
+    nassau: 5
+  },
+  currentHole: 1,
+  totalHoles: 18,
+  pars: {},          // { hole: par }
+  joinCode: null,
+  roundId: null,
+  realtimeChannel: null
+};
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  loadHomeStats();
+  loadRecentRounds();
+  setupCourseSearch();
+  checkActiveRound();
+});
+
+async function initAuth() {
+  // Handle magic link redirect
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const { data, error } = await sb.auth.getSession();
+    if (data.session) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+
+  const { data } = await sb.auth.getSession();
+  if (data.session) {
+    state.user = data.session.user;
+    await loadProfile();
+  } else {
+    showAuthPage();
+    return;
+  }
+}
+
+function showAuthPage() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-auth').style.display = 'flex';
+  document.getElementById('page-auth').classList.add('active');
+  document.getElementById('bottom-nav').style.display = 'none';
+}
+
+// ── AUTH TABS ──
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'magic') || (i === 1 && tab === 'password'));
+  });
+  document.getElementById('auth-panel-magic').classList.toggle('active', tab === 'magic');
+  document.getElementById('auth-panel-password').classList.toggle('active', tab === 'password');
+}
+
+function switchPwTab(tab) {
+  const isSignup = tab === 'signup';
+  document.getElementById('pw-tab-login').classList.toggle('active', !isSignup);
+  document.getElementById('pw-tab-signup').classList.toggle('active', isSignup);
+  document.getElementById('pw-name-group').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('pw-submit-btn').textContent = isSignup ? 'Create Account' : 'Log In';
+  document.getElementById('pw-error').classList.add('hidden');
+}
+
+// ── MAGIC LINK ──
+async function sendMagicLink() {
+  const email = document.getElementById('magic-email').value.trim();
+  if (!email) { showToast('Enter your email'); return; }
+
+  const redirectTo = window.location.origin + window.location.pathname;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
+
+  if (error) { showToast('Error: ' + error.message); return; }
+
+  document.getElementById('magic-sent-email').textContent = email;
+  document.getElementById('magic-email').closest('.form-group').style.display = 'none';
+  document.querySelector('#auth-panel-magic .btn').style.display = 'none';
+  document.getElementById('magic-sent').classList.remove('hidden');
+}
+
+// ── PASSWORD AUTH ──
+async function submitPassword() {
+  const email = document.getElementById('pw-email').value.trim();
+  const password = document.getElementById('pw-password').value;
+  const name = document.getElementById('pw-name').value.trim();
+  const isSignup = document.getElementById('pw-tab-signup').classList.contains('active');
+  const errEl = document.getElementById('pw-error');
+
+  if (!email || !password) { showToast('Fill in all fields'); return; }
+
+  errEl.classList.add('hidden');
+
+  let result;
+  if (isSignup) {
+    result = await sb.auth.signUp({ email, password, options: { data: { full_name: name || email.split('@')[0] } } });
+  } else {
+    result = await sb.auth.signInWithPassword({ email, password });
+  }
+
+  const { data, error } = result;
+  if (error) {
+    errEl.textContent = error.message;
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  state.user = data.user || data.session?.user;
+  if (isSignup && name) {
+    await upsertProfile({ full_name: name });
+  }
+  await afterLogin();
+}
+
+// ── AFTER LOGIN ──
+async function afterLogin() {
+  await loadProfile();
+  document.getElementById('page-auth').style.display = 'none';
+  document.getElementById('page-auth').classList.remove('active');
+  document.getElementById('bottom-nav').style.display = '';
+  showPage('page-home');
+  loadHomeStats();
+  loadRecentRounds();
+  checkActiveRound();
+}
+
+// ── SIGN OUT ──
+async function signOut() {
+  if (!confirm('Sign out?')) return;
+  await sb.auth.signOut();
+  state.user = null;
+  state.profile = null;
+  showAuthPage();
+}
+
+// ── PROFILE ──
+async function loadProfile() {
+  if (!state.user) return;
+  try {
+    const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).single();
+    state.profile = data || {};
+    renderProfileUI();
+    prefillPlayerFromProfile();
+  } catch(e) {
+    state.profile = {};
+  }
+}
+
+function renderProfileUI() {
+  const p = state.profile || {};
+  const name = p.full_name || state.user?.email?.split('@')[0] || 'Golfer';
+  const venmo = p.venmo_handle || '';
+  const email = state.user?.email || '';
+
+  // Profile page
+  document.getElementById('profile-avatar-large').textContent = name[0]?.toUpperCase() || 'G';
+  document.getElementById('profile-display-name').textContent = name;
+  document.getElementById('profile-email-display').textContent = email;
+  document.getElementById('profile-name-input').value = name;
+  document.getElementById('profile-venmo-input').value = venmo;
+
+  // Venmo block
+  if (venmo) {
+    document.getElementById('venmo-connected-block').classList.remove('hidden');
+    document.getElementById('venmo-unconnected-block').classList.add('hidden');
+    document.getElementById('venmo-handle-display').textContent = '@' + venmo;
+  } else {
+    document.getElementById('venmo-connected-block').classList.add('hidden');
+    document.getElementById('venmo-unconnected-block').classList.remove('hidden');
+  }
+
+  // Load stats
+  loadProfileStats();
+}
+
+function prefillPlayerFromProfile() {
+  // Pre-fill the "you" player when starting a round
+  const p = state.profile || {};
+  const name = p.full_name || state.user?.email?.split('@')[0] || '';
+  const venmo = p.venmo_handle || '';
+  if (name && !state.players.find(pl => pl.name === name)) {
+    state.players = [{ id: 'me', name, venmo }];
+  }
+}
+
+async function saveProfile() {
+  const name = document.getElementById('profile-name-input').value.trim();
+  const venmo = document.getElementById('profile-venmo-input').value.trim().replace(/^@/, '');
+  if (!name) { showToast('Enter your name'); return; }
+
+  await upsertProfile({ full_name: name, venmo_handle: venmo });
+  state.profile = { ...state.profile, full_name: name, venmo_handle: venmo };
+  renderProfileUI();
+  showToast('Profile saved ✓');
+}
+
+async function upsertProfile(updates) {
+  if (!state.user) return;
+  await sb.from('profiles').upsert({
+    id: state.user.id,
+    email: state.user.email,
+    updated_at: new Date().toISOString(),
+    ...updates
+  });
+}
+
+function editVenmo() {
+  document.getElementById('profile-venmo-input').focus();
+  // Scroll to the input
+  document.getElementById('profile-venmo-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function loadProfileStats() {
+  try {
+    const { data } = await sb.from('rounds').select('*').eq('status', 'complete').order('created_at', { ascending: false }).limit(50);
+    if (!data?.length) return;
+
+    document.getElementById('profile-stat-rounds').textContent = data.length;
+
+    const myName = state.profile?.full_name;
+    const scores = data.map(r => {
+      const me = r.players?.find(p => p.name === myName || p.id === 'me');
+      if (!me) return null;
+      return Object.values(r.scores?.[me.id] || {}).reduce((s, v) => s + (v || 0), 0) || null;
+    }).filter(Boolean);
+
+    if (scores.length) {
+      document.getElementById('profile-stat-avg').textContent = Math.round(scores.reduce((a, b) => a + b) / scores.length);
+      document.getElementById('profile-stat-best').textContent = Math.min(...scores);
+    }
+    document.getElementById('profile-stat-net').textContent = '+$—';
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const nav = document.getElementById('bottom-nav');
+  const hideNav = ['page-setup', 'page-settlement', 'page-auth'].includes(id);
+  nav.style.display = hideNav ? 'none' : '';
+
+  if (id === 'page-history') loadHistory();
+  if (id === 'page-home') { loadHomeStats(); loadRecentRounds(); }
+  if (id === 'page-profile') renderProfileUI();
+}
+
+function navTo(pageId, btn) {
+  if (pageId === 'page-round' && !state.roundId) {
+    showPage('page-setup');
+    return;
+  }
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+  showPage(pageId);
+}
+
+// ══════════════════════════════════════════
+// COURSE SEARCH
+// ══════════════════════════════════════════
+function setupCourseSearch() {
+  const input = document.getElementById('course-search-input');
+  let debounceTimer;
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (q.length < 3) {
+      document.getElementById('course-search-results').classList.add('hidden');
+      return;
+    }
+    debounceTimer = setTimeout(() => searchCourses(q), 400);
+  });
+}
+
+async function searchCourses(query) {
+  const loadEl = document.getElementById('course-search-loading');
+  const resultsEl = document.getElementById('course-search-results');
+  loadEl.classList.remove('hidden');
+  resultsEl.classList.add('hidden');
+
+  try {
+    const res = await fetch(`${GOLF_API_BASE}/courses?search=${encodeURIComponent(query)}`, {
+      headers: { 'x-api-key': GOLF_API_KEY }
+    });
+    const data = await res.json();
+    loadEl.classList.add('hidden');
+
+    const courses = data.courses || data || [];
+    if (!courses.length) {
+      resultsEl.innerHTML = '<div class="course-result text-muted text-sm" style="padding:16px;">No courses found. Try a different search.</div>';
+      resultsEl.classList.remove('hidden');
+      return;
+    }
+
+    resultsEl.innerHTML = courses.slice(0, 8).map(c => `
+      <div class="course-result" onclick="selectCourse(${JSON.stringify(c).replace(/"/g,'&quot;')})">
+        <div class="course-result-name">${c.club_name || c.name}</div>
+        <div class="course-result-location">${[c.city, c.state_name || c.state, c.country_name || c.country].filter(Boolean).join(', ')}</div>
+      </div>
+    `).join('');
+    resultsEl.classList.remove('hidden');
+  } catch(e) {
+    loadEl.classList.add('hidden');
+    showToast('Search failed — check connection');
+  }
+}
+
+async function selectCourse(course) {
+  document.getElementById('course-search-results').classList.add('hidden');
+  document.getElementById('course-search-input').value = '';
+
+  // Fetch full course details with holes
+  try {
+    const res = await fetch(`${GOLF_API_BASE}/courses/${course.id}`, {
+      headers: { 'x-api-key': GOLF_API_KEY }
+    });
+    const full = await res.json();
+    const courseData = full.course || full;
+
+    // Extract pars
+    const holes = courseData.holes || courseData.tees?.[0]?.holes || [];
+    const pars = {};
+    if (holes.length) {
+      holes.forEach((h, i) => {
+        pars[i + 1] = h.par || 4;
+      });
+    } else {
+      // fallback: standard pars
+      for (let i = 1; i <= 18; i++) pars[i] = 4;
+      if (pars[3]) pars[3] = 3; if (pars[6]) pars[6] = 3;
+      if (pars[9]) pars[9] = 5; if (pars[12]) pars[12] = 3;
+      if (pars[15]) pars[15] = 5; if (pars[17]) pars[17] = 3;
+    }
+
+    state.course = courseData;
+    state.course.display_name = course.club_name || course.name;
+    state.pars = pars;
+    state.totalHoles = holes.length || (courseData.num_holes || 18);
+
+    document.getElementById('course-selected-name').textContent = state.course.display_name;
+    document.getElementById('course-selected-location').textContent = [course.city, course.state_name || course.state].filter(Boolean).join(', ');
+    document.getElementById('course-selected-holes').textContent = `${state.totalHoles} holes`;
+    document.getElementById('course-selected').classList.remove('hidden');
+
+  } catch(e) {
+    // Use basic course data
+    state.course = course;
+    state.course.display_name = course.club_name || course.name;
+    state.pars = {};
+    for (let i = 1; i <= 18; i++) state.pars[i] = 4;
+    state.totalHoles = 18;
+
+    document.getElementById('course-selected-name').textContent = state.course.display_name;
+    document.getElementById('course-selected-location').textContent = [course.city, course.state_name || course.state].filter(Boolean).join(', ');
+    document.getElementById('course-selected-holes').textContent = '18 holes';
+    document.getElementById('course-selected').classList.remove('hidden');
+  }
+}
+
+function clearCourse() {
+  state.course = null;
+  state.pars = {};
+  document.getElementById('course-selected').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════
+// SETUP FLOW
+// ══════════════════════════════════════════
+function goToSetupPlayers() {
+  if (!state.course) { showToast('Please select a course first'); return; }
+  document.getElementById('setup-step-course').classList.add('hidden');
+  document.getElementById('setup-step-players').classList.remove('hidden');
+  renderPlayersList();
+}
+
+function goToSetupGames() {
+  if (state.players.length < 2) { showToast('Add at least 2 players'); return; }
+  document.getElementById('setup-step-players').classList.add('hidden');
+  document.getElementById('setup-step-games').classList.remove('hidden');
+}
+
+function addPlayer() {
+  const name = document.getElementById('new-player-name').value.trim();
+  const venmo = document.getElementById('new-player-venmo').value.trim().replace(/^@/, '');
+  if (!name) { showToast('Enter a player name'); return; }
+  if (state.players.length >= 4) { showToast('Max 4 players'); return; }
+
+  state.players.push({ id: genId(), name, venmo });
+  document.getElementById('new-player-name').value = '';
+  document.getElementById('new-player-venmo').value = '';
+  renderPlayersList();
+  document.getElementById('players-next-btn').disabled = state.players.length < 2;
+}
+
+function removePlayer(id) {
+  state.players = state.players.filter(p => p.id !== id);
+  renderPlayersList();
+  document.getElementById('players-next-btn').disabled = state.players.length < 2;
+}
+
+function renderPlayersList() {
+  const el = document.getElementById('players-list');
+  if (!state.players.length) {
+    el.innerHTML = '';
+    return;
+  }
+  el.innerHTML = `<div class="card mb-3" style="padding:8px 16px;">` +
+    state.players.map(p => `
+      <div class="player-row">
+        <div class="player-avatar">${p.name[0].toUpperCase()}</div>
+        <div class="player-info">
+          <div class="player-name">${p.name}</div>
+          <div class="player-venmo">${p.venmo ? '@' + p.venmo : 'No Venmo'}</div>
+        </div>
+        <button class="player-remove" onclick="removePlayer('${p.id}')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        </button>
+      </div>
+    `).join('') + '</div>';
+}
+
+function toggleGame(game) {
+  state.games[game] = !state.games[game];
+  const card = document.getElementById(`game-${game}-card`);
+  const toggle = document.getElementById(`${game}-toggle`);
+  const opts = document.getElementById(`${game}-options`);
+  const check = document.getElementById(`${game}-check`);
+
+  if (state.games[game]) {
+    card.style.borderColor = 'var(--turf)';
+    toggle.style.background = 'var(--turf)';
+    toggle.style.borderColor = 'var(--turf)';
+    toggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>`;
+    if (opts) opts.classList.remove('hidden');
+    if (check) check.classList.remove('hidden');
+  } else {
+    card.style.borderColor = '';
+    toggle.style.background = '';
+    toggle.style.borderColor = 'var(--border-mid)';
+    toggle.innerHTML = '';
+    if (opts) opts.classList.add('hidden');
+    if (check) check.classList.add('hidden');
+  }
+}
+
+// ══════════════════════════════════════════
+// START ROUND
+// ══════════════════════════════════════════
+async function startRound() {
+  if (!Object.values(state.games).some(v => v)) {
+    showToast('Select at least one game');
+    return;
+  }
+
+  state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
+  state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
+
+  const code = Math.floor(1000 + Math.random() * 9000).toString();
+  state.joinCode = code;
+  state.currentHole = 1;
+  state.scores = {};
+  state.greenies = {};
+  state.greenieEligible = {};
+
+  // Init scores
+  state.players.forEach(p => {
+    state.scores[p.id] = {};
+    for (let h = 1; h <= state.totalHoles; h++) state.scores[p.id][h] = null;
+  });
+
+  // Save to Supabase
+  try {
+    const { data, error } = await sb.from('rounds').insert({
+      join_code: code,
+      course_name: state.course.display_name,
+      course_data: state.course,
+      pars: state.pars,
+      total_holes: state.totalHoles,
+      players: state.players,
+      scores: state.scores,
+      greenies: state.greenies,
+      greenie_eligible: state.greenieEligible,
+      games: state.games,
+      game_amounts: state.gameAmounts,
+      created_by: state.user?.id,
+      status: 'active'
+    }).select().single();
+
+    if (error) throw error;
+    state.roundId = data.id;
+    subscribeToRound(state.roundId);
+  } catch(e) {
+    console.warn('Supabase save failed, running offline', e);
+    state.roundId = 'offline-' + genId();
+  }
+
+  showPage('page-round');
+  renderRound();
+}
+
+// ══════════════════════════════════════════
+// ROUND UI
+// ══════════════════════════════════════════
+function renderRound() {
+  document.getElementById('round-course-name').textContent = state.course?.display_name || 'Round';
+
+  // Game badges
+  const badges = Object.entries(state.games)
+    .filter(([, v]) => v)
+    .map(([g]) => `<span class="game-badge game-badge-${g}">${g}</span>`)
+    .join(' ');
+  document.getElementById('round-game-badges').innerHTML = badges;
+
+  renderHole();
+  renderHoleDots();
+}
+
+function renderHole() {
+  const h = state.currentHole;
+  const par = state.pars[h] || 4;
+  const totalHoles = state.totalHoles;
+
+  document.getElementById('current-hole-display').textContent = h;
+  document.getElementById('current-par-display').textContent = `Par ${par}`;
+  document.getElementById('prev-hole-btn').disabled = h === 1;
+  document.getElementById('next-hole-btn').disabled = h === totalHoles;
+  document.getElementById('hole-progress-fill').style.width = ((h - 1) / totalHoles * 100) + '%';
+
+  // Show finish button on last hole
+  const allScored = state.players.every(p => state.scores[p.id]?.[h] !== null);
+  const isLast = h === totalHoles;
+  document.getElementById('finish-round-btn').classList.toggle('hidden', !(isLast && allScored));
+
+  // Greenie section
+  const greenieEl = document.getElementById('greenie-section');
+  if (par === 3 && state.games.skins) {
+    greenieEl.classList.remove('hidden');
+    renderGreenies(h);
+  } else {
+    greenieEl.classList.add('hidden');
+  }
+
+  // Score inputs
+  renderScoreInputs(h, par);
+
+  // Games tally
+  renderGamesTally();
+}
+
+function renderScoreInputs(hole, par) {
+  const el = document.getElementById('score-inputs');
+  el.innerHTML = state.players.map(p => {
+    const score = state.scores[p.id]?.[hole];
+    const rel = score !== null ? score - par : null;
+    const cls = rel === null ? '' : rel <= -2 ? 'eagle' : rel === -1 ? 'birdie' : rel === 0 ? 'par' : rel === 1 ? 'bogey' : 'double';
+    const label = rel === null ? '—' : rel <= -2 ? 'Eagle' : rel === -1 ? 'Birdie' : rel === 0 ? 'Par' : rel === 1 ? 'Bogey' : rel === 2 ? 'Double' : '+' + rel;
+
+    return `
+      <div class="card mb-2" style="padding:16px;">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="player-avatar" style="width:34px;height:34px;font-size:0.95rem;">${p.name[0].toUpperCase()}</div>
+            <div>
+              <div class="fw-500">${p.name}</div>
+              ${rel !== null ? `<div class="text-xs" style="color:${cls === 'eagle' ? '#c0392b' : cls === 'birdie' ? '#e67e22' : cls === 'par' ? 'var(--turf)' : 'var(--muted)'}">${label}</div>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="score-stepper">
+          <button class="score-btn" onclick="adjustScore('${p.id}', ${hole}, -1)">−</button>
+          <div class="score-val ${cls}">${score !== null ? score : '—'}</div>
+          <button class="score-btn" onclick="adjustScore('${p.id}', ${hole}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function adjustScore(playerId, hole, delta) {
+  const par = state.pars[hole] || 4;
+  const current = state.scores[playerId]?.[hole];
+  let next;
+
+  if (current === null || current === undefined) {
+    next = par + (delta > 0 ? 1 : 0);
+    if (delta < 0) next = par - 1;
+    if (next < 1) next = 1;
+  } else {
+    next = current + delta;
+    if (next < 1) return;
+  }
+
+  if (!state.scores[playerId]) state.scores[playerId] = {};
+  state.scores[playerId][hole] = next;
+
+  renderHole();
+  pushScoreUpdate();
+
+  // Check if all players scored this hole to show finish
+  const allScored = state.players.every(p => state.scores[p.id]?.[hole] !== null);
+  const isLast = hole === state.totalHoles;
+  document.getElementById('finish-round-btn').classList.toggle('hidden', !(isLast && allScored));
+  renderHoleDots();
+}
+
+function renderGreenies(hole) {
+  const chips = document.getElementById('greenie-chips');
+  const current = state.greenieEligible[hole];
+  const winner = state.greenies[hole];
+
+  chips.innerHTML = state.players.map(p => {
+    const isElig = current === p.id;
+    const isWinner = winner === p.id;
+    return `<button class="chip ${isElig || isWinner ? 'active' : ''}" onclick="setGreenieEligible('${p.id}', ${hole})">${p.name}</button>`;
+  }).join('') + `<button class="chip ${!current ? 'active' : ''}" onclick="setGreenieEligible(null, ${hole})" style="${!current ? '' : ''}">None</button>`;
+
+  const winnerDisplay = document.getElementById('greenie-winner-display');
+  if (winner) {
+    const wp = state.players.find(p => p.id === winner);
+    winnerDisplay.textContent = `✓ ${wp?.name} wins the greenie`;
+  } else if (current) {
+    const ep = state.players.find(p => p.id === current);
+    winnerDisplay.textContent = `${ep?.name} is closest — check par after scoring`;
+  } else {
+    winnerDisplay.textContent = '';
+  }
+}
+
+function setGreenieEligible(playerId, hole) {
+  if (state.greenieEligible[hole] === playerId && playerId !== null) {
+    delete state.greenieEligible[hole];
+    delete state.greenies[hole];
+  } else {
+    state.greenieEligible[hole] = playerId;
+    if (playerId === null) {
+      delete state.greenieEligible[hole];
+      delete state.greenies[hole];
+    }
+  }
+  renderGreenies(hole);
+}
+
+// Auto-resolve greenies when scores entered
+function resolveGreenies(hole) {
+  const eligible = state.greenieEligible[hole];
+  if (!eligible) return;
+  const par = state.pars[hole] || 3;
+  const score = state.scores[eligible]?.[hole];
+  if (score !== null && score <= par) {
+    state.greenies[hole] = eligible;
+  } else if (score !== null) {
+    delete state.greenies[hole];
+  }
+}
+
+function prevHole() {
+  if (state.currentHole > 1) {
+    resolveGreenies(state.currentHole);
+    state.currentHole--;
+    renderHole();
+    renderHoleDots();
+  }
+}
+
+function nextHole() {
+  if (state.currentHole < state.totalHoles) {
+    resolveGreenies(state.currentHole);
+    state.currentHole++;
+    renderHole();
+    renderHoleDots();
+  }
+}
+
+function renderHoleDots() {
+  const el = document.getElementById('hole-dots');
+  el.innerHTML = Array.from({length: state.totalHoles}, (_, i) => {
+    const h = i + 1;
+    const done = state.players.every(p => state.scores[p.id]?.[h] !== null);
+    const current = h === state.currentHole;
+    return `<div class="hole-dot ${done ? 'done' : current ? 'current' : ''}" onclick="jumpToHole(${h})">${h}</div>`;
+  }).join('');
+}
+
+function jumpToHole(h) {
+  resolveGreenies(state.currentHole);
+  state.currentHole = h;
+  renderHole();
+  renderHoleDots();
+}
+
+// ══════════════════════════════════════════
+// GAMES TALLY
+// ══════════════════════════════════════════
+function renderGamesTally() {
+  const el = document.getElementById('games-tally');
+  let html = '';
+
+  if (state.games.skins) html += renderSkinsTally();
+  if (state.games.nassau) html += renderNassauTally();
+  if (state.games.stableford) html += renderStablefordTally();
+
+  el.innerHTML = html;
+}
+
+function computeSkins() {
+  const results = {}; // hole -> { winner: playerId|null, carryover: n, value: $ }
+  let carryover = 0;
+  const amt = state.gameAmounts.skins || 1;
+
+  for (let h = 1; h <= state.totalHoles; h++) {
+    const scores = state.players.map(p => ({ id: p.id, score: state.scores[p.id]?.[h] }))
+      .filter(s => s.score !== null);
+
+    if (scores.length < state.players.length) {
+      results[h] = { winner: null, carryover, value: (carryover + 1) * amt, pending: true };
+      continue;
+    }
+
+    const min = Math.min(...scores.map(s => s.score));
+    const winners = scores.filter(s => s.score === min);
+    const holeValue = (carryover + 1) * amt;
+
+    if (winners.length === 1) {
+      const winnerId = winners[0].id;
+      // Check greenie on par 3
+      let greenieWinner = null;
+      if (state.pars[h] === 3) {
+        greenieWinner = state.greenies[h] || null;
+      }
+      results[h] = { winner: winnerId, carryover, value: holeValue, greenieWinner };
+      carryover = 0;
+    } else {
+      results[h] = { winner: null, carryover, value: holeValue, tie: true };
+      carryover++;
+    }
+  }
+  return results;
+}
+
+function renderSkinsTally() {
+  const skins = computeSkins();
+  const totals = {};
+  state.players.forEach(p => totals[p.id] = { skins: 0, greenies: 0, money: 0 });
+
+  Object.entries(skins).forEach(([h, r]) => {
+    if (r.winner) {
+      totals[r.winner].skins++;
+      totals[r.winner].money += r.value;
+    }
+    if (r.greenieWinner) {
+      totals[r.greenieWinner].greenies++;
+      totals[r.greenieWinner].money += state.gameAmounts.skins || 1;
+    }
+  });
+
+  const sorted = [...state.players].sort((a, b) => totals[b.id].money - totals[a.id].money);
+
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="game-badge game-badge-skins">Skins + Greenies</span>
+        <span class="text-xs mono text-muted">$${state.gameAmounts.skins}/hole</span>
+      </div>
+      ${sorted.map(p => `
+        <div class="flex items-center justify-between" style="padding:8px 0;border-bottom:1px solid var(--border);">
+          <div class="flex items-center gap-2">
+            <div class="player-avatar" style="width:30px;height:30px;font-size:0.8rem;">${p.name[0]}</div>
+            <span class="fw-500 text-sm">${p.name}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-muted">${totals[p.id].skins}🏆 ${totals[p.id].greenies}🟢</span>
+            <span class="font-display" style="font-size:1.2rem;color:${totals[p.id].money > 0 ? 'var(--turf)' : 'var(--muted)'}">$${totals[p.id].money}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function computeNassau() {
+  const amt = state.gameAmounts.nassau || 5;
+  const results = { front: {}, back: {}, total: {} };
+
+  // Front 9
+  const frontScores = {};
+  state.players.forEach(p => {
+    frontScores[p.id] = 0;
+    for (let h = 1; h <= 9; h++) frontScores[p.id] += state.scores[p.id]?.[h] || 0;
+  });
+
+  // Back 9
+  const backScores = {};
+  state.players.forEach(p => {
+    backScores[p.id] = 0;
+    for (let h = 10; h <= state.totalHoles; h++) backScores[p.id] += state.scores[p.id]?.[h] || 0;
+  });
+
+  // Total
+  const totalScores = {};
+  state.players.forEach(p => {
+    totalScores[p.id] = frontScores[p.id] + backScores[p.id];
+  });
+
+  const determineWinner = (scores) => {
+    const valid = Object.entries(scores).filter(([, s]) => s > 0);
+    if (!valid.length) return null;
+    const min = Math.min(...valid.map(([, s]) => s));
+    const winners = valid.filter(([, s]) => s === min);
+    return winners.length === 1 ? winners[0][0] : null; // null = tie
+  };
+
+  return {
+    front: { winner: determineWinner(frontScores), scores: frontScores, amount: amt },
+    back: { winner: determineWinner(backScores), scores: backScores, amount: amt },
+    total: { winner: determineWinner(totalScores), scores: totalScores, amount: amt }
+  };
+}
+
+function renderNassauTally() {
+  const nassau = computeNassau();
+  const sections = [
+    { label: 'Front 9', data: nassau.front },
+    { label: 'Back 9', data: nassau.back },
+    { label: 'Total', data: nassau.total }
+  ];
+
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="game-badge game-badge-nassau">Nassau</span>
+        <span class="text-xs mono text-muted">$${state.gameAmounts.nassau}/bet</span>
+      </div>
+      ${sections.map(s => {
+        const winner = s.data.winner ? state.players.find(p => p.id === s.data.winner) : null;
+        return `
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-muted">${s.label}</span>
+              <span class="text-sm fw-500">${winner ? winner.name + ' +$' + s.data.amount : 'Tied / In progress'}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function computeStableford() {
+  const points = {};
+  state.players.forEach(p => {
+    points[p.id] = 0;
+    for (let h = 1; h <= state.totalHoles; h++) {
+      const score = state.scores[p.id]?.[h];
+      const par = state.pars[h] || 4;
+      if (score === null || score === undefined) continue;
+      const rel = score - par;
+      if (rel <= -2) points[p.id] += 4;
+      else if (rel === -1) points[p.id] += 3;
+      else if (rel === 0) points[p.id] += 2;
+      else if (rel === 1) points[p.id] += 1;
+      // double+ = 0
+    }
+  });
+  return points;
+}
+
+function renderStablefordTally() {
+  const pts = computeStableford();
+  const sorted = [...state.players].sort((a, b) => pts[b.id] - pts[a.id]);
+
+  return `
+    <div class="card mb-3">
+      <div class="flex items-center justify-between mb-3">
+        <span class="game-badge game-badge-stableford">Stableford</span>
+        <span class="text-xs mono text-muted">pts</span>
+      </div>
+      ${sorted.map((p, i) => `
+        <div class="flex items-center justify-between" style="padding:8px 0;border-bottom:1px solid var(--border);">
+          <div class="flex items-center gap-2">
+            <span class="font-display" style="font-size:1.1rem;color:var(--muted);width:20px;">${i + 1}</span>
+            <span class="fw-500 text-sm">${p.name}</span>
+          </div>
+          <span class="font-display" style="font-size:1.3rem;color:${i === 0 ? 'var(--turf)' : 'var(--ink)'};">${pts[p.id]}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════
+// SCORECARD MODAL
+// ══════════════════════════════════════════
+function showScorecard() {
+  document.getElementById('modal-scorecard').innerHTML = buildScorecardHTML();
+  document.getElementById('scorecard-modal').classList.add('open');
+}
+
+function buildScorecardHTML() {
+  const holes = Array.from({length: state.totalHoles}, (_, i) => i + 1);
+  const front = holes.slice(0, 9);
+  const back = holes.slice(9);
+
+  const renderSection = (holeArr) => {
+    const cols = holeArr.map(h => `<th>${h}</th>`).join('');
+    const parRow = `<tr><td class="player-name-cell" style="background:var(--ink);color:var(--gold);">Par</td>${holeArr.map(h => `<th>${state.pars[h] || 4}</th>`).join('')}<th>${holeArr.reduce((s,h) => s + (state.pars[h]||4), 0)}</th></tr>`;
+    const playerRows = state.players.map(p => {
+      const cells = holeArr.map(h => {
+        const s = state.scores[p.id]?.[h];
+        if (s === null || s === undefined) return '<td>—</td>';
+        const par = state.pars[h] || 4;
+        const rel = s - par;
+        const cls = rel <= -2 ? 'score-eagle' : rel === -1 ? 'score-birdie' : rel === 1 ? 'score-bogey' : rel >= 2 ? 'score-double' : '';
+        const cur = h === state.currentHole ? 'score-current' : '';
+        return `<td class="${cls} ${cur}">${s}</td>`;
+      }).join('');
+      const total = holeArr.reduce((s, h) => s + (state.scores[p.id]?.[h] || 0), 0);
+      return `<tr><td class="player-name-cell">${p.name}</td>${cells}<td style="font-weight:500;">${total || '—'}</td></tr>`;
+    }).join('');
+    return `<table class="scorecard-table"><thead><tr><th></th>${cols}<th>Tot</th></tr>${parRow}</thead><tbody>${playerRows}</tbody></table>`;
+  };
+
+  let html = renderSection(front);
+  if (back.length) html += `<div style="height:8px;"></div>` + renderSection(back);
+  return html;
+}
+
+// ══════════════════════════════════════════
+// FINISH & SETTLEMENT
+// ══════════════════════════════════════════
+function finishRound() {
+  // Resolve any remaining greenies
+  for (let h = 1; h <= state.totalHoles; h++) {
+    resolveGreenies(h);
+  }
+  renderSettlement();
+  showPage('page-settlement');
+}
+
+function renderSettlement() {
+  // Winner
+  const totalScores = {};
+  state.players.forEach(p => {
+    totalScores[p.id] = 0;
+    for (let h = 1; h <= state.totalHoles; h++) {
+      totalScores[p.id] += state.scores[p.id]?.[h] || 0;
+    }
+  });
+  const sorted = [...state.players].sort((a, b) => totalScores[a.id] - totalScores[b.id]);
+  document.getElementById('settlement-winner').textContent = sorted[0]?.name || '—';
+
+  // Game results
+  let gameHTML = '';
+  if (state.games.skins) gameHTML += buildSkinsResultHTML();
+  if (state.games.nassau) gameHTML += buildNassauResultHTML();
+  if (state.games.stableford) gameHTML += buildStablefordResultHTML();
+  document.getElementById('game-results-section').innerHTML = gameHTML;
+
+  // Final scorecard
+  document.getElementById('final-scorecard').innerHTML = buildScorecardHTML();
+
+  // Settlement math
+  renderMoneySettlement();
+}
+
+function buildSkinsResultHTML() {
+  const skins = computeSkins();
+  const totals = {};
+  state.players.forEach(p => totals[p.id] = { skins: 0, greenies: 0, money: 0 });
+
+  Object.entries(skins).forEach(([, r]) => {
+    if (r.winner) { totals[r.winner].skins++; totals[r.winner].money += r.value; }
+    if (r.greenieWinner) { totals[r.greenieWinner].greenies++; totals[r.greenieWinner].money += state.gameAmounts.skins || 1; }
+  });
+
+  const sorted = [...state.players].sort((a, b) => totals[b.id].money - totals[a.id].money);
+
+  return `
+    <div class="card mb-3">
+      <div class="section-title mb-1">Skins</div>
+      <div class="text-xs mono text-muted mb-3">$${state.gameAmounts.skins}/skin incl. greenies</div>
+      ${sorted.map((p, i) => `
+        <div class="leaderboard-row">
+          <div class="lb-rank ${i === 0 ? 'first' : ''}">${i + 1}</div>
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-score">${totals[p.id].skins} skins · ${totals[p.id].greenies} 🟢</div>
+          <div class="lb-money">$${totals[p.id].money}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function buildNassauResultHTML() {
+  const n = computeNassau();
+  const winnerName = (id) => id ? (state.players.find(p => p.id === id)?.name || 'Tied') : 'Tied';
+  return `
+    <div class="card mb-3">
+      <div class="section-title mb-1">Nassau</div>
+      <div class="text-xs mono text-muted mb-3">$${state.gameAmounts.nassau}/bet</div>
+      <div class="leaderboard-row"><div class="lb-rank">F</div><div class="lb-name">Front 9</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.front.winner)}</div></div>
+      <div class="leaderboard-row"><div class="lb-rank">B</div><div class="lb-name">Back 9</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.back.winner)}</div></div>
+      <div class="leaderboard-row"><div class="lb-rank">T</div><div class="lb-name">Total</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.total.winner)}</div></div>
+    </div>
+  `;
+}
+
+function buildStablefordResultHTML() {
+  const pts = computeStableford();
+  const sorted = [...state.players].sort((a, b) => pts[b.id] - pts[a.id]);
+  return `
+    <div class="card mb-3">
+      <div class="section-title mb-3">Stableford</div>
+      ${sorted.map((p, i) => `
+        <div class="leaderboard-row">
+          <div class="lb-rank ${i === 0 ? 'first' : ''}">${i + 1}</div>
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-money">${pts[p.id]} pts</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderMoneySettlement() {
+  // Calculate net per player across all games
+  const net = {};
+  state.players.forEach(p => net[p.id] = 0);
+
+  if (state.games.skins) {
+    const skins = computeSkins();
+    const totalPot = Object.values(skins).reduce((s, r) => s + (r.winner ? r.value : 0), 0);
+    const greenieAmt = state.gameAmounts.skins || 1;
+
+    Object.entries(skins).forEach(([, r]) => {
+      if (r.winner) net[r.winner] += r.value;
+      if (r.greenieWinner) net[r.greenieWinner] += greenieAmt;
+    });
+
+    // Cost = (total won by others - own winnings) for each player
+    // Actually: each player pays the total pot / n  — winners keep winnings
+    // Simpler: debts flow from losers to winners
+    const totalWon = Object.values(net).reduce((s, v) => s + v, 0);
+    state.players.forEach(p => {
+      net[p.id] -= (totalWon / state.players.length);
+    });
+  }
+
+  if (state.games.nassau) {
+    const n = computeNassau();
+    [n.front, n.back, n.total].forEach(bet => {
+      if (bet.winner) {
+        const losers = state.players.filter(p => p.id !== bet.winner);
+        net[bet.winner] += bet.amount * losers.length;
+        losers.forEach(p => net[p.id] -= bet.amount);
+      }
+    });
+  }
+
+  // Simplify debts: who owes who
+  const debts = [];
+  const balances = {...net};
+  const players = [...state.players];
+
+  // Greedy settlement
+  for (let iter = 0; iter < 20; iter++) {
+    const creditor = players.reduce((a, b) => balances[a.id] > balances[b.id] ? a : b);
+    const debtor = players.reduce((a, b) => balances[a.id] < balances[b.id] ? a : b);
+    if (Math.abs(balances[creditor.id]) < 0.01) break;
+    const amount = Math.min(balances[creditor.id], -balances[debtor.id]);
+    if (amount < 0.01) break;
+    debts.push({ from: debtor, to: creditor, amount: Math.round(amount * 100) / 100 });
+    balances[creditor.id] -= amount;
+    balances[debtor.id] += amount;
+  }
+
+  const el = document.getElementById('settlement-list');
+  if (!debts.length) {
+    el.innerHTML = '<div class="text-sm text-muted text-center" style="padding:20px;">All even — no money owed!</div>';
+    return;
+  }
+
+  el.innerHTML = debts.map(d => {
+    const venmo = d.to.venmo;
+    const note = `Golf - The Fairway - ${state.course?.display_name || 'Round'}`;
+    const venmoUrl = venmo
+      ? `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(venmo)}&amount=${d.amount}&note=${encodeURIComponent(note)}`
+      : null;
+
+    return `
+      <div class="settlement-row">
+        <div class="settlement-names">
+          <div class="settlement-from">${d.from.name} pays</div>
+          <div class="settlement-to">${d.to.name}</div>
+        </div>
+        <div class="settlement-amount">$${d.amount.toFixed(2)}</div>
+        ${venmoUrl ? `
+          <a href="${venmoUrl}" class="venmo-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+            Pay
+          </a>
+        ` : `<div class="text-xs text-muted">No Venmo</div>`}
+      </div>
+    `;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// SAVE ROUND
+// ══════════════════════════════════════════
+async function saveAndFinish() {
+  try {
+    if (state.roundId && !state.roundId.startsWith('offline-')) {
+      await sb.from('rounds').update({
+        scores: state.scores,
+        greenies: state.greenies,
+        greenie_eligible: state.greenieEligible,
+        status: 'complete'
+      }).eq('id', state.roundId);
+    }
+    showToast('Round saved!');
+  } catch(e) { showToast('Saved locally'); }
+
+  // Clear active round
+  state.roundId = null;
+  if (state.realtimeChannel) {
+    sb.removeChannel(state.realtimeChannel);
+    state.realtimeChannel = null;
+  }
+
+  setTimeout(() => {
+    showPage('page-home');
+    navTo('page-home', document.querySelector('.nav-item'));
+    loadRecentRounds();
+    loadHomeStats();
+    document.getElementById('active-round-banner').classList.add('hidden');
+  }, 800);
+}
+
+// ══════════════════════════════════════════
+// REALTIME
+// ══════════════════════════════════════════
+function subscribeToRound(roundId) {
+  if (state.realtimeChannel) sb.removeChannel(state.realtimeChannel);
+  state.realtimeChannel = sb
+    .channel('round-' + roundId)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rounds', filter: `id=eq.${roundId}` }, payload => {
+      const d = payload.new;
+      if (d.scores) state.scores = d.scores;
+      if (d.greenies) state.greenies = d.greenies;
+      if (d.greenie_eligible) state.greenieEligible = d.greenie_eligible;
+      renderHole();
+      renderHoleDots();
+    })
+    .subscribe();
+}
+
+async function pushScoreUpdate() {
+  if (!state.roundId || state.roundId.startsWith('offline-')) return;
+  try {
+    await sb.from('rounds').update({
+      scores: state.scores,
+      greenies: state.greenies,
+      greenie_eligible: state.greenieEligible
+    }).eq('id', state.roundId);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════
+// JOIN ROUND
+// ══════════════════════════════════════════
+function showJoinModal() {
+  document.getElementById('join-modal').classList.add('open');
+}
+
+async function joinRound() {
+  const name = document.getElementById('join-name').value.trim();
+  const venmo = document.getElementById('join-venmo').value.trim().replace(/^@/, '');
+  const code = document.getElementById('join-code-input').value.trim();
+
+  if (!name || !code) { showToast('Enter your name and code'); return; }
+
+  try {
+    const { data, error } = await sb.from('rounds').select('*').eq('join_code', code).eq('status', 'active').single();
+    if (error || !data) { showToast('Round not found'); return; }
+
+    // Add self to players if not already there
+    const me = { id: genId(), name, venmo };
+    if (!data.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+      data.players.push(me);
+      await sb.from('rounds').update({ players: data.players }).eq('id', data.id);
+    }
+
+    // Load round state
+    state.roundId = data.id;
+    state.course = { display_name: data.course_name };
+    state.players = data.players;
+    state.scores = data.scores || {};
+    state.greenies = data.greenies || {};
+    state.greenieEligible = data.greenie_eligible || {};
+    state.games = data.games;
+    state.gameAmounts = data.game_amounts;
+    state.pars = data.pars;
+    state.totalHoles = data.total_holes;
+    state.currentHole = 1;
+
+    closeModal('join-modal');
+    subscribeToRound(state.roundId);
+    showPage('page-round');
+    renderRound();
+  } catch(e) {
+    showToast('Could not join round');
+  }
+}
+
+// ══════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════
+async function loadHistory() {
+  const el = document.getElementById('history-list');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+  try {
+    const { data } = await sb.from('rounds')
+      .select('*')
+      .eq('status', 'complete')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (!data?.length) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🏌️</div>
+          <div class="empty-title">No rounds yet</div>
+          <div class="empty-sub">Your completed rounds will appear here</div>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = data.map(r => {
+      const myId = state.user?.id;
+      const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const playerNames = (r.players || []).map(p => p.name).join(' · ');
+      return `
+        <div class="round-card" onclick="showRoundDetail('${r.id}')">
+          <div class="round-card-top">
+            <div>
+              <div class="round-card-course">${r.course_name}</div>
+              <div class="round-card-date">${date} · ${playerNames}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            ${Object.entries(r.games || {}).filter(([,v]) => v).map(([g]) => `<span class="game-badge game-badge-${g}">${g}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-sub">Could not load history</div></div>';
+  }
+}
+
+async function showRoundDetail(id) {
+  const { data } = await sb.from('rounds').select('*').eq('id', id).single();
+  if (!data) return;
+
+  const el = document.getElementById('round-detail-content');
+  const date = new Date(data.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+  el.innerHTML = `
+    <div class="modal-title">${data.course_name}</div>
+    <div class="text-sm text-muted mb-3">${date}</div>
+    <div class="section-title mb-2">Players</div>
+    <div class="text-sm mb-3">${(data.players || []).map(p => p.name).join(', ')}</div>
+  `;
+
+  document.getElementById('round-detail-modal').classList.add('open');
+}
+
+// ══════════════════════════════════════════
+// HOME STATS
+// ══════════════════════════════════════════
+async function loadHomeStats() {
+  try {
+    const { data } = await sb.from('rounds').select('*').eq('status', 'complete').order('created_at', { ascending: false }).limit(50);
+    if (!data?.length) return;
+
+    document.getElementById('stat-rounds').textContent = data.length;
+
+    // Very rough avg — just use total hole count for now
+    const scores = data.map(r => {
+      const myPlayer = r.players?.[0];
+      if (!myPlayer) return null;
+      const total = Object.values(r.scores?.[myPlayer.id] || {}).reduce((s, v) => s + (v || 0), 0);
+      return total || null;
+    }).filter(Boolean);
+
+    if (scores.length) {
+      const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      document.getElementById('stat-avg').textContent = avg;
+      document.getElementById('stat-best').textContent = Math.min(...scores);
+    }
+
+    document.getElementById('stat-net').textContent = '+$—';
+  } catch(e) {}
+}
+
+async function loadRecentRounds() {
+  const el = document.getElementById('recent-rounds-list');
+  try {
+    const { data } = await sb.from('rounds').select('*').eq('status', 'complete').order('created_at', { ascending: false }).limit(5);
+    if (!data?.length) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🏌️</div>
+          <div class="empty-title">Ready to play?</div>
+          <div class="empty-sub">Start a new round to track your scores, play games, and settle up instantly.</div>
+        </div>`;
+      return;
+    }
+    el.innerHTML = data.map(r => {
+      const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `
+        <div class="round-card">
+          <div class="round-card-top">
+            <div class="round-card-course">${r.course_name}</div>
+            <div class="round-card-date">${date}</div>
+          </div>
+          <div>${(r.players || []).map(p => p.name).join(' · ')}</div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '';
+  }
+}
+
+// ══════════════════════════════════════════
+// ACTIVE ROUND CHECK
+// ══════════════════════════════════════════
+async function checkActiveRound() {
+  try {
+    const { data } = await sb.from('rounds').select('*').eq('status', 'active').order('created_at', { ascending: false }).limit(1).single();
+    if (data) {
+      document.getElementById('active-round-banner').classList.remove('hidden');
+      document.getElementById('banner-course').textContent = data.course_name;
+      document.getElementById('banner-hole').textContent = 'Tap to resume';
+      // Cache for resume
+      window._activeRoundData = data;
+    }
+  } catch(e) {}
+}
+
+function resumeRound() {
+  const d = window._activeRoundData;
+  if (!d) { showPage('page-setup'); return; }
+  state.roundId = d.id;
+  state.course = { display_name: d.course_name };
+  state.players = d.players;
+  state.scores = d.scores || {};
+  state.greenies = d.greenies || {};
+  state.greenieEligible = d.greenie_eligible || {};
+  state.games = d.games;
+  state.gameAmounts = d.game_amounts;
+  state.pars = d.pars;
+  state.totalHoles = d.total_holes;
+  state.currentHole = 1;
+  subscribeToRound(state.roundId);
+  showPage('page-round');
+  renderRound();
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function genId() {
+  return Math.random().toString(36).substr(2, 9);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function confirmLeaveRound() {
+  if (confirm('Leave round? Your scores are saved.')) {
+    showPage('page-home');
+    document.querySelector('.nav-item').click();
+  }
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m) m.classList.remove('open');
+  });
+});
+
+// PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+
+</body>
+</html>
