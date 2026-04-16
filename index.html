@@ -1283,6 +1283,7 @@ body {
     <div style="text-align:center;">
       <div class="app-header-title" id="round-course-name">The Fairway</div>
       <div class="app-header-sub" id="round-game-badges"></div>
+      <div class="mono" id="round-join-code-display" style="font-size:0.7rem;letter-spacing:3px;color:var(--gold);margin-top:1px;"></div>
     </div>
     <button class="header-btn" onclick="showScorecard()">Card</button>
   </div>
@@ -2022,28 +2023,16 @@ async function selectCourse(course) {
       const full = await res.json();
       const courseData = full.course || full;
 
-      // Extract pars — handle various response shapes
-      const holes = courseData.holes || courseData.tees?.[0]?.holes || [];
+      // Extract pars from golfcourseapi response: tees.male[0].holes or tees.female[0].holes
+      const teeData = courseData.tees?.male?.[0] || courseData.tees?.female?.[0] || null;
+      const holes = teeData?.holes || courseData.holes || [];
       const pars = {};
       if (holes.length) {
         holes.forEach((h, i) => { pars[i + 1] = h.par || 4; });
-      } else if (courseData.scorecard) {
-        // Parse scorecard format: [{1: "4", 2: "5", ...}]
-        try {
-          const sc = typeof courseData.scorecard === 'string' ? JSON.parse(courseData.scorecard) : courseData.scorecard;
-          const parRow = sc.find(row => row['Hole:'] === 'Par:' || row['Hole'] === 'Par' || Object.values(row).includes('Par'));
-          if (parRow) {
-            for (let h = 1; h <= 18; h++) {
-              if (parRow[h] || parRow[String(h)]) {
-                pars[h] = parseInt(parRow[h] || parRow[String(h)]) || 4;
-              }
-            }
-          }
-        } catch(e) {}
       }
 
-      // Fill any missing holes with defaults
-      const total = courseData.num_holes || courseData.holes_count || holes.length || 18;
+      // Use number_of_holes from tee data if available, fall back to holes array length
+      const total = teeData?.number_of_holes || courseData.num_holes || holes.length || 18;
       for (let h = 1; h <= total; h++) {
         if (!pars[h]) pars[h] = 4;
       }
@@ -2225,6 +2214,8 @@ async function startRound() {
 // ══════════════════════════════════════════
 function renderRound() {
   document.getElementById('round-course-name').textContent = state.course?.display_name || 'Round';
+  const jcEl = document.getElementById('round-join-code-display');
+  if (jcEl && state.joinCode) jcEl.textContent = `CODE: ${state.joinCode}`;
 
   // Game badges
   const badges = Object.entries(state.games)
@@ -2750,21 +2741,38 @@ function renderMoneySettlement() {
 
   if (state.games.skins) {
     const skins = computeSkins();
-    const totalPot = Object.values(skins).reduce((s, r) => s + (r.winner ? r.value : 0), 0);
-    const greenieAmt = state.gameAmounts.skins || 1;
+    const amt = state.gameAmounts.skins || 1;
+    const n = state.players.length;
 
-    Object.entries(skins).forEach(([, r]) => {
-      if (r.winner) net[r.winner] += r.value;
-      if (r.greenieWinner) net[r.greenieWinner] += greenieAmt;
+    // Each player contributes $amt per hole to the pot
+    // Each won skin = (carryover+1)*amt back to winner
+    // Net per player = winnings - cost
+    // Cost = total skins won / n_players (equal share of the pot)
+    let totalSkinsWon = 0;
+    let totalGreeniesWon = 0;
+
+    Object.values(skins).forEach(r => {
+      if (r.winner) {
+        net[r.winner] += r.value;
+        totalSkinsWon += r.value;
+      }
+      if (r.greenieWinner) {
+        net[r.greenieWinner] += amt;
+        totalGreeniesWon += amt;
+      }
     });
 
-    // Cost = (total won by others - own winnings) for each player
-    // Actually: each player pays the total pot / n  — winners keep winnings
-    // Simpler: debts flow from losers to winners
-    const totalWon = Object.values(net).reduce((s, v) => s + v, 0);
+    // Each player pays their equal share of what was won
     state.players.forEach(p => {
-      net[p.id] -= (totalWon / state.players.length);
+      net[p.id] -= (totalSkinsWon / n);
     });
+
+    // Greenie cost: each non-winner pays amt/(n-1) per greenie (or split equally)
+    if (totalGreeniesWon > 0) {
+      state.players.forEach(p => {
+        net[p.id] -= (totalGreeniesWon / n);
+      });
+    }
   }
 
   if (state.games.nassau) {
