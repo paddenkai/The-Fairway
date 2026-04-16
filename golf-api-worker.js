@@ -16,13 +16,10 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname.replace(/^\//, '');
     const q = url.searchParams.get('q') || '';
-    const lat = url.searchParams.get('lat') || '';
-    const lng = url.searchParams.get('lng') || '';
-    const radius = url.searchParams.get('radius') || '25';
 
-    // Debug endpoint - pass any params through
+    // Debug
     if (path === 'debug') {
-      const apiUrl = `${GOLF_API_BASE}/courses?${url.searchParams.toString()}`;
+      const apiUrl = `${GOLF_API_BASE}/search?search_query=${encodeURIComponent(q)}`;
       const resp = await fetch(apiUrl, {
         headers: { 'Authorization': `Key ${GOLF_API_KEY}` }
       });
@@ -33,63 +30,31 @@ export default {
       );
     }
 
-    // Nearby courses by GPS
-    if (path === 'nearby') {
-      // Try different param formats the API might support
-      const attempts = [
-        `${GOLF_API_BASE}/courses?latitude=${lat}&longitude=${lng}&radius=${radius}`,
-        `${GOLF_API_BASE}/courses?lat=${lat}&lng=${lng}&radius=${radius}`,
-        `${GOLF_API_BASE}/courses?lat=${lat}&lon=${lng}&radius_km=${radius}`,
-      ];
-
-      for (const apiUrl of attempts) {
-        try {
-          const resp = await fetch(apiUrl, {
-            headers: { 'Authorization': `Key ${GOLF_API_KEY}` }
-          });
-          if (resp.ok) {
-            const data = await resp.json();
-            const courses = data.courses || data.results || data.data || [];
-            if (courses.length > 0) {
-              return new Response(JSON.stringify({ courses, source: apiUrl }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json', ...CORS }
-              });
-            }
-          }
-        } catch(e) {}
-      }
-
-      // Fallback: return empty so the app knows location search isn't supported
-      return new Response(JSON.stringify({ courses: [], supported: false }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', ...CORS }
-      });
-    }
-
-    // Text search - fetch multiple pages, client will filter
+    // Search — uses correct /v1/search endpoint with search_query param
     if (path === 'search') {
-      const allCourses = [];
-      for (let page = 1; page <= 5; page++) {
-        try {
-          const apiUrl = `${GOLF_API_BASE}/courses?search=${encodeURIComponent(q)}&page=${page}`;
-          const resp = await fetch(apiUrl, {
-            headers: { 'Authorization': `Key ${GOLF_API_KEY}` }
-          });
-          if (!resp.ok) break;
-          const data = await resp.json();
-          const courses = data.courses || data.results || [];
-          if (!courses.length) break;
-          allCourses.push(...courses);
-          if (courses.length < 20) break;
-        } catch(e) { break; }
+      if (!q || q.length < 2) {
+        return new Response(JSON.stringify({ courses: [] }), {
+          status: 200, headers: { 'Content-Type': 'application/json', ...CORS }
+        });
       }
-      return new Response(JSON.stringify({ courses: allCourses }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', ...CORS }
-      });
+      try {
+        const apiUrl = `${GOLF_API_BASE}/search?search_query=${encodeURIComponent(q)}`;
+        const resp = await fetch(apiUrl, {
+          headers: { 'Authorization': `Key ${GOLF_API_KEY}` }
+        });
+        const text = await resp.text();
+        return new Response(text, {
+          status: resp.status,
+          headers: { 'Content-Type': 'application/json', ...CORS }
+        });
+      } catch(e) {
+        return new Response(JSON.stringify({ error: e.message }), {
+          status: 500, headers: { 'Content-Type': 'application/json', ...CORS }
+        });
+      }
     }
 
+    // Get course by ID
     if (path.startsWith('course/')) {
       const id = path.replace('course/', '');
       try {
