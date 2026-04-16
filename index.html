@@ -924,6 +924,145 @@ body {
   font-weight: 500;
 }
 
+/* ── GPS DISTANCE ── */
+.gps-widget {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.gps-widget::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(200,169,81,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.gps-distance-main {
+  flex: 1;
+}
+.gps-distance-val {
+  font-family: 'Italiana', serif;
+  font-size: 3rem;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.gps-distance-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(245,240,232,0.4);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+.gps-distance-label {
+  font-size: 0.7rem;
+  color: rgba(245,240,232,0.5);
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.gps-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: rgba(245,240,232,0.4);
+  font-family: 'DM Mono', monospace;
+  margin-top: 6px;
+}
+.gps-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #888;
+  flex-shrink: 0;
+}
+.gps-dot.active {
+  background: #4CAF50;
+  animation: pulse-gps 2s ease-in-out infinite;
+}
+.gps-dot.calibrating {
+  background: var(--gold);
+  animation: pulse-gps 1s ease-in-out infinite;
+}
+@keyframes pulse-gps {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+.gps-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.gps-calibrate-btn {
+  background: rgba(200,169,81,0.15);
+  border: 1px solid rgba(200,169,81,0.3);
+  color: var(--gold);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
+  transition: background 0.2s;
+}
+.gps-calibrate-btn:active { background: rgba(200,169,81,0.25); }
+.gps-yardage-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gps-yardage-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.7rem;
+  font-family: 'DM Mono', monospace;
+}
+.gps-yardage-label { color: rgba(245,240,232,0.35); }
+.gps-yardage-val { color: rgba(245,240,232,0.7); font-weight: 500; }
+
+/* ── CALIBRATE MODAL ── */
+.calibrate-sheet {
+  background: var(--cream);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+}
+.yardage-marker-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.15s;
+}
+.yardage-marker-btn:active { border-color: var(--turf); background: rgba(58,107,71,0.04); }
+.yardage-marker-yds {
+  font-family: 'Italiana', serif;
+  font-size: 1.8rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.yardage-marker-label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
 /* ── UTILS ── */
 .text-gold { color: var(--gold); }
 .text-muted { color: var(--muted); }
@@ -1166,6 +1305,25 @@ body {
       <button class="hole-nav-btn" id="next-hole-btn" onclick="nextHole()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>
+    </div>
+
+    <!-- GPS Distance Widget -->
+    <div class="gps-widget" id="gps-widget">
+      <div class="gps-distance-main">
+        <div class="gps-distance-label">To the pin</div>
+        <div class="gps-distance-val" id="gps-distance-val">—</div>
+        <div class="gps-distance-unit" id="gps-distance-unit">yards to green</div>
+        <div class="gps-status">
+          <div class="gps-dot" id="gps-dot"></div>
+          <span id="gps-status-text">Starting GPS…</span>
+        </div>
+      </div>
+      <div class="gps-side">
+        <button class="gps-calibrate-btn" onclick="showCalibrateModal()" id="gps-calibrate-btn">
+          📍 At a<br>marker?
+        </button>
+        <div class="gps-yardage-rows" id="gps-tee-yardages"></div>
+      </div>
     </div>
 
     <!-- Greenie section (shown on par 3s when skins active) -->
@@ -1473,6 +1631,26 @@ body {
     <div class="modal-handle"></div>
     <div id="round-detail-content"></div>
     <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('round-detail-modal')">Close</button>
+  </div>
+</div>
+
+<!-- Calibrate GPS Modal -->
+<div class="modal-overlay" id="calibrate-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Set Distance from Marker</div>
+    <p class="text-sm text-muted mb-3" style="line-height:1.6;">Stand at a yardage marker and tap its distance. GPS will track from there.</p>
+    <div id="calibrate-marker-btns"></div>
+    <div class="divider"></div>
+    <div class="section-title mb-2" style="font-size:1rem;">Or enter manually</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="amount-input-wrap" style="flex:1;">
+        <input class="form-input mono" id="calibrate-manual-input" type="number" placeholder="e.g. 150" style="font-size:1.2rem;text-align:center;">
+      </div>
+      <span class="text-sm text-muted">yards</span>
+    </div>
+    <button class="btn btn-primary btn-full btn-lg mt-3" onclick="calibrateManual()">Set Distance</button>
+    <button class="btn btn-ghost btn-full mt-2" onclick="closeModal('calibrate-modal')">Cancel</button>
   </div>
 </div>
 
@@ -2908,6 +3086,295 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
     if (e.target === m) m.classList.remove('open');
   });
 });
+
+// ══════════════════════════════════════════
+// GPS DISTANCE SYSTEM
+// ══════════════════════════════════════════
+const gps = {
+  watchId: null,
+  currentPos: null,         // { lat, lng }
+  greenCoords: {},          // { hole: { lat, lng } } — from API or estimated
+  calibration: {},          // { hole: { markerYds, markerPos } } — manual calibration
+  active: false,
+  lastDistance: null
+};
+
+// Haversine formula — returns distance in yards
+function haversineYards(lat1, lng1, lat2, lng2) {
+  const R = 6371000; // metres
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c * 1.09361); // convert metres to yards
+}
+
+// Estimate green coordinates from course center + yardage + compass approximation
+function estimateGreenCoords(courseLat, courseLng, holeNum, yardageMetres) {
+  // Distribute holes in a rough circle around the course center
+  // This is a rough estimate — offset each green by its yardage in a spiral
+  const angleStep = (2 * Math.PI) / 18;
+  const angle = (holeNum - 1) * angleStep;
+  // Convert yardage to degrees (rough: 1 degree lat ≈ 111km)
+  const distKm = yardageMetres / 1000;
+  const latOffset = (distKm / 111) * Math.cos(angle) * 0.5;
+  const lngOffset = (distKm / (111 * Math.cos(courseLat * Math.PI / 180))) * Math.sin(angle) * 0.5;
+  return { lat: courseLat + latOffset, lng: courseLng + lngOffset };
+}
+
+function initGPS() {
+  if (!navigator.geolocation) {
+    setGPSStatus('unavailable', 'GPS not available');
+    return;
+  }
+  setGPSStatus('calibrating', 'Getting location…');
+
+  // Extract green coords from course data
+  buildGreenCoords();
+
+  gps.watchId = navigator.geolocation.watchPosition(
+    pos => {
+      gps.currentPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      gps.active = true;
+      updateGPSDisplay();
+    },
+    err => {
+      if (err.code === 1) setGPSStatus('unavailable', 'Location denied');
+      else setGPSStatus('unavailable', 'GPS error');
+    },
+    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+  );
+}
+
+function stopGPS() {
+  if (gps.watchId !== null) {
+    navigator.geolocation.clearWatch(gps.watchId);
+    gps.watchId = null;
+  }
+  gps.active = false;
+}
+
+function buildGreenCoords() {
+  // Try to get coordinates from course API data
+  const course = state.course;
+  if (!course) return;
+
+  const courseLat = parseFloat(course.latitude || course.lat || 0);
+  const courseLng = parseFloat(course.longitude || course.lng || 0);
+
+  if (!courseLat || !courseLng) {
+    // No coords — GPS distance will rely purely on calibration
+    return;
+  }
+
+  // Check if API returned per-hole green coordinates
+  const holes = course.holes || course.tees?.[0]?.holes || [];
+  holes.forEach((h, i) => {
+    const holeNum = i + 1;
+    if (h.latitude && h.longitude) {
+      gps.greenCoords[holeNum] = { lat: parseFloat(h.latitude), lng: parseFloat(h.longitude) };
+    } else {
+      // Use scorecard yardage to estimate
+      const yds = getHoleYardage(holeNum);
+      const metres = yds * 0.9144;
+      gps.greenCoords[holeNum] = estimateGreenCoords(courseLat, courseLng, holeNum, metres);
+    }
+  });
+
+  // Fill any missing holes
+  for (let h = 1; h <= state.totalHoles; h++) {
+    if (!gps.greenCoords[h]) {
+      const yds = getHoleYardage(h);
+      const metres = yds * 0.9144;
+      gps.greenCoords[h] = estimateGreenCoords(courseLat, courseLng, h, metres);
+    }
+  }
+}
+
+function getHoleYardage(holeNum) {
+  // Try to get from course scorecard data
+  const course = state.course;
+  if (!course) return 350;
+  const holes = course.holes || [];
+  const hole = holes[holeNum - 1];
+  if (hole?.yardage) return hole.yardage;
+  // Default by par
+  const par = state.pars[holeNum] || 4;
+  return par === 3 ? 150 : par === 4 ? 380 : 520;
+}
+
+function updateGPSDisplay() {
+  const h = state.currentHole;
+  if (!gps.currentPos) return;
+
+  let distance = null;
+  let source = 'estimated';
+
+  // 1. Check if we have a manual calibration for this hole
+  const cal = gps.calibration[h];
+  if (cal && cal.markerPos) {
+    // Calculate distance from calibration point, adjust by marker yardage
+    const distFromMarker = haversineYards(
+      gps.currentPos.lat, gps.currentPos.lng,
+      cal.markerPos.lat, cal.markerPos.lng
+    );
+    // Are we moving toward or away from the green?
+    // Simple: subtract distance walked from marker yardage
+    distance = Math.max(0, cal.markerYds - distFromMarker);
+    // If walked past the green estimate, flip
+    if (distFromMarker > cal.markerYds * 1.5) distance = distFromMarker - cal.markerYds;
+    source = 'calibrated';
+  }
+  // 2. Use green coords (API or estimated)
+  else if (gps.greenCoords[h]) {
+    const g = gps.greenCoords[h];
+    distance = haversineYards(gps.currentPos.lat, gps.currentPos.lng, g.lat, g.lng);
+    source = 'estimated';
+  }
+
+  if (distance === null) {
+    setGPSStatus('active', 'No course data');
+    document.getElementById('gps-distance-val').textContent = '—';
+    return;
+  }
+
+  gps.lastDistance = distance;
+
+  // Format display
+  const valEl = document.getElementById('gps-distance-val');
+  const unitEl = document.getElementById('gps-distance-unit');
+
+  if (distance < 30) {
+    valEl.textContent = Math.round(distance * 3); // convert to feet
+    unitEl.textContent = 'feet to green';
+    valEl.style.color = '#4CAF50';
+  } else {
+    valEl.textContent = distance;
+    unitEl.textContent = source === 'calibrated' ? 'yards to green ·  calibrated' : 'yards to green · est.';
+    valEl.style.color = 'var(--gold)';
+  }
+
+  setGPSStatus('active', source === 'calibrated' ? 'GPS tracking' : 'GPS · estimated coords');
+}
+
+function setGPSStatus(state, text) {
+  const dot = document.getElementById('gps-dot');
+  const txt = document.getElementById('gps-status-text');
+  if (!dot || !txt) return;
+  dot.className = 'gps-dot';
+  if (state === 'active') dot.classList.add('active');
+  if (state === 'calibrating') dot.classList.add('calibrating');
+  txt.textContent = text;
+}
+
+function updateGPSTeeYardages() {
+  const h = state.currentHole;
+  const el = document.getElementById('gps-tee-yardages');
+  if (!el) return;
+
+  // Show tee yardages from course data
+  const course = state.course;
+  if (!course) { el.innerHTML = ''; return; }
+
+  const holes = course.holes || [];
+  const hole = holes[h - 1];
+  if (!hole) { el.innerHTML = ''; return; }
+
+  const tees = hole.tees || hole.teeDistances || [];
+  if (!tees.length) {
+    // Just show estimated yardage
+    const yds = getHoleYardage(h);
+    el.innerHTML = `<div class="gps-yardage-row"><span class="gps-yardage-label">Scorecard</span><span class="gps-yardage-val">${yds}y</span></div>`;
+    return;
+  }
+
+  el.innerHTML = tees.slice(0, 3).map(t => `
+    <div class="gps-yardage-row">
+      <span class="gps-yardage-label">${t.name || t.tee || '—'}</span>
+      <span class="gps-yardage-val">${t.yardage || t.distance || '—'}y</span>
+    </div>
+  `).join('');
+}
+
+// ── CALIBRATE MODAL ──
+function showCalibrateModal() {
+  const h = state.currentHole;
+  const yds = getHoleYardage(h);
+
+  // Build common yardage marker buttons
+  const markers = [250, 200, 175, 150, 125, 100, 75, 50].filter(m => m <= yds + 50);
+
+  document.getElementById('calibrate-marker-btns').innerHTML = markers.map(m => `
+    <button class="yardage-marker-btn" onclick="calibrateFromMarker(${m})">
+      <div>
+        <div class="yardage-marker-yds">${m}</div>
+        <div class="yardage-marker-label">yards to center</div>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  `).join('');
+
+  document.getElementById('calibrate-modal').classList.add('open');
+}
+
+function calibrateFromMarker(yds) {
+  if (!gps.currentPos) { showToast('Waiting for GPS…'); return; }
+  const h = state.currentHole;
+  gps.calibration[h] = {
+    markerYds: yds,
+    markerPos: { ...gps.currentPos }
+  };
+  // Also update the green coords based on this calibration
+  closeModal('calibrate-modal');
+  showToast(`Calibrated: ${yds} yards to green`);
+  updateGPSDisplay();
+}
+
+function calibrateManual() {
+  const val = parseInt(document.getElementById('calibrate-manual-input').value);
+  if (!val || val < 1 || val > 700) { showToast('Enter a valid yardage'); return; }
+  calibrateFromMarker(val);
+  document.getElementById('calibrate-manual-input').value = '';
+}
+
+// Hook GPS into hole rendering
+const _origRenderHole = renderHole;
+renderHole = function() {
+  _origRenderHole.apply(this, arguments);
+  updateGPSDisplay();
+  updateGPSTeeYardages();
+};
+
+// Start GPS when round starts
+const _origStartRound = startRound;
+startRound = async function() {
+  await _origStartRound.apply(this, arguments);
+  initGPS();
+};
+
+const _origResumeRound = resumeRound;
+resumeRound = function() {
+  _origResumeRound.apply(this, arguments);
+  initGPS();
+};
+
+// Stop GPS when leaving round
+const _origConfirmLeaveRound = confirmLeaveRound;
+confirmLeaveRound = function() {
+  if (confirm('Leave round? Your scores are saved.')) {
+    stopGPS();
+    showPage('page-home');
+    document.querySelector('.nav-item').click();
+  }
+};
+
+const _origSaveAndFinish = saveAndFinish;
+saveAndFinish = async function() {
+  stopGPS();
+  await _origSaveAndFinish.apply(this, arguments);
+};
 
 // PWA
 if ('serviceWorker' in navigator) {
