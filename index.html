@@ -59,6 +59,7 @@ body {
   background: var(--bg);
   color: var(--text);
   background-image: linear-gradient(160deg, #2a1f4e 0%, #1a1238 60%, #0f0d2a 100%);
+  position: relative;
   min-height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
@@ -165,6 +166,9 @@ body {
   overflow-y: auto;
   padding: 20px 16px calc(80px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cg fill='none' stroke='rgba(254,250,205,0.04)' stroke-width='1'%3E%3Cpath d='M-50,350 Q100,320 200,340 Q320,362 440,330 Q560,298 680,320 Q760,332 850,310'/%3E%3Cpath d='M-50,300 Q80,268 190,288 Q310,310 430,278 Q550,246 670,270 Q750,284 850,260'/%3E%3Cpath d='M-50,250 Q90,215 200,238 Q330,262 450,228 Q570,194 680,220 Q755,236 850,210'/%3E%3Cpath d='M-50,200 Q100,162 210,188 Q340,216 460,180 Q580,144 690,170 Q762,186 850,162'/%3E%3Cpath d='M-50,150 Q110,110 220,138 Q355,168 470,132 Q585,96 695,122 Q768,138 850,114'/%3E%3Cpath d='M-50,100 Q120,58 230,88 Q368,120 482,84 Q596,48 702,74 Q774,90 850,66'/%3E%3Cpath d='M-50,50 Q130,6 240,38 Q382,72 494,36 Q606,0 710,26 Q780,42 850,18'/%3E%3Cpath d='M-50,380 Q110,348 220,368 Q345,390 460,358 Q575,326 685,350 Q758,364 850,340'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 800px 400px;
+  background-repeat: repeat;
 }
 
 /* ── CARDS ── */
@@ -785,10 +789,9 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(254,250,205,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(254,250,205,0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cg fill='none' stroke='rgba(254,250,205,0.07)' stroke-width='1'%3E%3Cpath d='M-50,350 Q100,320 200,340 Q320,362 440,330 Q560,298 680,320 Q760,332 850,310'/%3E%3Cpath d='M-50,300 Q80,268 190,288 Q310,310 430,278 Q550,246 670,270 Q750,284 850,260'/%3E%3Cpath d='M-50,250 Q90,215 200,238 Q330,262 450,228 Q570,194 680,220 Q755,236 850,210'/%3E%3Cpath d='M-50,200 Q100,162 210,188 Q340,216 460,180 Q580,144 690,170 Q762,186 850,162'/%3E%3Cpath d='M-50,150 Q110,110 220,138 Q355,168 470,132 Q585,96 695,122 Q768,138 850,114'/%3E%3Cpath d='M-50,100 Q120,58 230,88 Q368,120 482,84 Q596,48 702,74 Q774,90 850,66'/%3E%3Cpath d='M-50,50 Q130,6 240,38 Q382,72 494,36 Q606,0 710,26 Q780,42 850,18'/%3E%3Cpath d='M-50,380 Q110,348 220,368 Q345,390 460,358 Q575,326 685,350 Q758,364 850,340'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 800px 400px;
+  background-repeat: repeat-y;
   pointer-events: none;
 }
 .hero-logo {
@@ -1222,16 +1225,6 @@ body {
       </button>
     </div>
 
-    <!-- Stats -->
-    <div class="section-title">Your Stats</div>
-    <div class="section-sub">All-time performance</div>
-    <div class="stat-row" id="home-stats">
-      <div class="stat-pill"><div class="stat-pill-val" id="stat-rounds">—</div><div class="stat-pill-label">Rounds</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="stat-best">—</div><div class="stat-pill-label">Best Round</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="stat-net" style="color:var(--neon-blue);">—</div><div class="stat-pill-label">Net $</div></div>
-    </div>
-
     <!-- Recent Rounds -->
     <div class="section-title mt-3">Recent Rounds</div>
     <div id="recent-rounds-list">
@@ -1307,12 +1300,12 @@ body {
     <div id="setup-step-players" class="hidden">
       <div class="section-title">Players</div>
       <div class="section-sub">Add up to 4 players — include Venmo handles for easy settlement</div>
-      <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);color:var(--neon-green);border-radius:12px;padding:12px 16px;margin-bottom:16px;cursor:pointer;">
+      <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid rgba(254,250,205,0.3);border-radius:8px;padding:16px 20px;margin-bottom:16px;cursor:pointer;box-shadow:0 0 20px rgba(254,250,205,0.08);">
         <div>
-          <div style="font-size:0.65rem;font-family:'Share Tech Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
-          <div id="setup-join-code" style="font-family:'Share Tech Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
+          <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Share this code to join</div>
+          <div id="setup-join-code" style="font-family:'Share Tech Mono',monospace;font-size:2.5rem;font-weight:700;letter-spacing:12px;color:var(--lemon);text-shadow:0 0 20px rgba(254,250,205,0.5);line-height:1;">----</div>
         </div>
-        <div style="font-size:0.7rem;font-family:'Share Tech Mono',monospace;opacity:0.6;">TAP TO COPY</div>
+        <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;color:var(--muted);letter-spacing:2px;">TAP TO COPY</div>
       </div>
 
       <div id="players-list"></div>
@@ -1764,11 +1757,11 @@ body {
     <div class="section-title mb-3">Your Stats</div>
     <div class="stat-row">
       <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-rounds">—</div><div class="stat-pill-label">Rounds</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-best">—</div><div class="stat-pill-label">Best</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-net" style="color:var(--lemon);">—</div><div class="stat-pill-label">Net Money</div></div>
     </div>
     <div class="stat-row">
-      <div class="stat-pill" style="flex:none;width:100%;"><div class="stat-pill-val" id="profile-stat-net" style="color:var(--neon-blue);">—</div><div class="stat-pill-label">Net Money Won</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-best">—</div><div class="stat-pill-label">Best Round</div></div>
     </div>
 
     <div style="height:20px;"></div>
@@ -1835,12 +1828,20 @@ body {
 </div>
 
 <!-- Round Detail Modal -->
-<div class="modal-overlay" id="round-detail-modal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div id="round-detail-content"></div>
-    <button class="btn btn-ghost btn-full mt-3" onclick="closeModal('round-detail-modal')">Close</button>
+<!-- Round Detail Page -->
+<div id="page-round-detail" class="page" style="display:none;">
+  <div class="app-header">
+    <button class="header-btn" onclick="showPage('page-history'); navHighlight('page-history');">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div style="text-align:center;">
+      <div class="app-header-title" id="detail-header-title">Round</div>
+    </div>
+    <button class="header-btn" onclick="confirmDeleteRound()" style="color:var(--red);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>
+    </button>
   </div>
+  <div class="scroll-content" id="round-detail-content"></div>
 </div>
 
 <!-- Calibrate GPS Modal -->
@@ -1923,7 +1924,7 @@ let state = {
 // ══════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
   await initAuth();
-  loadHomeStats();
+
   loadRecentRounds();
   setupCourseSearch();
   checkActiveRound();
@@ -1999,7 +2000,7 @@ async function afterLogin() {
   document.getElementById('page-auth').classList.remove('active');
   document.getElementById('bottom-nav').style.display = '';
   showPage('page-home');
-  loadHomeStats();
+
   loadRecentRounds();
   checkActiveRound();
 }
@@ -2113,7 +2114,25 @@ async function loadProfileStats() {
       document.getElementById('profile-stat-avg').textContent = Math.round(scores.reduce((a, b) => a + b) / scores.length);
       document.getElementById('profile-stat-best').textContent = Math.min(...scores);
     }
-    document.getElementById('profile-stat-net').textContent = '+$—';
+    // Calculate net money from settlement_data
+    let totalNet = 0;
+    let hasNet = false;
+    data.forEach(r => {
+      if (!r.settlement_data) return;
+      const myId = r.players?.find(p => p.name === myName || p.id === 'me')?.id;
+      if (!myId) return;
+      const myNet = r.settlement_data[myId];
+      if (myNet == null) return;
+      totalNet += myNet;
+      hasNet = true;
+    });
+    const netEl = document.getElementById('profile-stat-net');
+    if (hasNet) {
+      netEl.textContent = (totalNet >= 0 ? '+$' : '-$') + Math.abs(totalNet).toFixed(2);
+      netEl.style.color = totalNet >= 0 ? 'var(--lemon)' : 'var(--red)';
+    } else {
+      netEl.textContent = '—';
+    }
   } catch(e) {}
 }
 
@@ -2121,11 +2140,21 @@ async function loadProfileStats() {
 // NAVIGATION
 // ══════════════════════════════════════════
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'flex';
+  target.classList.add('active');
   const nav = document.getElementById('bottom-nav');
-  const hideNav = ['page-setup', 'page-settlement', 'page-auth'].includes(id);
+  const hideNav = ['page-setup', 'page-settlement', 'page-auth', 'page-round-detail'].includes(id);
   nav.style.display = hideNav ? 'none' : '';
+
+  // Update nav active state
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === id);
+  });
 
   if (id === 'page-history') loadHistory();
   if (id === 'page-home') { loadHomeStats(); loadRecentRounds(); }
@@ -3213,12 +3242,17 @@ function buildScorecardHTML() {
 // FINISH & SETTLEMENT
 // ══════════════════════════════════════════
 function finishRound() {
-  // Resolve any remaining greenies
-  for (let h = 1; h <= state.totalHoles; h++) {
-    resolveGreenies(h);
+  try {
+    // Resolve any remaining greenies
+    for (let h = 1; h <= state.totalHoles; h++) {
+      resolveGreenies(h);
+    }
+    renderSettlement();
+    showPage('page-settlement');
+  } catch(e) {
+    console.error('finishRound error:', e);
+    showToast('Error: ' + e.message);
   }
-  renderSettlement();
-  showPage('page-settlement');
 }
 
 function renderSettlement() {
@@ -3496,6 +3530,7 @@ function renderWolfPick(hole) {
 function renderWolfBanner(hole) {
   const banner = document.getElementById('wolf-pick-banner');
   if (!banner || !state.games.wolf) { if (banner) banner.classList.add('hidden'); return; }
+  if (!state.players?.length) return;
 
   const ws = state.wolfState || {};
   const wolf = getWolfOrder(hole);
@@ -3571,8 +3606,9 @@ function buildMatchPlayResultHTML() {
 }
 
 function buildWolfResultHTML() {
-  // Reuse the wolf tally which already shows totals
-  return renderWolfTally().replace('wolf-pick-section', 'wolf-pick-section-settle');
+  // Reuse the wolf tally - skip the pick section DOM manipulation
+  const html = renderWolfTally();
+  return html.replace('wolf-pick-section', 'wolf-pick-section-settle');
 }
 
 function undoWolfPick(hole) {
@@ -3854,16 +3890,48 @@ function renderMoneySettlement() {
 // ══════════════════════════════════════════
 async function saveAndFinish() {
   try {
+    // Calculate final net money per player for stats
+    const net = {};
+    state.players.forEach(p => net[p.id] = 0);
+    const n = state.players.length;
+
+    if (state.games.skins) {
+      const skins = computeSkins();
+      const amt = state.gameAmounts.skins || 1;
+      Object.values(skins).forEach(r => {
+        if (r.winner) { net[r.winner] += r.value * (n-1); state.players.forEach(p => { if (p.id !== r.winner) net[p.id] -= r.value; }); }
+        if (r.greenieWinner) { const gAmt = state.gameAmounts.greenies || amt; net[r.greenieWinner] += gAmt*(n-1); state.players.forEach(p => { if (p.id !== r.greenieWinner) net[p.id] -= gAmt; }); }
+        if (r.birdieWinner && state.birdiesEnabled) { const bAmt = state.gameAmounts.birdies || 1; net[r.birdieWinner] += bAmt*(n-1); state.players.forEach(p => { if (p.id !== r.birdieWinner) net[p.id] -= bAmt; }); }
+      });
+    }
+    if (state.games.strokeplay) {
+      const amt = state.gameAmounts.strokeplay || 1;
+      const totals = computeStrokePlay();
+      for (let i = 0; i < state.players.length; i++) for (let j = i+1; j < state.players.length; j++) {
+        const a = state.players[i], b = state.players[j], diff = totals[b.id] - totals[a.id];
+        if (diff > 0) { net[a.id] += diff*amt; net[b.id] -= diff*amt; } else if (diff < 0) { net[b.id] += Math.abs(diff)*amt; net[a.id] -= Math.abs(diff)*amt; }
+      }
+    }
+    if (state.games.stableford) {
+      const amt = state.gameAmounts.stableford || 1;
+      const pts = computeStableford();
+      for (let i = 0; i < state.players.length; i++) for (let j = i+1; j < state.players.length; j++) {
+        const a = state.players[i], b = state.players[j], diff = pts[a.id] - pts[b.id];
+        if (diff > 0) { net[a.id] += diff*amt; net[b.id] -= diff*amt; } else if (diff < 0) { net[b.id] += Math.abs(diff)*amt; net[a.id] -= Math.abs(diff)*amt; }
+      }
+    }
+
     if (state.roundId && !state.roundId.startsWith('offline-')) {
       await sb.from('rounds').update({
         scores: state.scores,
         greenies: state.greenies,
         greenie_eligible: state.greenieEligible,
+        settlement_data: net,
         status: 'complete'
       }).eq('id', state.roundId);
     }
     showToast('Round saved!');
-  } catch(e) { showToast('Saved locally'); }
+  } catch(e) { console.error(e); showToast('Saved locally'); }
 
   // Clear active round
   state.roundId = null;
@@ -3876,7 +3944,7 @@ async function saveAndFinish() {
     showPage('page-home');
     navTo('page-home', document.querySelector('.nav-item'));
     loadRecentRounds();
-    loadHomeStats();
+  
     document.getElementById('active-round-banner').classList.add('hidden');
   }, 800);
 }
@@ -4042,49 +4110,224 @@ async function loadHistory() {
   }
 }
 
+let _detailRoundId = null;
+
 async function showRoundDetail(id) {
   const { data } = await sb.from('rounds').select('*').eq('id', id).single();
   if (!data) return;
+  _detailRoundId = id;
 
-  const el = document.getElementById('round-detail-content');
   const date = new Date(data.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
-  el.innerHTML = `
-    <div class="modal-title">${data.course_name}</div>
-    <div class="text-sm text-muted mb-3">${date}</div>
-    <div class="section-title mb-2">Players</div>
-    <div class="text-sm mb-3">${(data.players || []).map(p => p.name).join(', ')}</div>
+  const players = data.players || [];
+  const scores = data.scores || {};
+  const pars = data.pars || {};
+  const totalHoles = data.total_holes || 9;
+  const games = data.game_amounts || {};
+
+  // Build scorecard
+  const holeArr = Array.from({length: totalHoles}, (_, i) => i + 1);
+  const holeWinners = {};
+  holeArr.forEach(h => {
+    const holescores = players.map(p => ({ id: p.id, s: scores[p.id]?.[h] ?? scores[p.id]?.[String(h)] })).filter(x => x.s != null);
+    if (holescores.length < players.length) return;
+    const min = Math.min(...holescores.map(x => x.s));
+    const winners = holescores.filter(x => x.s === min);
+    if (winners.length === 1) holeWinners[h] = winners[0].id;
+  });
+
+  const parTotal = holeArr.reduce((s, h) => s + (pars[h] ?? pars[String(h)] ?? 4), 0);
+  const scorecardHTML = `
+    <div style="overflow-x:auto;">
+      <table class="scorecard-table" style="min-width:100%;">
+        <thead>
+          <tr><th></th>${holeArr.map(h => `<th>${h}</th>`).join('')}<th>Tot</th></tr>
+          <tr><td class="player-name-cell" style="background:var(--bg-3);color:var(--lemon);">Par</td>${holeArr.map(h => `<th>${pars[h] || 4}</th>`).join('')}<th>${parTotal}</th></tr>
+        </thead>
+        <tbody>
+          ${players.map(p => {
+            const total = holeArr.reduce((s, h) => s + (scores[p.id]?.[h] ?? scores[p.id]?.[String(h)] ?? 0), 0);
+            const cells = holeArr.map(h => {
+              const s = scores[p.id]?.[h] ?? scores[p.id]?.[String(h)];
+              if (s == null) return '<td>—</td>';
+              const par = pars[h] ?? pars[String(h)] ?? 4;
+              const rel = s - par;
+              const cls = rel <= -2 ? 'score-eagle' : rel === -1 ? 'score-birdie' : rel === 1 ? 'score-bogey' : rel >= 2 ? 'score-double' : '';
+              const win = holeWinners[h] === p.id ? 'outline:2px solid rgba(254,250,205,0.8);outline-offset:-2px;font-weight:700;' : '';
+              return `<td class="${cls}" style="${win}">${s}</td>`;
+            }).join('');
+            const rel = total - parTotal;
+            const relStr = rel === 0 ? 'E' : rel > 0 ? `+${rel}` : `${rel}`;
+            return `<tr><td class="player-name-cell">${p.name}</td>${cells}<td style="font-weight:700;color:var(--lemon);">${total} <span style="font-size:0.65rem;color:var(--muted);">${relStr}</span></td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // Games played
+  const activeGames = Object.entries(data.games || {}).filter(([,v]) => v).map(([g]) => g);
+  const gamesHTML = activeGames.length ? `
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+      ${activeGames.map(g => `<span class="game-badge game-badge-${g}">${g}</span>`).join('')}
+    </div>` : '';
+
+  // Player totals
+  const playerTotals = players.map(p => {
+    const total = holeArr.reduce((s, h) => s + (scores[p.id]?.[h] || 0), 0);
+    return { ...p, total };
+  }).sort((a, b) => a.total - b.total);
+
+  // Calculate money settlement from stored round data
+  const gameAmounts = data.game_amounts || {};
+  const gameFlags = data.games || {};
+  const greeniesData = data.greenies || {};
+  const birdiesEnabled = data.birdies_enabled || false;
+  const greeniesEnabled = data.greenies_enabled || false;
+  const net = {};
+  players.forEach(p => net[p.id] = 0);
+  const n = players.length;
+
+  // Skins
+  if (gameFlags.skins && n >= 2) {
+    const amt = gameAmounts.skins || 1;
+    let carryover = 0;
+    holeArr.forEach(h => {
+      const holescores = players.map(p => ({ id: p.id, s: scores[p.id]?.[h] ?? scores[p.id]?.[String(h)] })).filter(x => x.s != null);
+      if (holescores.length < n) { carryover++; return; }
+      const min = Math.min(...holescores.map(x => x.s));
+      const winners = holescores.filter(x => x.s === min);
+      const holeVal = (carryover + 1) * amt;
+      if (winners.length === 1) {
+        net[winners[0].id] += holeVal * (n - 1);
+        players.filter(p => p.id !== winners[0].id).forEach(p => net[p.id] -= holeVal);
+        carryover = 0;
+        // Greenies
+        const greenieWinner = greeniesData[h] ?? greeniesData[String(h)];
+        if (greenieWinner && (pars[h] === 3 || pars[String(h)] === 3)) {
+          const gAmt = gameAmounts.greenies || gameAmounts.skins || 1;
+          net[greenieWinner] += gAmt * (n - 1);
+          players.filter(p => p.id !== greenieWinner).forEach(p => net[p.id] -= gAmt);
+        }
+      } else { carryover++; }
+    });
+  }
+
+  // Stroke play
+  if (gameFlags.strokeplay && n >= 2) {
+    const amt = gameAmounts.strokeplay || 1;
+    const totals = {};
+    players.forEach(p => { totals[p.id] = holeArr.reduce((s, h) => s + (scores[p.id]?.[h] ?? scores[p.id]?.[String(h)] ?? 0), 0); });
+    for (let i = 0; i < players.length; i++) {
+      for (let j = i + 1; j < players.length; j++) {
+        const a = players[i], b = players[j];
+        const diff = totals[b.id] - totals[a.id];
+        if (diff > 0) { net[a.id] += diff * amt; net[b.id] -= diff * amt; }
+        else if (diff < 0) { net[b.id] += Math.abs(diff) * amt; net[a.id] -= Math.abs(diff) * amt; }
+      }
+    }
+  }
+
+  // Stableford
+  if (gameFlags.stableford && n >= 2) {
+    const amt = gameAmounts.stableford || 1;
+    const pts = {};
+    players.forEach(p => {
+      pts[p.id] = holeArr.reduce((s, h) => {
+        const sc = scores[p.id]?.[h] ?? scores[p.id]?.[String(h)]; const par = pars[h] ?? pars[String(h)] ?? 4;
+        if (sc == null) return s;
+        const d = sc - par;
+        return s + (d <= -2 ? 4 : d === -1 ? 3 : d === 0 ? 2 : d === 1 ? 1 : 0);
+      }, 0);
+    });
+    for (let i = 0; i < players.length; i++) {
+      for (let j = i + 1; j < players.length; j++) {
+        const a = players[i], b = players[j];
+        const diff = pts[a.id] - pts[b.id];
+        if (diff > 0) { net[a.id] += diff * amt; net[b.id] -= diff * amt; }
+        else if (diff < 0) { net[b.id] += Math.abs(diff) * amt; net[a.id] -= Math.abs(diff) * amt; }
+      }
+    }
+  }
+
+  // Simplify debts
+  const debts = [];
+  const pos = players.filter(p => net[p.id] > 0).sort((a,b) => net[b.id]-net[a.id]);
+  const neg = players.filter(p => net[p.id] < 0).sort((a,b) => net[a.id]-net[b.id]);
+  const posAmts = pos.map(p => net[p.id]);
+  const negAmts = neg.map(p => -net[p.id]);
+  let i = 0, j = 0;
+  while (i < pos.length && j < neg.length) {
+    const amt = Math.min(posAmts[i], negAmts[j]);
+    if (amt > 0) debts.push({ from: neg[j].name, to: pos[i].name, amount: amt });
+    posAmts[i] -= amt; negAmts[j] -= amt;
+    if (posAmts[i] < 0.01) i++;
+    if (negAmts[j] < 0.01) j++;
+  }
+
+  const moneyHTML = debts.length ? `
+    <div class="section-title mb-2" style="font-size:1.2rem;">Money</div>
+    <div class="card mb-3">
+      ${debts.map(d => `
+        <div class="settlement-row">
+          <div class="settlement-names">
+            <div class="settlement-from">${d.from} pays</div>
+            <div class="settlement-to">${d.to}</div>
+          </div>
+          <div class="settlement-amount">$${d.amount.toFixed(2)}</div>
+        </div>`).join('')}
+    </div>` : (activeGames.length ? `<div class="card mb-3" style="text-align:center;color:var(--muted);padding:16px;font-family:'Share Tech Mono',monospace;font-size:0.8rem;">All even — no money owed</div>` : '');
+
+  document.getElementById('detail-header-title').textContent = data.course_name?.toUpperCase() || 'ROUND';
+  document.getElementById('round-detail-content').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.65rem;font-family:'Share Tech Mono',monospace;letter-spacing:3px;color:var(--muted);margin-bottom:4px;">${date}</div>
+      <div style="font-size:0.8rem;color:var(--text-dim);">${players.map(p=>p.name).join(' · ')}</div>
+    </div>
+
+    ${gamesHTML}
+
+    <div class="section-title mb-2" style="font-size:1.2rem;">Leaderboard</div>
+    <div class="card mb-3">
+      ${playerTotals.map((p, i) => {
+        const rel = p.total - parTotal;
+        const relStr = rel === 0 ? 'E' : rel > 0 ? `+${rel}` : `${rel}`;
+        return `<div class="leaderboard-row">
+          <div class="lb-rank ${i===0?'first':''}">${i+1}</div>
+          <div class="lb-name">${p.name}</div>
+          <div class="lb-score">${relStr}</div>
+          <div class="lb-money" style="font-size:1.1rem;">${p.total}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    ${moneyHTML}
+
+    <div class="section-title mb-2" style="font-size:1.2rem;">Scorecard</div>
+    <div class="card mb-3" style="padding:12px;">${scorecardHTML}</div>
+
+    <button onclick="confirmDeleteRound()" class="btn btn-full mt-3" style="border:1px solid var(--red);color:var(--red);background:transparent;font-size:0.8rem;letter-spacing:2px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14H6L5,6"/><path d="M10,11v6M14,11v6"/><path d="M9,6V4h6v2"/></svg>
+      Delete Round
+    </button>
+    <div style="height:20px;"></div>
   `;
 
-  document.getElementById('round-detail-modal').classList.add('open');
+  // Show the detail page
+  showPage('page-round-detail');
+}
+
+async function confirmDeleteRound() {
+  if (!confirm('Delete this round? This cannot be undone.')) return;
+  const { error } = await sb.from('rounds').delete().eq('id', _detailRoundId);
+  if (error) { showToast('Error deleting round'); console.error(error); return; }
+  _detailRoundId = null;
+  showToast('Round deleted');
+  showPage('page-history');
 }
 
 // ══════════════════════════════════════════
 // HOME STATS
 // ══════════════════════════════════════════
-async function loadHomeStats() {
-  try {
-    const { data } = await sb.from('rounds').select('*').eq('status', 'complete').order('created_at', { ascending: false }).limit(50);
-    if (!data?.length) return;
 
-    document.getElementById('stat-rounds').textContent = data.length;
-
-    // Very rough avg — just use total hole count for now
-    const scores = data.map(r => {
-      const myPlayer = r.players?.[0];
-      if (!myPlayer) return null;
-      const total = Object.values(r.scores?.[myPlayer.id] || {}).reduce((s, v) => s + (v || 0), 0);
-      return total || null;
-    }).filter(Boolean);
-
-    if (scores.length) {
-      const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-      document.getElementById('stat-avg').textContent = avg;
-      document.getElementById('stat-best').textContent = Math.min(...scores);
-    }
-
-    document.getElementById('stat-net').textContent = '+$—';
-  } catch(e) {}
-}
 
 async function loadRecentRounds() {
   const el = document.getElementById('recent-rounds-list');
@@ -4102,12 +4345,12 @@ async function loadRecentRounds() {
     el.innerHTML = data.map(r => {
       const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return `
-        <div class="round-card">
+        <div class="round-card" onclick="showRoundDetail('${r.id}')" style="cursor:pointer;">
           <div class="round-card-top">
             <div class="round-card-course">${r.course_name}</div>
             <div class="round-card-date">${date}</div>
           </div>
-          <div>${(r.players || []).map(p => p.name).join(' · ')}</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">${(r.players || []).map(p => p.name).join(' · ')}</div>
         </div>
       `;
     }).join('');
@@ -4221,27 +4464,7 @@ function estimateGreenCoords(courseLat, courseLng, holeNum, yardageMetres) {
 }
 
 function initGPS() {
-  if (!navigator.geolocation) {
-    setGPSStatus('unavailable', 'GPS not available');
-    return;
-  }
-  setGPSStatus('calibrating', 'Getting location…');
-
-  // Extract green coords from course data
-  buildGreenCoords();
-
-  gps.watchId = navigator.geolocation.watchPosition(
-    pos => {
-      gps.currentPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-      gps.active = true;
-      updateGPSDisplay();
-    },
-    err => {
-      if (err.code === 1) setGPSStatus('unavailable', 'Location denied');
-      else setGPSStatus('unavailable', 'GPS error');
-    },
-    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
-  );
+  // GPS/yardage tracking removed
 }
 
 function stopGPS() {
@@ -4447,13 +4670,13 @@ renderHole = function() {
 const _origStartRound = startRound;
 startRound = async function() {
   await _origStartRound.apply(this, arguments);
-  initGPS();
+
 };
 
 const _origResumeRound = resumeRound;
 resumeRound = function() {
   _origResumeRound.apply(this, arguments);
-  initGPS();
+
 };
 
 // Stop GPS when leaving round
