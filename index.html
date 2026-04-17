@@ -5,57 +5,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The Fairway</title>
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#2a0a0e">
+<meta name="theme-color" content="#2a1f4e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="The Fairway">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --ink: #2a0a0e;
-  --ink-mid: #3d1018;
-  --ink-light: #5b0e14;
-  --turf: #5b0e14;
-  --turf-light: #7a1a1f;
-  --gold: #f1e194;
-  --gold-light: #f8edaf;
-  --gold-dark: #d4c460;
-  --cream: #fdf8ec;
-  --cream-dark: #f5edcc;
+  --bg: #2a1f4e;
+  --bg-2: #221844;
+  --bg-3: #1a1238;
+  --surface: #352865;
+  --surface-2: #3f3175;
+  --ink: #1a1238;
+  --ink-mid: #221844;
+  --ink-light: #2a1f4e;
+  --turf: #5f4a8b;
+  --turf-light: #7a62a8;
+  --gold: #fefacd;
+  --gold-light: #fffde8;
+  --gold-dark: #e8e0a0;
+  --cream: #fefacd;
+  --cream-dark: #e8e0a0;
   --white: #ffffff;
-  --muted: rgba(42,10,14,0.42);
-  --border: rgba(42,10,14,0.1);
-  --border-mid: rgba(42,10,14,0.18);
-  --red: #c0392b;
-  --blue: #2980b9;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --shadow: 0 2px 16px rgba(42,10,14,0.1), 0 1px 3px rgba(42,10,14,0.06);
-  --shadow-lg: 0 12px 48px rgba(42,10,14,0.18);
+  --text: #fefacd;
+  --text-dim: rgba(254,250,205,0.6);
+  --muted: rgba(254,250,205,0.4);
+  --border: rgba(254,250,205,0.1);
+  --border-mid: rgba(254,250,205,0.2);
+  --border-bright: rgba(254,250,205,0.45);
+  --red: #ff6b8a;
+  --blue: #a78bdc;
+  --neon-green: #fefacd;
+  --neon-blue: #fefacd;
+  --violet: #5f4a8b;
+  --violet-light: #7a62a8;
+  --lemon: #fefacd;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
+  --glow: 0 0 20px rgba(254,250,205,0.2);
+  --glow-green: 0 0 20px rgba(254,250,205,0.15);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-  font-family: 'Outfit', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  background-image: linear-gradient(160deg, #2a1f4e 0%, #1a1238 60%, #0f0d2a 100%);
+  min-height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
 }
 
-/* Subtle grain texture on scroll content */
-.scroll-content {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
-}
-
 /* ── TYPOGRAPHY ── */
-.font-display { font-family: 'Cormorant Garamond', serif; }
-.mono { font-family: 'JetBrains Mono', monospace; }
+.font-display { font-family: 'Rajdhani', sans-serif; }
+.mono { font-family: 'Share Tech Mono', monospace; }
 
 /* ── PAGES ── */
 .page { display: none; min-height: 100vh; min-height: 100dvh; }
@@ -63,10 +75,10 @@ body {
 
 /* ── HEADER ── */
 .app-header {
-  background: rgba(42,10,14,0.97);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  color: var(--cream);
+  background: rgba(5,8,16,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--text);
   padding: 14px 20px 12px;
   display: flex;
   align-items: center;
@@ -74,41 +86,41 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid rgba(241,225,148,0.15);
-  box-shadow: 0 1px 0 rgba(241,225,148,0.08), 0 4px 20px rgba(42,10,14,0.3);
+  border-bottom: 1px solid var(--border-mid);
+  box-shadow: 0 1px 0 rgba(254,250,205,0.1), 0 4px 30px rgba(0,0,0,0.4);
 }
 .app-header-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--gold);
-  letter-spacing: 3px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neon-blue);
+  letter-spacing: 4px;
   text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(254,250,205,0.5);
 }
 .app-header-sub {
-  font-size: 0.6rem;
-  color: rgba(241,225,148,0.35);
+  font-size: 0.55rem;
+  color: var(--muted);
   letter-spacing: 3px;
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   margin-top: 1px;
 }
 .header-btn {
   background: none;
   border: none;
-  color: var(--cream);
+  color: var(--text-dim);
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.85rem;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  transition: color 0.2s;
 }
-.header-btn:hover { opacity: 1; }
+.header-btn:hover { color: var(--neon-blue); }
 .header-btn svg { width: 20px; height: 20px; }
 
 /* ── BOTTOM NAV ── */
@@ -117,14 +129,14 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(42,10,14,0.96);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-top: 1px solid rgba(241,225,148,0.12);
+  background: rgba(5,8,16,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-mid);
   display: flex;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -1px 0 rgba(241,225,148,0.06), 0 -8px 32px rgba(42,10,14,0.4);
+  box-shadow: 0 -1px 0 rgba(254,250,205,0.15), 0 -8px 32px rgba(0,0,0,0.6);
 }
 .nav-item {
   flex: 1;
@@ -135,17 +147,17 @@ body {
   padding: 10px 0 8px;
   background: none;
   border: none;
-  color: rgba(241,225,148,0.3);
+  color: rgba(200,223,245,0.25);
   cursor: pointer;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.5rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  transition: color 0.2s, transform 0.2s;
+  transition: color 0.2s;
 }
 .nav-item svg { width: 20px; height: 20px; }
-.nav-item.active { color: var(--gold); }
-.nav-item.active svg { filter: drop-shadow(0 0 6px rgba(241,225,148,0.4)); }
+.nav-item.active { color: var(--neon-blue); }
+.nav-item.active svg { filter: drop-shadow(0 0 8px rgba(254,250,205,0.7)); }
 
 /* ── SCROLL CONTENT ── */
 .scroll-content {
@@ -157,24 +169,31 @@ body {
 
 /* ── CARDS ── */
 .card {
-  background: var(--white);
+  background: var(--bg-2);
   border-radius: var(--radius);
   padding: 20px;
-  box-shadow: 0 1px 0 rgba(241,225,148,0.0), 0 2px 16px rgba(42,10,14,0.07);
   margin-bottom: 12px;
-  border: 1px solid rgba(42,10,14,0.09);
-  transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid rgba(254,250,205,0.12);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
 }
-.card:active { transform: scale(0.995); box-shadow: 0 1px 4px rgba(42,10,14,0.06); }
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 16px; right: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-mid), transparent);
+}
+.card:active { border-color: var(--border-mid); }
 .card-dark {
-  background: var(--ink);
-  color: var(--cream);
-  border-color: rgba(241,225,148,0.15);
+  background: var(--bg-2);
+  color: var(--text);
+  border-color: var(--border-mid);
 }
 .card-turf {
-  background: var(--turf);
-  color: var(--white);
-  border: none;
+  background: rgba(254,250,205,0.08);
+  border-color: var(--border-bright);
+  color: var(--text);
 }
 
 /* ── BUTTONS ── */
@@ -187,99 +206,102 @@ body {
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
   transition: all 0.18s;
   text-decoration: none;
-  letter-spacing: 0.2px;
-}
-.btn-primary {
-  background: var(--ink);
-  color: var(--gold);
-  box-shadow: 0 4px 20px rgba(42,10,14,0.3);
-  letter-spacing: 0.5px;
-  font-weight: 500;
-}
-.btn-primary:hover { background: var(--ink-mid); }
-.btn-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(42,10,14,0.2); }
-.btn-gold {
-  background: var(--gold);
-  color: var(--ink);
-  font-weight: 600;
-  box-shadow: 0 4px 20px rgba(241,225,148,0.3);
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-size: 0.85rem;
 }
-.btn-gold:hover { background: var(--gold-light); box-shadow: 0 6px 24px rgba(241,225,148,0.4); }
+.btn-primary {
+  background: transparent;
+  border: 1.5px solid var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 16px rgba(254,250,205,0.2), inset 0 0 16px rgba(254,250,205,0.05);
+  text-shadow: 0 0 8px rgba(254,250,205,0.5);
+}
+.btn-primary:hover { box-shadow: 0 0 24px rgba(254,250,205,0.4), inset 0 0 20px rgba(254,250,205,0.1); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-gold {
+  background: var(--neon-green);
+  color: var(--bg);
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(254,250,205,0.4);
+  text-shadow: none;
+  border: none;
+}
+.btn-gold:hover { box-shadow: 0 0 30px rgba(254,250,205,0.6); }
 .btn-gold:active { transform: scale(0.97); }
 .btn-outline {
   background: transparent;
-  border: 1.5px solid rgba(42,10,14,0.2);
-  color: var(--ink);
-  letter-spacing: 0.3px;
+  border: 1px solid var(--border-mid);
+  color: var(--text-dim);
+  letter-spacing: 1px;
 }
-.btn-outline:hover { border-color: rgba(42,10,14,0.4); background: rgba(42,10,14,0.03); }
+.btn-outline:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
 .btn-outline:active { transform: scale(0.97); }
 .btn-ghost {
-  background: rgba(10,26,15,0.06);
-  color: var(--ink);
+  background: rgba(254,250,205,0.06);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 .btn-danger {
-  background: var(--red);
-  color: white;
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
 }
 .btn-full { width: 100%; }
-.btn-sm { padding: 10px 18px; font-size: 0.875rem; }
-.btn-lg { padding: 18px 32px; font-size: 1.1rem; border-radius: var(--radius); }
-.btn:disabled { opacity: 0.4; pointer-events: none; }
+.btn-sm { padding: 8px 16px; font-size: 0.75rem; }
+.btn-lg { padding: 18px 32px; font-size: 1rem; border-radius: var(--radius); }
+.btn:disabled { opacity: 0.3; pointer-events: none; }
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* ── FORMS ── */
 .form-group { margin-bottom: 16px; }
 .form-label {
   display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.65rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   color: var(--muted);
   margin-bottom: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
 }
 .form-input {
   width: 100%;
   padding: 13px 16px;
-  border: 1.5px solid rgba(42,10,14,0.15);
+  border: 1px solid var(--border-mid);
   border-radius: var(--radius-sm);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
-  background: var(--white);
-  color: var(--ink);
+  background: var(--bg-2);
+  color: var(--text);
   transition: border-color 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
 }
-.form-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(42,10,14,0.08); }
-.form-input::placeholder { color: rgba(42,10,14,0.25); }
+.form-input:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 12px rgba(254,250,205,0.2); }
+.form-input::placeholder { color: rgba(200,223,245,0.2); }
 
 /* ── CHIP / TOGGLE ── */
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
   padding: 8px 16px;
-  border-radius: 100px;
-  border: 1.5px solid var(--border-mid);
+  border-radius: 4px;
+  border: 1px solid var(--border-mid);
   background: transparent;
-  color: var(--ink);
+  color: var(--text-dim);
   cursor: pointer;
-  font-size: 0.875rem;
-  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
   transition: all 0.15s;
 }
 .chip.active {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--cream);
+  background: rgba(254,250,205,0.1);
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: 0 0 10px rgba(254,250,205,0.2);
 }
 
 /* ── SCORE GRID ── */
@@ -287,7 +309,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0;
-  border: 1.5px solid var(--border-mid);
+  border: 1px solid var(--border-mid);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
@@ -295,8 +317,8 @@ body {
   width: 52px;
   height: 52px;
   border: none;
-  background: var(--cream-dark);
-  color: var(--ink);
+  background: var(--bg-3);
+  color: var(--text);
   font-size: 1.5rem;
   cursor: pointer;
   display: flex;
@@ -304,27 +326,26 @@ body {
   justify-content: center;
   flex-shrink: 0;
   transition: background 0.15s;
-  font-weight: 300;
 }
-.score-btn:active { background: #d4cabb; }
+.score-btn:active { background: var(--surface-2); }
 .score-val {
   flex: 1;
   text-align: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 2rem;
-  color: var(--ink);
-  background: var(--white);
+  color: var(--text);
+  background: var(--surface);
   height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 60px;
 }
-.score-val.eagle { color: #c0392b; }
-.score-val.birdie { color: #d4a017; }
-.score-val.par { color: var(--turf); }
-.score-val.bogey { color: var(--ink-light); }
-.score-val.double { color: #888; }
+.score-val.eagle { color: #ff4466; text-shadow: 0 0 10px rgba(255,107,138,0.5); }
+.score-val.birdie { color: var(--neon-green); text-shadow: 0 0 10px rgba(254,250,205,0.5); }
+.score-val.par { color: var(--violet-light); }
+.score-val.bogey { color: var(--text-dim); }
+.score-val.double { color: rgba(200,223,245,0.3); }
 
 /* ── HOLE NAV ── */
 .hole-nav {
@@ -334,42 +355,44 @@ body {
   margin-bottom: 20px;
 }
 .hole-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 4.5rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 5rem;
   line-height: 1;
-  color: var(--ink);
-  letter-spacing: -1px;
-  text-shadow: 0 2px 12px rgba(10,26,15,0.1);
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-shadow: 0 0 40px rgba(254,250,205,0.2);
 }
 .hole-par-badge {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 3px;
-  color: var(--muted);
+  color: var(--neon-blue);
   margin-top: 4px;
-  background: rgba(42,10,14,0.06);
+  background: rgba(254,250,205,0.1);
+  border: 1px solid rgba(254,250,205,0.25);
   padding: 4px 12px;
-  border-radius: 100px;
+  border-radius: 2px;
   display: inline-block;
 }
 .hole-nav-btn {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-mid);
-  background: var(--white);
-  color: var(--ink);
-  box-shadow: 0 2px 8px rgba(10,26,15,0.08);
+  border-radius: 4px;
+  border: 1px solid var(--border-mid);
+  background: var(--surface);
+  color: var(--text-dim);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s;
 }
-.hole-nav-btn:active { background: var(--cream-dark); }
+.hole-nav-btn:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
+.hole-nav-btn:active { background: var(--surface-2); }
 .hole-nav-btn svg { width: 20px; height: 20px; }
-.hole-nav-btn:disabled { opacity: 0.2; }
+.hole-nav-btn:disabled { opacity: 0.15; }
 
 /* ── MINI SCORECARD ── */
 .mini-scorecard {
@@ -381,7 +404,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
 }
 .scorecard-table th, .scorecard-table td {
   text-align: center;
@@ -390,24 +413,24 @@ body {
   min-width: 28px;
 }
 .scorecard-table th {
-  background: var(--ink);
-  color: var(--gold);
+  background: var(--bg-3);
+  color: var(--lemon);
   font-weight: 500;
   font-size: 0.65rem;
 }
 .scorecard-table .player-name-cell {
   text-align: left;
   padding-left: 10px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   min-width: 80px;
   font-weight: 500;
 }
-.score-eagle { background: #fdecea; color: #c0392b; font-weight: 500; }
-.score-birdie { background: #fef3e2; color: #e67e22; font-weight: 500; }
-.score-bogey { background: #f0f4ff; }
-.score-double { background: #e8f0fe; color: #555; }
-.score-current { outline: 2px solid var(--gold); outline-offset: -2px; }
+.score-eagle { background: rgba(255,107,138,0.15); color: #ff4466; font-weight: 600; }
+.score-birdie { background: rgba(254,250,205,0.12); color: var(--neon-green); font-weight: 600; }
+.score-bogey { background: rgba(254,250,205,0.06); }
+.score-double { background: rgba(254,250,205,0.03); color: var(--text-dim); }
+.score-current { outline: 1px solid var(--neon-green); outline-offset: -1px; }
 
 /* ── SKINS TRACKER ── */
 .skins-row {
@@ -418,9 +441,9 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .skins-row:last-child { border-bottom: none; }
-.skin-hole { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+.skin-hole { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--muted); }
 .skin-winner { font-size: 0.9rem; font-weight: 500; }
-.skin-value { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--gold); }
+.skin-value { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; color: var(--lemon); }
 
 /* ── SETTLEMENT ── */
 .settlement-row {
@@ -432,19 +455,19 @@ body {
 }
 .settlement-row:last-child { border-bottom: none; }
 .settlement-names { flex: 1; }
-.settlement-from { font-size: 0.8rem; color: var(--muted); }
-.settlement-to { font-size: 1rem; font-weight: 500; }
-.settlement-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--turf); }
+.settlement-from { font-size: 0.75rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+.settlement-to { font-size: 1rem; font-weight: 600; }
+.settlement-amount { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; color: var(--neon-green); font-weight: 700; text-shadow: 0 0 10px rgba(254,250,205,0.4); }
 .venmo-btn {
   background: #3d95ce;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -460,52 +483,51 @@ body {
   transition: background 0.15s;
 }
 .course-result:last-child { border-bottom: none; }
-.course-result:active { background: var(--cream-dark); }
-.course-result-name { font-weight: 500; font-size: 0.95rem; }
-.course-result-location { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.course-result:active { background: var(--surface-2); }
+.course-result-name { font-weight: 500; font-size: 0.95rem; color: var(--text); }
+.course-result-location { font-size: 0.75rem; color: var(--muted); margin-top: 2px; font-family: 'Share Tech Mono', monospace; }
 
 /* ── GAME BADGE ── */
 .game-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 12px;
-  border-radius: 100px;
-  font-size: 0.65rem;
-  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 0.6rem;
+  font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 2px;
   border: 1px solid;
-  font-weight: 500;
+  font-weight: 400;
 }
-.game-badge-skins { background: rgba(200,169,81,0.1); color: #7a6020; border-color: rgba(200,169,81,0.35); }
-.game-badge-nassau { background: rgba(58,107,71,0.1); color: var(--turf); border-color: rgba(58,107,71,0.3); }
-.game-badge-stableford { background: rgba(41,128,185,0.1); color: var(--blue); border-color: rgba(41,128,185,0.3); }
+.game-badge-skins { background: rgba(254,250,205,0.08); color: var(--neon-green); border-color: rgba(254,250,205,0.3); }
+.game-badge-nassau { background: rgba(254,250,205,0.08); color: var(--neon-blue); border-color: rgba(254,250,205,0.3); }
+.game-badge-stableford { background: rgba(95,74,139,0.1); color: #bf7fff; border-color: rgba(95,74,139,0.3); }
 
 /* ── HOLE DOTS ── */
 .hole-dots {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin-top: 12px;
 }
 .hole-dot {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-mid);
+  border-radius: 2px;
+  border: 1px solid var(--border-mid);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-family: 'Share Tech Mono', monospace;
   cursor: pointer;
   color: var(--muted);
   transition: all 0.15s;
 }
-.hole-dot.done { background: var(--ink); border-color: var(--ink); color: var(--cream); }
-.hole-dot.current { border-color: var(--gold); color: var(--gold); }
+.hole-dot.done { background: var(--lemon); border-color: var(--lemon); color: var(--violet); font-weight: 700; }
+.hole-dot.current { border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 8px rgba(254,250,205,0.4); }
 
 /* ── PLAYER ROW ── */
 .player-row {
@@ -519,69 +541,66 @@ body {
 .player-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--gold);
+  border-radius: 4px;
+  background: var(--bg-3);
+  border: 1px solid var(--border-mid);
+  color: var(--neon-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
   flex-shrink: 0;
 }
 .player-info { flex: 1; }
-.player-name { font-weight: 500; font-size: 0.95rem; }
-.player-venmo { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.player-name { font-weight: 600; font-size: 0.95rem; }
+.player-venmo { font-size: 0.7rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
 .player-remove {
   background: none;
   border: none;
   color: var(--muted);
   cursor: pointer;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
 }
-.player-remove:active { background: var(--cream-dark); }
+.player-remove:hover { color: var(--red); }
 
 /* ── STAT PILL ── */
 .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
 .stat-pill {
-  background: var(--ink);
-  border: 1px solid rgba(241,225,148,0.12);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   text-align: left;
   position: relative;
   overflow: hidden;
+  transition: border-color 0.2s;
 }
 .stat-pill::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-  opacity: 0.6;
-}
-.stat-pill::after {
-  content: '';
-  position: absolute;
-  bottom: -20px; right: -20px;
-  width: 60px; height: 60px;
-  border-radius: 50%;
-  border: 1px solid rgba(241,225,148,0.08);
+  background: linear-gradient(90deg, var(--neon-blue), transparent);
+  opacity: 0.5;
 }
 .stat-pill-val {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 2.2rem;
-  font-weight: 300;
-  color: var(--gold);
+  font-weight: 700;
+  color: var(--neon-blue);
   line-height: 1;
+  text-shadow: 0 0 20px rgba(254,250,205,0.3);
 }
 .stat-pill-label {
   font-size: 0.55rem;
-  color: rgba(241,225,148,0.4);
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 2.5px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   margin-top: 6px;
 }
 
@@ -596,12 +615,13 @@ body {
   color: var(--muted);
 }
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 2.5px solid var(--border-mid);
-  border-top-color: var(--turf);
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border);
+  border-top-color: var(--neon-blue);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
+  box-shadow: 0 0 10px rgba(254,250,205,0.3);
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -611,37 +631,42 @@ body {
   padding: 60px 24px;
 }
 .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.3; }
-.empty-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--ink); margin-bottom: 8px; }
+.empty-title { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: 1px; }
 .empty-sub { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
 
 /* ── JOIN CODE ── */
 .join-code {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  letter-spacing: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 3rem;
+  letter-spacing: 16px;
   text-align: center;
-  color: var(--gold);
-  background: var(--ink);
+  color: var(--neon-blue);
+  background: var(--surface);
+  border: 1px solid var(--border-bright);
   border-radius: var(--radius);
   padding: 24px;
   margin: 16px 0;
   line-height: 1;
+  box-shadow: 0 0 30px rgba(254,250,205,0.15), inset 0 0 30px rgba(254,250,205,0.05);
+  text-shadow: 0 0 20px rgba(254,250,205,0.8);
 }
 
 /* ── MODAL ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10,26,15,0.7);
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
   z-index: 200;
   display: none;
   align-items: flex-end;
-  padding: 0;
 }
 .modal-overlay.open { display: flex; }
 .modal-sheet {
-  background: var(--cream);
-  border-radius: 20px 20px 0 0;
+  background: var(--bg-2);
+  border: 1px solid var(--border-mid);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
   width: 100%;
   max-height: 90dvh;
   overflow-y: auto;
@@ -654,31 +679,35 @@ body {
 }
 .modal-handle {
   width: 36px;
-  height: 4px;
+  height: 3px;
   background: var(--border-mid);
   border-radius: 2px;
   margin: 0 auto 20px;
 }
 .modal-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
   margin-bottom: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lemon);
 }
 
 /* ── GREENIE PROMPT ── */
 .greenie-section {
-  background: linear-gradient(135deg, rgba(58,107,71,0.08), rgba(58,107,71,0.04));
-  border: 1px solid rgba(58,107,71,0.2);
+  background: rgba(254,250,205,0.04);
+  border: 1px solid rgba(254,250,205,0.2);
   border-radius: var(--radius-sm);
   padding: 16px;
   margin-bottom: 16px;
 }
 .greenie-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--turf);
+  color: var(--lemon);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -687,19 +716,20 @@ body {
 
 /* ── SECTION TITLE ── */
 .section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.9rem;
-  font-weight: 300;
-  color: var(--ink);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 4px;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 .section-sub {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: var(--muted);
   margin-bottom: 16px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.5px;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
 }
 
 /* ── DIVIDER ── */
@@ -715,80 +745,86 @@ body {
   bottom: calc(80px + env(safe-area-inset-bottom) + 10px);
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--surface-2);
+  border: 1px solid var(--border-mid);
+  color: var(--text);
   padding: 12px 20px;
-  border-radius: 100px;
-  font-size: 0.875rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
   opacity: 0;
   transition: all 0.3s;
   z-index: 300;
   white-space: nowrap;
   pointer-events: none;
+  box-shadow: 0 0 20px rgba(254,250,205,0.2);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ── HOME PAGE ── */
 .hero-header {
-  background: var(--ink);
-  padding: 56px 24px 48px;
+  background: var(--bg);
+  padding: 60px 24px 52px;
   text-align: center;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid var(--border);
 }
 .hero-header::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(241,225,148,0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 10% 100%, rgba(91,14,20,0.4) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 50% at 90% 50%, rgba(91,14,20,0.25) 0%, transparent 60%);
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(254,250,205,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(254,250,205,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 100% 50%, rgba(254,250,205,0.04) 0%, transparent 60%);
   pointer-events: none;
 }
-/* Geometric grid lines */
 .hero-header::after {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(241,225,148,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(241,225,148,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(254,250,205,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(254,250,205,0.04) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
 }
 .hero-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 4rem;
-  font-weight: 300;
-  color: var(--gold);
-  letter-spacing: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: var(--neon-blue);
+  letter-spacing: 10px;
   line-height: 1;
   position: relative;
   z-index: 1;
   text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(254,250,205,0.6), 0 0 60px rgba(254,250,205,0.2);
   animation: heroIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .hero-tagline {
   font-size: 0.6rem;
-  color: rgba(241,225,148,0.35);
+  color: rgba(254,250,205,0.4);
   letter-spacing: 5px;
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   margin-top: 12px;
   position: relative;
   z-index: 1;
   animation: heroIn 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .hero-divider {
-  width: 40px;
+  width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
   margin: 16px auto 0;
   position: relative;
   z-index: 1;
-  opacity: 0.4;
+  opacity: 0.5;
   animation: heroIn 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-shadow: 0 0 8px rgba(254,250,205,0.5);
 }
 @keyframes heroIn {
   from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
@@ -797,21 +833,20 @@ body {
 
 /* ── HISTORY ROUND CARD ── */
 .round-card {
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
   padding: 18px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow);
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: border-color 0.15s;
 }
-.round-card:active { transform: scale(0.99); }
+.round-card:active { border-color: var(--border-mid); }
 .round-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
-.round-card-course { font-weight: 500; font-size: 0.95rem; }
-.round-card-date { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-.round-card-score { font-family: 'Cormorant Garamond', serif; font-size: 2rem; line-height: 1; }
-.round-card-score span { font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
+.round-card-course { font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; }
+.round-card-date { font-size: 0.7rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+.round-card-score { font-family: 'Rajdhani', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1; color: var(--lemon); }
+.round-card-score span { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
 
 /* ── GAME SUMMARY ── */
 .winner-crown { font-size: 1.4rem; }
@@ -823,23 +858,21 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .leaderboard-row:last-child { border-bottom: none; }
-.lb-rank { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; width: 28px; color: var(--muted); font-weight: 300; }
-.lb-rank.first { color: var(--gold); }
-.lb-name { flex: 1; font-weight: 500; letter-spacing: 0.2px; }
-.lb-score { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--muted); }
-.lb-money { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--turf); }
+.lb-rank { font-family: 'Share Tech Mono', monospace; font-size: 1rem; width: 28px; color: var(--muted); }
+.lb-rank.first { color: var(--neon-green); text-shadow: 0 0 8px rgba(254,250,205,0.5); }
+.lb-name { flex: 1; font-weight: 600; }
+.lb-score { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+.lb-money { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--lemon); }
 
 /* ── AMOUNT INPUT ── */
-.amount-input-wrap {
-  position: relative;
-}
+.amount-input-wrap { position: relative; }
 .amount-prefix {
   position: absolute;
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1rem;
   color: var(--muted);
   pointer-events: none;
 }
@@ -847,27 +880,27 @@ body {
 
 /* ── PROGRESS BAR ── */
 .hole-progress {
-  height: 3px;
+  height: 2px;
   background: var(--border);
-  border-radius: 2px;
   margin-bottom: 20px;
   overflow: hidden;
+  position: relative;
 }
 .hole-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--ink), var(--turf-light));
-  border-radius: 2px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(254,250,205,0.6);
 }
 
 /* ── AUTH PAGE ── */
 .auth-page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--ink);
+  background: var(--bg);
   background-image:
-    linear-gradient(rgba(241,225,148,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(241,225,148,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(254,250,205,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(254,250,205,0.04) 1px, transparent 1px);
   background-size: 40px 40px;
   display: flex;
   flex-direction: column;
@@ -881,8 +914,8 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 20%, rgba(200,169,81,0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(58,107,71,0.15) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% 30%, rgba(254,250,205,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(254,250,205,0.06) 0%, transparent 50%);
   pointer-events: none;
 }
 .auth-hero {
@@ -892,39 +925,42 @@ body {
   text-align: center;
 }
 .auth-logo {
-  font-family: 'Cormorant Garamond', serif;
-  letter-spacing: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 10px;
   text-transform: uppercase;
-  font-size: 4rem;
-  color: var(--gold);
-  letter-spacing: 2px;
+  color: var(--neon-blue);
   line-height: 1;
   margin-bottom: 12px;
+  text-shadow: 0 0 40px rgba(254,250,205,0.6);
 }
 .auth-tagline {
-  font-size: 0.75rem;
-  color: rgba(245,240,232,0.35);
-  letter-spacing: 3px;
+  font-size: 0.65rem;
+  color: rgba(254,250,205,0.4);
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
 }
 .auth-sheet {
-  background: var(--cream);
-  border-radius: 24px 24px 0 0;
+  background: var(--bg-2);
+  border: 1px solid var(--border-mid);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
   width: 100%;
   padding: 28px 24px calc(40px + env(safe-area-inset-bottom));
   position: relative;
   z-index: 2;
 }
 .auth-sheet-handle {
-  width: 36px; height: 4px;
+  width: 36px; height: 3px;
   background: var(--border-mid);
   border-radius: 2px;
   margin: 0 auto 24px;
 }
 .auth-tabs {
   display: flex;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 24px;
 }
 .auth-tab {
@@ -932,67 +968,64 @@ body {
   padding: 10px;
   text-align: center;
   cursor: pointer;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--muted);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
   background: none;
   border-top: none;
   border-left: none;
   border-right: none;
   transition: all 0.2s;
 }
-.auth-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+.auth-tab.active { color: var(--neon-blue); border-bottom-color: var(--neon-blue); }
 .auth-panel { display: none; }
 .auth-panel.active { display: block; }
 
 /* ── MAGIC LINK SENT ── */
-.magic-sent {
-  text-align: center;
-  padding: 20px 0;
-}
-.magic-sent-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
+.magic-sent { text-align: center; padding: 20px 0; }
+.magic-sent-icon { font-size: 2.5rem; margin-bottom: 16px; }
 
 /* ── PROFILE PAGE ── */
 .profile-avatar-large {
   width: 80px; height: 80px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--gold);
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border-bright);
+  color: var(--neon-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.2rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin: 0 auto 16px;
-  border: 3px solid var(--gold);
+  box-shadow: 0 0 20px rgba(254,250,205,0.2);
+  text-shadow: 0 0 10px rgba(254,250,205,0.5);
 }
 .venmo-link-card {
-  background: #3d95ce;
+  background: rgba(61,149,206,0.15);
+  border: 1px solid rgba(61,149,206,0.3);
   border-radius: var(--radius);
   padding: 20px;
-  color: white;
+  color: #3d95ce;
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 14px;
   cursor: pointer;
-  border: none;
   width: 100%;
   text-align: left;
-  transition: opacity 0.2s;
+  transition: border-color 0.2s;
 }
 .venmo-link-card:active { opacity: 0.85; }
 .venmo-icon {
   width: 44px; height: 44px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 50%;
+  background: rgba(61,149,206,0.2);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1000,11 +1033,11 @@ body {
   font-size: 1.3rem;
 }
 .venmo-card-text { flex: 1; }
-.venmo-card-title { font-weight: 500; font-size: 1rem; margin-bottom: 2px; }
-.venmo-card-sub { font-size: 0.8rem; opacity: 0.8; }
+.venmo-card-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
+.venmo-card-sub { font-size: 0.8rem; opacity: 0.7; font-family: 'Share Tech Mono', monospace; }
 .venmo-connected {
-  background: rgba(58,107,71,0.1);
-  border: 1.5px solid rgba(58,107,71,0.3);
+  background: rgba(254,250,205,0.06);
+  border: 1px solid rgba(254,250,205,0.2);
   border-radius: var(--radius);
   padding: 16px 20px;
   display: flex;
@@ -1013,15 +1046,16 @@ body {
   margin-bottom: 14px;
 }
 .venmo-connected-handle {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   font-size: 0.9rem;
-  color: var(--turf);
-  font-weight: 500;
+  color: var(--neon-green);
+  font-weight: 400;
 }
 
 /* ── GPS DISTANCE ── */
 .gps-widget {
-  background: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 20px;
   margin-bottom: 14px;
@@ -1035,31 +1069,29 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(200,169,81,0.08) 0%, transparent 60%);
-  pointer-events: none;
+  background: radial-gradient(ellipse at 80% 50%, rgba(254,250,205,0.06) 0%, transparent 60%);
 }
-.gps-distance-main {
-  flex: 1;
-}
+.gps-distance-main { flex: 1; }
 .gps-distance-val {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 3rem;
-  color: var(--gold);
+  font-weight: 700;
+  color: var(--neon-blue);
   line-height: 1;
-  letter-spacing: -1px;
+  text-shadow: 0 0 20px rgba(254,250,205,0.4);
 }
 .gps-distance-unit {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: rgba(245,240,232,0.4);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-top: 2px;
 }
 .gps-distance-label {
-  font-size: 0.7rem;
-  color: rgba(245,240,232,0.5);
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-bottom: 4px;
@@ -1068,70 +1100,42 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.7rem;
-  color: rgba(245,240,232,0.4);
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
   margin-top: 6px;
 }
-.gps-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #888;
-  flex-shrink: 0;
-}
-.gps-dot.active {
-  background: #4CAF50;
-  animation: pulse-gps 2s ease-in-out infinite;
-}
-.gps-dot.calibrating {
-  background: var(--gold);
-  animation: pulse-gps 1s ease-in-out infinite;
-}
+.gps-dot { width: 6px; height: 6px; border-radius: 50%; background: #444; flex-shrink: 0; }
+.gps-dot.active { background: var(--lemon); animation: pulse-gps 2s ease-in-out infinite; box-shadow: 0 0 6px rgba(254,250,205,0.6); }
+.gps-dot.calibrating { background: var(--neon-blue); animation: pulse-gps 1s ease-in-out infinite; }
 @keyframes pulse-gps {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.7); }
+  50% { opacity: 0.4; transform: scale(0.7); }
 }
-.gps-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-}
+.gps-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
 .gps-calibrate-btn {
-  background: rgba(200,169,81,0.15);
-  border: 1px solid rgba(200,169,81,0.3);
-  color: var(--gold);
-  border-radius: 8px;
+  background: rgba(254,250,205,0.08);
+  border: 1px solid rgba(254,250,205,0.25);
+  color: var(--neon-blue);
+  border-radius: var(--radius-sm);
   padding: 8px 12px;
-  font-size: 0.75rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-family: 'Share Tech Mono', monospace;
   cursor: pointer;
   text-align: center;
   line-height: 1.3;
   transition: background 0.2s;
 }
-.gps-calibrate-btn:active { background: rgba(200,169,81,0.25); }
-.gps-yardage-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.gps-yardage-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.7rem;
-  font-family: 'JetBrains Mono', monospace;
-}
-.gps-yardage-label { color: rgba(245,240,232,0.35); }
-.gps-yardage-val { color: rgba(245,240,232,0.7); font-weight: 500; }
+.gps-calibrate-btn:active { background: rgba(254,250,205,0.15); }
+.gps-yardage-rows { display: flex; flex-direction: column; gap: 4px; }
+.gps-yardage-row { display: flex; justify-content: space-between; gap: 12px; font-size: 0.7rem; font-family: 'Share Tech Mono', monospace; }
+.gps-yardage-label { color: var(--muted); }
+.gps-yardage-val { color: var(--text-dim); font-weight: 400; }
 
 /* ── CALIBRATE MODAL ── */
 .calibrate-sheet {
-  background: var(--cream);
-  border-radius: 20px 20px 0 0;
+  background: var(--bg-2);
+  border-radius: 12px 12px 0 0;
   width: 100%;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 }
@@ -1141,27 +1145,23 @@ body {
   justify-content: space-between;
   width: 100%;
   padding: 16px 18px;
-  border: 1.5px solid var(--border-mid);
+  border: 1px solid var(--border-mid);
   border-radius: var(--radius-sm);
-  background: var(--white);
+  background: var(--surface);
   margin-bottom: 10px;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
   transition: border-color 0.15s;
 }
-.yardage-marker-btn:active { border-color: var(--turf); background: rgba(58,107,71,0.04); }
-.yardage-marker-yds {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  color: var(--ink);
-  line-height: 1;
-}
+.yardage-marker-btn:active { border-color: var(--neon-blue); }
+.yardage-marker-yds { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--neon-blue); line-height: 1; }
 .yardage-marker-label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
 
 /* ── UTILS ── */
-.text-gold { color: var(--gold); }
+.text-gold { color: var(--neon-green); }
 .text-muted { color: var(--muted); }
-.text-turf { color: var(--turf); }
+.text-turf { color: var(--neon-blue); }
 .text-red { color: var(--red); }
 .text-sm { font-size: 0.875rem; }
 .text-xs { font-size: 0.75rem; }
@@ -1196,13 +1196,13 @@ body {
 
     <!-- Active Round Banner -->
     <div id="active-round-banner" class="hidden">
-      <div class="card card-dark mb-3" style="position:relative; overflow:hidden; border:1px solid rgba(200,169,81,0.25); padding:22px;">
+      <div class="card card-dark mb-3" style="position:relative; overflow:hidden; border:1px solid rgba(254,250,205,0.15); padding:22px;">
         <!-- Fairway stripe texture -->
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(168deg,transparent,transparent 20px,rgba(58,107,71,0.06) 20px,rgba(58,107,71,0.06) 21px);pointer-events:none;"></div>
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(168deg,transparent,transparent 20px,rgba(254,250,205,0.04) 20px,rgba(254,250,205,0.04) 21px);pointer-events:none;"></div>
         <div style="position:absolute;top:-20px;right:-20px;font-size:7rem;opacity:0.05;line-height:1;pointer-events:none;">⛳</div>
-        <div style="font-size:0.65rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;position:relative;">● Round in progress</div>
-        <div id="banner-course" class="font-display" style="font-size:1.5rem;color:var(--cream);margin-bottom:4px;position:relative;"></div>
-        <div id="banner-hole" class="text-sm" style="color:rgba(245,240,232,0.45);margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;position:relative;"></div>
+        <div style="font-size:0.65rem;font-family:'Share Tech Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--neon-green);margin-bottom:10px;position:relative;">● Round in progress</div>
+        <div id="banner-course" class="font-display" style="font-size:1.5rem;color:var(--text);margin-bottom:4px;position:relative;"></div>
+        <div id="banner-hole" class="text-sm" style="color:rgba(200,223,245,0.4);margin-bottom:18px;font-family:'Share Tech Mono',monospace;font-size:0.75rem;position:relative;"></div>
         <button class="btn btn-gold btn-full" onclick="resumeRound()" style="position:relative;font-size:1rem;letter-spacing:0.5px;">Resume Round →</button>
       </div>
     </div>
@@ -1229,7 +1229,7 @@ body {
       <div class="stat-pill"><div class="stat-pill-val" id="stat-rounds">—</div><div class="stat-pill-label">Rounds</div></div>
       <div class="stat-pill"><div class="stat-pill-val" id="stat-avg">—</div><div class="stat-pill-label">Avg Score</div></div>
       <div class="stat-pill"><div class="stat-pill-val" id="stat-best">—</div><div class="stat-pill-label">Best Round</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="stat-net" style="color:var(--turf);">—</div><div class="stat-pill-label">Net $</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="stat-net" style="color:var(--neon-blue);">—</div><div class="stat-pill-label">Net $</div></div>
     </div>
 
     <!-- Recent Rounds -->
@@ -1264,7 +1264,7 @@ body {
 
       <!-- Favorites -->
       <div id="course-favorites-section" class="hidden mb-3">
-        <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">⭐ Favorites</div>
+        <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">⭐ Favorites</div>
         <div id="course-favorites-list" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
 
@@ -1277,22 +1277,22 @@ body {
       <div id="course-search-results" class="card hidden" style="padding:0;overflow:hidden;border:1px solid var(--border-mid);"></div>
 
       <div id="course-selected" class="hidden">
-        <div style="background:var(--ink);color:var(--gold);border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid rgba(241,225,148,0.15);">
-          <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(241,225,148,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(241,225,148,0.03) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;"></div>
-          <div style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;opacity:0.5;margin-bottom:10px;position:relative;">Selected Course</div>
-          <div id="course-selected-name" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:1px;position:relative;line-height:1.2;"></div>
-          <div id="course-selected-location" style="font-size:0.75rem;opacity:0.5;margin-top:6px;font-family:'JetBrains Mono',monospace;position:relative;"></div>
+        <div style="background:var(--bg);color:var(--neon-green);border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid rgba(254,250,205,0.15);">
+          <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(254,250,205,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(254,250,205,0.03) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;"></div>
+          <div style="font-size:0.55rem;font-family:'Share Tech Mono',monospace;letter-spacing:3px;text-transform:uppercase;opacity:0.5;margin-bottom:10px;position:relative;">Selected Course</div>
+          <div id="course-selected-name" style="font-family:'Rajdhani',serif;font-size:1.6rem;font-weight:300;letter-spacing:1px;position:relative;line-height:1.2;"></div>
+          <div id="course-selected-location" style="font-size:0.75rem;opacity:0.5;margin-top:6px;font-family:'Share Tech Mono',monospace;position:relative;"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;position:relative;">
             <div style="display:flex;align-items:center;gap:8px;">
-              <div id="course-selected-holes" style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;opacity:0.6;"></div>
+              <div id="course-selected-holes" style="font-size:0.7rem;font-family:'Share Tech Mono',monospace;opacity:0.6;"></div>
               <div style="display:flex;gap:4px;">
-                <button onclick="setHoles(9)" id="holes-btn-9" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">9H</button>
-                <button onclick="setHoles(18)" id="holes-btn-18" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">18H</button>
+                <button onclick="setHoles(9)" id="holes-btn-9" style="background:rgba(254,250,205,0.08);color:var(--neon-blue);border:1px solid rgba(254,250,205,0.25);border-radius:3px;padding:3px 10px;font-size:0.65rem;font-family:'Share Tech Mono',monospace;cursor:pointer;letter-spacing:1px;">9H</button>
+                <button onclick="setHoles(18)" id="holes-btn-18" style="background:rgba(254,250,205,0.08);color:var(--neon-blue);border:1px solid rgba(254,250,205,0.25);border-radius:3px;padding:3px 10px;font-size:0.65rem;font-family:'Share Tech Mono',monospace;cursor:pointer;letter-spacing:1px;">18H</button>
               </div>
             </div>
             <div style="display:flex;gap:8px;">
-              <button onclick="toggleFavoriteCourse()" id="fav-btn" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:8px;padding:6px 12px;font-size:0.8rem;cursor:pointer;">☆ Save</button>
-              <button onclick="clearCourse()" style="background:rgba(241,225,148,0.1);color:var(--gold);border:1px solid rgba(241,225,148,0.2);border-radius:8px;padding:6px 12px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;cursor:pointer;">Change</button>
+              <button onclick="toggleFavoriteCourse()" id="fav-btn" style="background:rgba(254,250,205,0.06);color:var(--neon-blue);border:1px solid rgba(254,250,205,0.2);border-radius:3px;padding:6px 12px;font-size:0.7rem;font-family:'Share Tech Mono',monospace;cursor:pointer;letter-spacing:1px;">☆ Save</button>
+              <button onclick="clearCourse()" style="background:rgba(255,107,138,0.06);color:var(--red);border:1px solid rgba(255,107,138,0.2);border-radius:3px;padding:6px 12px;font-size:0.7rem;font-family:'Share Tech Mono',monospace;cursor:pointer;letter-spacing:1px;">Change</button>
             </div>
           </div>
         </div>
@@ -1307,12 +1307,12 @@ body {
     <div id="setup-step-players" class="hidden">
       <div class="section-title">Players</div>
       <div class="section-sub">Add up to 4 players — include Venmo handles for easy settlement</div>
-      <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:var(--gold);border-radius:12px;padding:12px 16px;margin-bottom:16px;cursor:pointer;">
+      <div onclick="copyJoinCode()" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);color:var(--neon-green);border-radius:12px;padding:12px 16px;margin-bottom:16px;cursor:pointer;">
         <div>
-          <div style="font-size:0.65rem;font-family:'JetBrains Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
-          <div id="setup-join-code" style="font-family:'JetBrains Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
+          <div style="font-size:0.65rem;font-family:'Share Tech Mono',monospace;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Share this code to join</div>
+          <div id="setup-join-code" style="font-family:'Share Tech Mono',monospace;font-size:1.5rem;letter-spacing:6px;margin-top:2px;">----</div>
         </div>
-        <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;opacity:0.6;">TAP TO COPY</div>
+        <div style="font-size:0.7rem;font-family:'Share Tech Mono',monospace;opacity:0.6;">TAP TO COPY</div>
       </div>
 
       <div id="players-list"></div>
@@ -1351,7 +1351,7 @@ body {
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
             <span class="game-badge game-badge-skins">Skins</span>
-            <div id="skins-check" class="hidden" style="color:var(--turf);">✓</div>
+            <div id="skins-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="skins-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1368,7 +1368,14 @@ body {
               <div style="font-size:0.85rem;font-weight:500;">🟢 Greenies</div>
               <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Closest to pin on par 3s wins a bonus skin</div>
             </div>
-            <button id="greenies-toggle-btn" onclick="toggleGreenies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+            <button id="greenies-toggle-btn" onclick="toggleGreenies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+          </div>
+          <div id="greenies-amount-row" class="hidden" style="margin-top:12px;" onclick="event.stopPropagation()">
+            <label class="form-label">Dollar amount per greenie</label>
+            <div class="amount-input-wrap">
+              <span class="amount-prefix">$</span>
+              <input class="form-input" id="greenies-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
+            </div>
           </div>
           <!-- Birdies toggle -->
           <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);" onclick="event.stopPropagation()">
@@ -1376,7 +1383,7 @@ body {
               <div style="font-size:0.85rem;font-weight:500;">🐦 Birdies</div>
               <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Outright birdie wins a bonus — ties don't pay</div>
             </div>
-            <button id="birdies-toggle-btn" onclick="toggleBirdies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+            <button id="birdies-toggle-btn" onclick="toggleBirdies(event)" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
           </div>
           <div id="birdies-amount-row" class="hidden" style="margin-top:12px;" onclick="event.stopPropagation()">
             <label class="form-label">Dollar amount per birdie</label>
@@ -1392,7 +1399,7 @@ body {
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
             <span class="game-badge game-badge-nassau">Nassau</span>
-            <div id="nassau-check" class="hidden" style="color:var(--turf);">✓</div>
+            <div id="nassau-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="nassau-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1410,7 +1417,7 @@ body {
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
             <span class="game-badge game-badge-stableford">Stableford</span>
-            <div id="stableford-check" class="hidden" style="color:var(--turf);">✓</div>
+            <div id="stableford-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="stableford-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1421,7 +1428,7 @@ body {
             <span class="amount-prefix">$</span>
             <input class="form-input" id="stableford-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
           </div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;">e.g. Pops wins 22–20 = 2 pts × $1 = $2 owed</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;font-family:'Share Tech Mono',monospace;">e.g. Pops wins 22–20 = 2 pts × $1 = $2 owed</div>
         </div>
       </div>
 
@@ -1429,8 +1436,8 @@ body {
       <div class="card mb-3" id="game-strokeplay-card" style="cursor:pointer;" onclick="toggleGame('strokeplay')">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
-            <span class="game-badge" style="background:rgba(42,10,14,0.08);color:var(--ink);border-color:rgba(42,10,14,0.2);">Stroke Play</span>
-            <div id="strokeplay-check" class="hidden" style="color:var(--turf);">✓</div>
+            <span class="game-badge" style="background:rgba(254,250,205,0.05);color:var(--text);border-color:rgba(254,250,205,0.15);">Stroke Play</span>
+            <div id="strokeplay-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="strokeplay-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1441,7 +1448,7 @@ body {
             <span class="amount-prefix">$</span>
             <input class="form-input" id="strokeplay-amount" type="number" min="1" value="1" onclick="event.stopPropagation()">
           </div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;">e.g. Kai shoots 72, Pops 75 = 3 strokes × $1 = $3 owed</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;font-family:'Share Tech Mono',monospace;">e.g. Kai shoots 72, Pops 75 = 3 strokes × $1 = $3 owed</div>
         </div>
       </div>
 
@@ -1449,8 +1456,8 @@ body {
       <div class="card mb-3" id="game-matchplay-card" style="cursor:pointer;" onclick="toggleGame('matchplay')">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
-            <span class="game-badge" style="background:rgba(139,69,19,0.1);color:#6b3a1f;border-color:rgba(139,69,19,0.3);">Match Play</span>
-            <div id="matchplay-check" class="hidden" style="color:var(--turf);">✓</div>
+            <span class="game-badge" style="background:rgba(139,69,19,0.1);color:var(--neon-blue);border-color:rgba(139,69,19,0.3);">Match Play</span>
+            <div id="matchplay-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="matchplay-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1468,8 +1475,8 @@ body {
       <div class="card mb-3" id="game-wolf-card" style="cursor:pointer;" onclick="toggleGame('wolf')">
         <div class="flex items-center justify-between mb-2">
           <div class="flex items-center gap-2">
-            <span class="game-badge" style="background:rgba(50,50,80,0.1);color:#2d2d5e;border-color:rgba(50,50,80,0.3);">🐺 Wolf</span>
-            <div id="wolf-check" class="hidden" style="color:var(--turf);">✓</div>
+            <span class="game-badge" style="background:rgba(254,250,205,0.06);color:var(--lemon);border-color:rgba(254,250,205,0.2);">🐺 Wolf</span>
+            <div id="wolf-check" class="hidden" style="color:var(--neon-blue);">✓</div>
           </div>
           <div id="wolf-toggle" style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border-mid);"></div>
         </div>
@@ -1484,13 +1491,13 @@ body {
       </div>
 
       <!-- Handicap toggle -->
-      <div class="card mb-3" style="background:rgba(42,10,14,0.03);border:1px dashed var(--border-mid);">
+      <div class="card mb-3" style="background:rgba(254,250,205,0.03);border:1px dashed var(--border-mid);">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div>
             <div style="font-size:0.9rem;font-weight:500;">Use Handicaps</div>
             <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Adjust scores based on each player's strokes</div>
           </div>
-          <button id="handicap-toggle-btn" onclick="toggleHandicaps()" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
+          <button id="handicap-toggle-btn" onclick="toggleHandicaps()" style="padding:6px 14px;border-radius:100px;font-size:0.75rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;border:1.5px solid var(--border-mid);background:transparent;cursor:pointer;transition:all 0.15s;">OFF</button>
         </div>
       </div>
 
@@ -1529,10 +1536,10 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <div style="text-align:center;">
-        <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
+        <div style="font-size:0.7rem;font-family:'Share Tech Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:2px;">Hole</div>
         <div class="hole-num" id="current-hole-display">1</div>
         <div class="hole-par-badge" id="current-par-display">Par 4</div>
-        <div id="round-join-code-display" onclick="copyJoinCode()" style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--gold);cursor:pointer;padding:3px 8px;background:rgba(200,169,81,0.12);border-radius:6px;display:none;"></div>
+        <div id="round-join-code-display" onclick="copyJoinCode()" style="margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:3px;color:var(--lemon);cursor:pointer;padding:3px 8px;background:rgba(254,250,205,0.1);border-radius:6px;display:none;"></div>
       </div>
       <button class="hole-nav-btn" id="next-hole-btn" onclick="nextHole()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -1550,13 +1557,13 @@ body {
       </div>
       <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">Who hit the green on their tee shot and is closest to the pin?</div>
       <div class="chip-group" id="greenie-chips"></div>
-      <div id="greenie-winner-display" class="mt-2 text-sm" style="color:var(--turf);font-weight:500;"></div>
+      <div id="greenie-winner-display" class="mt-2 text-sm" style="color:var(--neon-blue);font-weight:500;"></div>
     </div>
 
     <!-- Wolf Pick Banner -->
-    <div id="wolf-pick-banner" class="hidden" style="background:var(--ink);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid rgba(241,225,148,0.2);">
-      <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">🐺 Wolf — Pick Your Partner</div>
-      <div id="wolf-banner-wolf-name" style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--cream);margin-bottom:12px;"></div>
+    <div id="wolf-pick-banner" class="hidden" style="background:var(--violet);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid rgba(254,250,205,0.25);">
+      <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;letter-spacing:3px;text-transform:uppercase;color:var(--lemon);margin-bottom:8px;">🐺 Wolf — Pick Your Partner</div>
+      <div id="wolf-banner-wolf-name" style="font-family:'Rajdhani',serif;font-size:1.3rem;color:var(--text);margin-bottom:12px;"></div>
       <div id="wolf-banner-buttons" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
@@ -1565,7 +1572,7 @@ body {
 
     <!-- Hole dots -->
     <div class="card mt-3" style="padding:14px 16px;">
-      <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Progress</div>
+      <div style="font-size:0.7rem;font-family:'Share Tech Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">Progress</div>
       <div class="hole-dots" id="hole-dots"></div>
     </div>
 
@@ -1594,10 +1601,12 @@ body {
   <div class="scroll-content">
 
     <!-- Winner banner -->
-    <div class="card card-dark mb-3" style="text-align:center;padding:28px 20px;">
-      <div class="winner-crown mb-2">🏆</div>
-      <div style="font-size:0.7rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:2px;color:rgba(245,240,232,0.5);margin-bottom:6px;">Overall winner</div>
-      <div id="settlement-winner" class="font-display" style="font-size:2rem;color:var(--gold);"></div>
+    <div style="text-align:center;padding:32px 20px 24px;position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--border-mid);border-radius:var(--radius);margin-bottom:12px;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%, rgba(254,250,205,0.12) 0%, transparent 70%);pointer-events:none;"></div>
+      <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(254,250,205,0.04) 1px, transparent 1px),linear-gradient(90deg,rgba(254,250,205,0.04) 1px, transparent 1px);background-size:30px 30px;pointer-events:none;"></div>
+      <div style="font-size:2rem;margin-bottom:8px;position:relative;">🏆</div>
+      <div style="font-size:0.6rem;font-family:'Share Tech Mono',monospace;text-transform:uppercase;letter-spacing:4px;color:var(--muted);margin-bottom:8px;position:relative;">Overall Winner</div>
+      <div id="settlement-winner" style="font-family:'Rajdhani',sans-serif;font-size:2.8rem;font-weight:700;color:var(--neon-green);text-shadow:0 0 30px rgba(254,250,205,0.5);position:relative;letter-spacing:2px;"></div>
     </div>
 
     <!-- Game results -->
@@ -1688,7 +1697,7 @@ body {
     <div style="text-align:center;">
       <div class="app-header-title">Profile</div>
     </div>
-    <button class="header-btn" onclick="signOut()" style="color:rgba(245,240,232,0.6);">
+    <button class="header-btn" onclick="signOut()" style="color:rgba(200,223,245,0.4);">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Sign Out
     </button>
@@ -1759,7 +1768,7 @@ body {
       <div class="stat-pill"><div class="stat-pill-val" id="profile-stat-best">—</div><div class="stat-pill-label">Best</div></div>
     </div>
     <div class="stat-row">
-      <div class="stat-pill" style="flex:none;width:100%;"><div class="stat-pill-val" id="profile-stat-net" style="color:var(--turf);">—</div><div class="stat-pill-label">Net Money Won</div></div>
+      <div class="stat-pill" style="flex:none;width:100%;"><div class="stat-pill-val" id="profile-stat-net" style="color:var(--neon-blue);">—</div><div class="stat-pill-label">Net Money Won</div></div>
     </div>
 
     <div style="height:20px;"></div>
@@ -1891,6 +1900,7 @@ let state = {
     skins: 1,
     nassau: 5,
     birdies: 1,
+    greenies: 1,
     stableford: 1,
     matchplay: 5,
     wolf: 1,
@@ -2196,7 +2206,7 @@ async function searchCourses(query) {
             <div class="course-result-name">${name}</div>
             <div class="course-result-location">${location}</div>
           </div>
-          ${isFav ? '<span style="font-size:0.8rem;color:var(--gold);padding-right:4px;">⭐</span>' : ''}
+          ${isFav ? '<span style="font-size:0.8rem;color:var(--neon-green);padding-right:4px;">⭐</span>' : ''}
         </div>
       `;
     }).join('');
@@ -2244,10 +2254,10 @@ function renderFavorites() {
   // Store favs globally for index-based access (avoids id escaping issues)
   window._favCourses = favs;
   list.innerHTML = favs.map((f, idx) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;" onclick="selectFavoriteCourse(${idx})">
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;" onclick="selectFavoriteCourse(${idx})">
       <div>
         <div style="font-weight:500;font-size:0.9rem;">${f.name}</div>
-        ${f.location ? `<div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">${f.location}</div>` : ''}
+        ${f.location ? `<div style="font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:2px;">${f.location}</div>` : ''}
       </div>
       <button onclick="event.stopPropagation();removeFavoriteCourse(${idx})" style="background:none;border:none;font-size:1rem;color:var(--muted);cursor:pointer;padding:4px 8px;">×</button>
     </div>
@@ -2267,8 +2277,8 @@ function selectFavoriteCourse(idx) {
   document.getElementById('fav-btn').textContent = '⭐ Saved';
   const b9 = document.getElementById('holes-btn-9');
   const b18 = document.getElementById('holes-btn-18');
-  if (b9) b9.style.background = fav.totalHoles === 9 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
-  if (b18) b18.style.background = fav.totalHoles === 18 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  if (b9) b9.style.background = fav.totalHoles === 9 ? 'rgba(254,250,205,0.3)' : 'rgba(254,250,205,0.1)';
+  if (b18) b18.style.background = fav.totalHoles === 18 ? 'rgba(254,250,205,0.3)' : 'rgba(254,250,205,0.1)';
   document.getElementById('course-selected').classList.remove('hidden');
   document.getElementById('course-search-input').value = '';
   document.getElementById('course-search-results').classList.add('hidden');
@@ -2349,8 +2359,8 @@ async function selectCourse(course) {
   // Highlight correct hole count button
   const b9 = document.getElementById('holes-btn-9');
   const b18 = document.getElementById('holes-btn-18');
-  if (b9) b9.style.background = state.totalHoles === 9 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
-  if (b18) b18.style.background = state.totalHoles === 18 ? 'rgba(241,225,148,0.3)' : 'rgba(241,225,148,0.1)';
+  if (b9) b9.style.background = state.totalHoles === 9 ? 'rgba(254,250,205,0.3)' : 'rgba(254,250,205,0.1)';
+  if (b18) b18.style.background = state.totalHoles === 18 ? 'rgba(254,250,205,0.3)' : 'rgba(254,250,205,0.1)';
   // Show fav button state
   const favCourseId = state.course.id || state.course.course_id || state.course.display_name;
   const isFav = getFavoriteCourses().some(f => f.id === favCourseId);
@@ -2414,6 +2424,7 @@ async function goToSetupPlayers() {
   state.gameAmounts.skins = parseFloat(document.getElementById('skins-amount')?.value || 1);
   state.gameAmounts.nassau = parseFloat(document.getElementById('nassau-amount')?.value || 5);
   state.gameAmounts.birdies = parseFloat(document.getElementById('birdies-amount')?.value || 1);
+  state.gameAmounts.greenies = parseFloat(document.getElementById('greenies-amount')?.value || 1);
   state.gameAmounts.stableford = parseFloat(document.getElementById('stableford-amount')?.value || 1);
   state.gameAmounts.matchplay = parseFloat(document.getElementById('matchplay-amount')?.value || 1);
   state.gameAmounts.wolf = parseFloat(document.getElementById('wolf-amount')?.value || 1);
@@ -2523,9 +2534,9 @@ function toggleHandicaps() {
   state.handicapsEnabled = !state.handicapsEnabled;
   const btn = document.getElementById('handicap-toggle-btn');
   btn.textContent = state.handicapsEnabled ? 'ON' : 'OFF';
-  btn.style.background = state.handicapsEnabled ? 'var(--ink)' : 'transparent';
-  btn.style.color = state.handicapsEnabled ? 'var(--gold)' : '';
-  btn.style.borderColor = state.handicapsEnabled ? 'var(--ink)' : 'var(--border-mid)';
+  btn.style.background = state.handicapsEnabled ? 'var(--bg)' : 'transparent';
+  btn.style.color = state.handicapsEnabled ? 'var(--lemon)' : '';
+  btn.style.borderColor = state.handicapsEnabled ? 'var(--bg)' : 'var(--border-mid)';
   // Show/hide handicap input on player form
   const hGroup = document.getElementById('handicap-input-group');
   if (hGroup) hGroup.style.display = state.handicapsEnabled ? 'block' : 'none';
@@ -2536,9 +2547,11 @@ function toggleGreenies(e) {
   state.greeniesEnabled = !state.greeniesEnabled;
   const btn = document.getElementById('greenies-toggle-btn');
   btn.textContent = state.greeniesEnabled ? 'ON' : 'OFF';
-  btn.style.background = state.greeniesEnabled ? 'var(--turf)' : 'transparent';
-  btn.style.color = state.greeniesEnabled ? 'white' : '';
-  btn.style.borderColor = state.greeniesEnabled ? 'var(--turf)' : 'var(--border-mid)';
+  btn.style.background = state.greeniesEnabled ? 'var(--violet)' : 'transparent';
+  btn.style.color = state.greeniesEnabled ? 'var(--lemon)' : '';
+  btn.style.borderColor = state.greeniesEnabled ? 'var(--violet-light)' : 'var(--border-mid)';
+  const row = document.getElementById('greenies-amount-row');
+  if (row) row.classList.toggle('hidden', !state.greeniesEnabled);
 }
 
 function toggleBirdies(e) {
@@ -2546,9 +2559,9 @@ function toggleBirdies(e) {
   state.birdiesEnabled = !state.birdiesEnabled;
   const btn = document.getElementById('birdies-toggle-btn');
   btn.textContent = state.birdiesEnabled ? 'ON' : 'OFF';
-  btn.style.background = state.birdiesEnabled ? 'var(--ink)' : 'transparent';
-  btn.style.color = state.birdiesEnabled ? 'var(--gold)' : '';
-  btn.style.borderColor = state.birdiesEnabled ? 'var(--ink)' : 'var(--border-mid)';
+  btn.style.background = state.birdiesEnabled ? 'var(--bg)' : 'transparent';
+  btn.style.color = state.birdiesEnabled ? 'var(--lemon)' : '';
+  btn.style.borderColor = state.birdiesEnabled ? 'var(--bg)' : 'var(--border-mid)';
   document.getElementById('birdies-amount-row').classList.toggle('hidden', !state.birdiesEnabled);
 }
 
@@ -2560,9 +2573,9 @@ function toggleGame(game) {
   const check = document.getElementById(`${game}-check`);
 
   if (state.games[game]) {
-    card.style.borderColor = 'var(--turf)';
-    toggle.style.background = 'var(--turf)';
-    toggle.style.borderColor = 'var(--turf)';
+    card.style.borderColor = 'var(--neon-blue)';
+    toggle.style.background = 'var(--neon-blue)';
+    toggle.style.borderColor = 'var(--neon-blue)';
     toggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>`;
     if (opts) opts.classList.remove('hidden');
     if (check) check.classList.remove('hidden');
@@ -2720,19 +2733,24 @@ function renderScoreInputs(hole, par) {
     const score = state.scores[p.id]?.[hole];
     const rel = score !== null && score !== undefined ? score - par : null;
     const label = rel === null ? '' : rel <= -2 ? 'Eagle' : rel === -1 ? 'Birdie' : rel === 0 ? 'Par' : rel === 1 ? 'Bogey' : rel === 2 ? 'Double' : '+' + rel;
-    const labelColor = rel === null ? '' : rel <= -2 ? '#c0392b' : rel === -1 ? '#e67e22' : rel === 0 ? 'var(--turf)' : 'var(--muted)';
+    const labelColor = rel === null ? '' : rel <= -2 ? 'var(--red)' : rel === -1 ? 'var(--lemon)' : rel === 0 ? 'var(--violet-light)' : 'var(--muted)';
 
     const chips = Array.from({length: maxScore - minScore + 1}, (_, i) => {
       const s = minScore + i;
       const r = s - par;
       const isSelected = score === s;
       const chipLabel = r <= -2 ? 'Eagle' : r === -1 ? 'Bird' : r === 0 ? 'Par' : r === 1 ? 'Bog' : r === 2 ? 'Dbl' : `+${r}`;
-      const chipColor = isSelected ? (r <= -2 ? '#c0392b' : r === -1 ? '#e67e22' : r === 0 ? 'var(--turf)' : r >= 2 ? '#888' : 'var(--ink)') : 'transparent';
-      const textColor = isSelected ? 'white' : 'var(--muted)';
-      const border = isSelected ? 'none' : '1px solid var(--border)';
-      return `<button onclick="setScore('${p.id}', ${hole}, ${s})" style="flex:1;padding:10px 4px;border-radius:8px;border:${border};background:${chipColor};color:${textColor};font-family:'JetBrains Mono',monospace;font-size:0.7rem;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <span style="font-size:1.1rem;font-weight:600;font-family:'Cormorant Garamond',serif;">${s}</span>
-        <span style="font-size:0.6rem;opacity:0.8;">${chipLabel}</span>
+      const chipBg = isSelected ? (r <= -2 ? 'rgba(255,107,138,0.18)' : r === -1 ? 'rgba(254,250,205,0.14)' : r === 0 ? 'rgba(254,250,205,0.14)' : 'rgba(200,223,245,0.07)') : 'transparent';
+      const chipText = isSelected ? (r <= -2 ? 'var(--red)' : r === -1 ? 'var(--lemon)' : r === 0 ? 'var(--violet-light)' : 'var(--text-dim)') : 'var(--muted)';
+      const chipBorder = isSelected
+        ? (r <= -2 ? '1px solid rgba(255,107,138,0.4)' : r === -1 ? '1px solid rgba(254,250,205,0.4)' : r === 0 ? '1px solid rgba(95,74,139,0.6)' : '1px solid rgba(200,223,245,0.15)')
+        : '1px solid var(--border)';
+      const chipGlow = isSelected ? (r <= -2 ? '0 0 10px rgba(255,107,138,0.25)' : r === -1 ? '0 0 10px rgba(254,250,205,0.25)' : r === 0 ? '0 0 10px rgba(95,74,139,0.4)' : 'none') : 'none';
+      const baseChipBorder = isSelected ? chipBorder : '1px solid rgba(254,250,205,0.2)';
+      const baseChipBg = isSelected ? chipBg : 'transparent';
+      return `<button onclick="setScore('${p.id}', ${hole}, ${s})" style="flex:1;padding:10px 4px;border-radius:4px;border:${baseChipBorder};background:${baseChipBg};color:${chipText};font-family:'Share Tech Mono',monospace;font-size:0.65rem;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:${chipGlow};">
+        <span style="font-size:1.15rem;font-weight:700;font-family:'Rajdhani',sans-serif;line-height:1;">${s}</span>
+        <span style="font-size:0.55rem;letter-spacing:1px;opacity:${isSelected ? '1' : '0.5'};">${chipLabel}</span>
       </button>`;
     }).join('');
 
@@ -2755,7 +2773,7 @@ function renderScoreInputs(hole, par) {
           </div>
           ${score !== null && score !== undefined ? `<button onclick="setScore('${p.id}', ${hole}, null)" style="font-size:0.7rem;color:var(--muted);background:none;border:none;cursor:pointer;">Clear</button>` : ''}
         </div>
-        <div style="display:flex;gap:6px;">${chips}</div>
+        <div style="display:flex;gap:4px;background:var(--bg-3);border-radius:6px;padding:6px;">${chips}</div>
       </div>
     `;
   }).join('');
@@ -3024,7 +3042,7 @@ function renderSkinsTally() {
               ${state.greeniesEnabled ? totals[p.id].greenies + '🟢' : ''}
               ${state.birdiesEnabled ? totals[p.id].birdies + '🐦' : ''}
             </span>
-            <span class="font-display" style="font-size:1.2rem;color:${totals[p.id].money > 0 ? 'var(--turf)' : 'var(--muted)'}">$${totals[p.id].money}</span>
+            <span class="font-display" style="font-size:1.2rem;color:${totals[p.id].money > 0 ? 'var(--neon-blue)' : 'var(--muted)'}">$${totals[p.id].money}</span>
           </div>
         </div>
       `).join('')}
@@ -3135,7 +3153,7 @@ function renderStablefordTally() {
             <span class="font-display" style="font-size:1.1rem;color:var(--muted);width:20px;">${i + 1}</span>
             <span class="fw-500 text-sm">${p.name}</span>
           </div>
-          <span class="font-display" style="font-size:1.3rem;color:${i === 0 ? 'var(--turf)' : 'var(--ink)'};">${pts[p.id]}</span>
+          <span class="font-display" style="font-size:1.3rem;color:${i === 0 ? 'var(--neon-blue)' : 'var(--bg)'};">${pts[p.id]}</span>
         </div>
       `).join('')}
     </div>
@@ -3156,20 +3174,32 @@ function buildScorecardHTML() {
   const back = holes.slice(9);
 
   const renderSection = (holeArr) => {
+    // Pre-compute hole winners for highlighting
+    const holeWinners = {};
+    holeArr.forEach(h => {
+      const scores = state.players.map(p => ({ id: p.id, s: state.scores[p.id]?.[h] }))
+        .filter(x => x.s !== null && x.s !== undefined);
+      if (scores.length < state.players.length) return;
+      const min = Math.min(...scores.map(x => x.s));
+      const winners = scores.filter(x => x.s === min);
+      if (winners.length === 1) holeWinners[h] = winners[0].id;
+    });
+
     const cols = holeArr.map(h => `<th>${h}</th>`).join('');
-    const parRow = `<tr><td class="player-name-cell" style="background:var(--ink);color:var(--gold);">Par</td>${holeArr.map(h => `<th>${state.pars[h] || 4}</th>`).join('')}<th>${holeArr.reduce((s,h) => s + (state.pars[h]||4), 0)}</th></tr>`;
+    const parRow = `<tr><td class="player-name-cell" style="background:var(--bg-3);color:var(--lemon);">Par</td>${holeArr.map(h => `<th>${state.pars[h] || 4}</th>`).join('')}<th>${holeArr.reduce((s,h) => s + (state.pars[h]||4), 0)}</th></tr>`;
     const playerRows = state.players.map(p => {
       const cells = holeArr.map(h => {
         const s = state.scores[p.id]?.[h];
-        if (s === null || s === undefined) return '<td>—</td>';
+        if (s === null || s === undefined) return '<td style="color:var(--muted);">—</td>';
         const par = state.pars[h] || 4;
         const rel = s - par;
         const cls = rel <= -2 ? 'score-eagle' : rel === -1 ? 'score-birdie' : rel === 1 ? 'score-bogey' : rel >= 2 ? 'score-double' : '';
-        const cur = h === state.currentHole ? 'score-current' : '';
-        return `<td class="${cls} ${cur}">${s}</td>`;
+        const isWinner = holeWinners[h] === p.id;
+        const winStyle = isWinner ? 'outline:2px solid rgba(254,250,205,0.8);outline-offset:-2px;font-weight:700;' : '';
+        return `<td class="${cls}" style="${winStyle}">${s}</td>`;
       }).join('');
       const total = holeArr.reduce((s, h) => s + (state.scores[p.id]?.[h] || 0), 0);
-      return `<tr><td class="player-name-cell">${p.name}</td>${cells}<td style="font-weight:500;">${total || '—'}</td></tr>`;
+      return `<tr><td class="player-name-cell">${p.name}</td>${cells}<td style="font-weight:700;color:var(--lemon);">${total || '—'}</td></tr>`;
     }).join('');
     return `<table class="scorecard-table"><thead><tr><th></th>${cols}<th>Tot</th></tr>${parRow}</thead><tbody>${playerRows}</tbody></table>`;
   };
@@ -3227,7 +3257,7 @@ function buildSkinsResultHTML() {
 
   Object.entries(skins).forEach(([, r]) => {
     if (r.winner) { totals[r.winner].skins += (r.carryover || 0) + 1; totals[r.winner].money += r.value; }
-    if (r.greenieWinner) { totals[r.greenieWinner].greenies++; totals[r.greenieWinner].money += state.gameAmounts.skins || 1; }
+    if (r.greenieWinner) { totals[r.greenieWinner].greenies++; totals[r.greenieWinner].money += state.gameAmounts.greenies || state.gameAmounts.skins || 1; }
     if (r.birdieWinner && state.birdiesEnabled) { totals[r.birdieWinner].birdies = (totals[r.birdieWinner].birdies || 0) + 1; totals[r.birdieWinner].money += state.gameAmounts.birdies || 1; }
   });
 
@@ -3236,7 +3266,7 @@ function buildSkinsResultHTML() {
   return `
     <div class="card mb-3">
       <div class="section-title mb-1">Skins</div>
-      <div class="text-xs mono text-muted mb-3">$\${state.gameAmounts.skins}/skin\${state.greeniesEnabled ? " + greenies" : ""}\${state.birdiesEnabled ? " + birdies $" + state.gameAmounts.birdies : ""}</div>
+      <div class="text-xs mono text-muted mb-3">$${state.gameAmounts.skins}/skin${state.greeniesEnabled ? " + greenies" : ""}${state.birdiesEnabled ? " + birdies $" + state.gameAmounts.birdies : ""}</div>
       ${sorted.map((p, i) => `
         <div class="leaderboard-row">
           <div class="lb-rank ${i === 0 ? 'first' : ''}">${i + 1}</div>
@@ -3256,9 +3286,9 @@ function buildNassauResultHTML() {
     <div class="card mb-3">
       <div class="section-title mb-1">Nassau</div>
       <div class="text-xs mono text-muted mb-3">$${state.gameAmounts.nassau}/bet</div>
-      <div class="leaderboard-row"><div class="lb-rank">F</div><div class="lb-name">Front 9</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.front.winner)}</div></div>
-      <div class="leaderboard-row"><div class="lb-rank">B</div><div class="lb-name">Back 9</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.back.winner)}</div></div>
-      <div class="leaderboard-row"><div class="lb-rank">T</div><div class="lb-name">Total</div><div class="lb-money" style="color:var(--ink);">${winnerName(n.total.winner)}</div></div>
+      <div class="leaderboard-row"><div class="lb-rank">F</div><div class="lb-name">Front 9</div><div class="lb-money" style="color:var(--text);">${winnerName(n.front.winner)}</div></div>
+      <div class="leaderboard-row"><div class="lb-rank">B</div><div class="lb-name">Back 9</div><div class="lb-money" style="color:var(--text);">${winnerName(n.back.winner)}</div></div>
+      <div class="leaderboard-row"><div class="lb-rank">T</div><div class="lb-name">Total</div><div class="lb-money" style="color:var(--text);">${winnerName(n.total.winner)}</div></div>
     </div>
   `;
 }
@@ -3334,17 +3364,17 @@ function renderMatchPlayTally() {
   return `
     <div class="card mb-3">
       <div class="flex items-center justify-between mb-3">
-        <span class="game-badge" style="background:rgba(139,69,19,0.1);color:#6b3a1f;border-color:rgba(139,69,19,0.3);">Match Play</span>
+        <span class="game-badge" style="background:rgba(139,69,19,0.1);color:var(--neon-blue);border-color:rgba(139,69,19,0.3);">Match Play</span>
         <span class="text-xs mono text-muted">$${state.gameAmounts.matchplay}/hole</span>
       </div>
-      <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.4rem;padding:8px 0;">${status}</div>
+      <div style="text-align:center;font-family:'Rajdhani',serif;font-size:1.4rem;padding:8px 0;">${status}</div>
       <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
         ${[a, b].map(p => {
           const won = mp.holes.filter(h => h.winner === p.id).length;
           const halved = mp.holes.filter(h => h.result === 'halved').length;
           return `<div style="text-align:center;flex:1;">
             <div style="font-weight:500;font-size:0.9rem;">${p.name}</div>
-            <div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;">${won}W ${Math.floor(halved/2)}H</div>
+            <div style="font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:2px;">${won}W ${Math.floor(halved/2)}H</div>
           </div>`;
         }).join('<div style="width:1px;background:var(--border);"></div>')}
       </div>
@@ -3411,11 +3441,11 @@ function renderWolfTally() {
   return `
     <div class="card mb-3">
       <div class="flex items-center justify-between mb-3">
-        <span class="game-badge" style="background:rgba(50,50,80,0.1);color:#2d2d5e;border-color:rgba(50,50,80,0.3);">🐺 Wolf</span>
+        <span class="game-badge" style="background:rgba(254,250,205,0.06);color:var(--lemon);border-color:rgba(254,250,205,0.2);">🐺 Wolf</span>
         <span class="text-xs mono text-muted">$${amt}/pt</span>
       </div>
-      <div style="font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:10px;">
-        Wolf this hole: <strong style="color:var(--ink);">${currentWolf.name}</strong>
+      <div style="font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-bottom:10px;">
+        Wolf this hole: <strong style="color:var(--text);">${currentWolf.name}</strong>
         ${currentWolfState ? (currentWolfState.loneWolf ? ' · 🐺 Lone Wolf!' : currentWolfState.partner ? ' · Partner: ' + (state.players.find(p=>p.id===currentWolfState.partner)?.name||'') : '') : ' · Pick after tee shots'}
       </div>
       ${sorted.map((p, i) => {
@@ -3426,10 +3456,10 @@ function renderWolfTally() {
         return `
         <div class="flex items-center justify-between" style="padding:6px 0;border-bottom:1px solid var(--border);">
           <div class="flex items-center gap-2">
-            <div class="player-avatar" style="width:28px;height:28px;font-size:0.8rem;${isWolf ? 'background:var(--ink);' : ''}">${p.name[0]}</div>
+            <div class="player-avatar" style="width:28px;height:28px;font-size:0.8rem;${isWolf ? 'background:var(--bg);' : ''}">${p.name[0]}</div>
             <span class="fw-500 text-sm">${p.name}${badge}</span>
           </div>
-          <span class="font-display" style="font-size:1.2rem;color:${pts[p.id] > 0 ? 'var(--turf)' : 'var(--muted)'}">
+          <span class="font-display" style="font-size:1.2rem;color:${pts[p.id] > 0 ? 'var(--neon-blue)' : 'var(--muted)'}">
             ${pts[p.id]} pt${pts[p.id] !== 1 ? 's' : ''}
           </span>
         </div>`;
@@ -3456,7 +3486,7 @@ function renderWolfPick(hole) {
           Partner: ${p.name}
         </button>
       `).join('')}
-      <button onclick="wolfPick('${hole}', null, true)" style="padding:8px 14px;border-radius:8px;border:1.5px solid var(--ink);background:var(--ink);color:var(--gold);cursor:pointer;font-size:0.85rem;">
+      <button onclick="wolfPick('${hole}', null, true)" style="padding:8px 14px;border-radius:8px;border:1px solid rgba(254,250,205,0.4);background:rgba(254,250,205,0.08);color:var(--neon-green);cursor:pointer;font-size:0.85rem;">
         🐺 Lone Wolf
       </button>
     </div>
@@ -3481,7 +3511,7 @@ function renderWolfBanner(hole) {
       ? `🐺 ${wolf.name} goes Lone Wolf — double stakes!`
       : `🤝 ${wolf.name} + ${partnerName} vs the field`;
     if (btnsEl) btnsEl.innerHTML = `
-      <button onclick="undoWolfPick(${hole})" style="padding:7px 16px;border-radius:8px;border:1.5px solid rgba(241,225,148,0.3);background:transparent;color:rgba(241,225,148,0.7);cursor:pointer;font-size:0.8rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+      <button onclick="undoWolfPick(${hole})" style="padding:7px 16px;border-radius:8px;border:1.5px solid rgba(254,250,205,0.3);background:transparent;color:rgba(254,250,205,0.7);cursor:pointer;font-size:0.8rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;">
         ✏️ Change pick
       </button>`;
     banner.classList.remove('hidden');
@@ -3492,10 +3522,10 @@ function renderWolfBanner(hole) {
   if (nameEl) nameEl.textContent = `${wolf.name} is the Wolf`;
   if (btnsEl) btnsEl.innerHTML = [
     ...others.map(p => `
-      <button onclick="wolfPick(${hole}, '${p.id}')" style="flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(241,225,148,0.3);background:rgba(241,225,148,0.08);color:var(--gold);cursor:pointer;font-size:0.9rem;font-family:'Outfit',sans-serif;min-width:80px;">
+      <button onclick="wolfPick(${hole}, '${p.id}')" style="flex:1;padding:10px 14px;border-radius:10px;border:1px solid rgba(254,250,205,0.3);background:rgba(254,250,205,0.06);color:var(--neon-blue);cursor:pointer;font-size:0.85rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;min-width:80px;">
         🤝 ${p.name}
       </button>`),
-    `<button onclick="wolfPick(${hole}, null, true)" style="flex:1;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(241,225,148,0.6);background:rgba(241,225,148,0.15);color:var(--gold);cursor:pointer;font-size:0.9rem;font-family:'Outfit',sans-serif;font-weight:600;min-width:80px;">
+    `<button onclick="wolfPick(${hole}, null, true)" style="flex:1;padding:10px 14px;border-radius:10px;border:1px solid rgba(254,250,205,0.4);background:rgba(254,250,205,0.08);color:var(--neon-green);cursor:pointer;font-size:0.85rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;font-weight:600;min-width:80px;">
       🐺 Lone Wolf
     </button>`
   ].join('');
@@ -3526,7 +3556,7 @@ function buildMatchPlayResultHTML() {
         <div class="section-title">Match Play</div>
         <span class="text-xs mono text-muted">$${state.gameAmounts.matchplay}/hole</span>
       </div>
-      <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.3rem;padding:8px 0;color:${winner ? 'var(--turf)' : 'var(--muted)'}">
+      <div style="text-align:center;font-family:'Rajdhani',serif;font-size:1.3rem;padding:8px 0;color:${winner ? 'var(--neon-blue)' : 'var(--muted)'}">
         ${aUp === 0 ? 'All Square' : `${aUp > 0 ? a.name : b.name} wins`}
       </div>
       ${[a, b].map(p => {
@@ -3576,7 +3606,7 @@ function renderStrokePlayTally() {
   return `
     <div class="card mb-3">
       <div class="flex items-center justify-between mb-3">
-        <span class="game-badge" style="background:rgba(42,10,14,0.08);color:var(--ink);border-color:rgba(42,10,14,0.2);">Stroke Play</span>
+        <span class="game-badge" style="background:rgba(254,250,205,0.05);color:var(--text);border-color:rgba(254,250,205,0.15);">Stroke Play</span>
         <span class="text-xs mono text-muted">${holesPlayed}/${state.totalHoles} holes · $${state.gameAmounts.strokeplay}/stroke</span>
       </div>
       ${sorted.map((p, i) => {
@@ -3590,7 +3620,7 @@ function renderStrokePlayTally() {
             <span class="fw-500 text-sm">${p.name}</span>
           </div>
           <div class="flex items-center gap-3">
-            <span class="text-xs mono" style="color:${rel<0?'var(--turf)':rel>0?'var(--red)':'var(--muted)'}">${relStr}</span>
+            <span class="text-xs mono" style="color:${rel<0?'var(--neon-blue)':rel>0?'var(--red)':'var(--muted)'}">${relStr}</span>
             <span class="font-display" style="font-size:1.3rem;">${totals[p.id]}</span>
           </div>
         </div>`;
@@ -3645,10 +3675,11 @@ function renderMoneySettlement() {
         });
       }
       if (r.greenieWinner) {
-        // Greenie: winner gets $amt from each other player
-        net[r.greenieWinner] += amt * (n - 1);
+        // Greenie: winner gets $greenieAmt from each other player
+        const gAmt = state.gameAmounts.greenies || state.gameAmounts.skins || 1;
+        net[r.greenieWinner] += gAmt * (n - 1);
         state.players.forEach(p => {
-          if (p.id !== r.greenieWinner) net[p.id] -= amt;
+          if (p.id !== r.greenieWinner) net[p.id] -= gAmt;
         });
       }
       if (r.birdieWinner && state.birdiesEnabled) {
